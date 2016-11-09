@@ -1,0 +1,35 @@
+{
+  "servers": [
+    {
+      "id": 0,
+      "name" : "fe01",
+      "status": true
+    },
+    {
+      "id": 1,
+      "name" : "fe02",
+      "status": true
+    },
+    {
+      "id": 2,
+      "name" : "fe03",
+      "status": true
+    },
+    {
+      "id": 3,
+      "name" : "fe04",
+      "status": true
+    },
+    {
+      "id": 4,
+      "name" : "fe05",
+      "status": true
+    },
+    {
+      "id": 5,
+      "name" : "fe06",
+      "status": true
+    }
+  ],
+  "isMultiProxy": true
+}
