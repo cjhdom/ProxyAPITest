@@ -17,20 +17,20 @@ module.exports = exports = {
 
     if (typeof server != 'undefined') {
       console.log(server);
-      callback(null, server);
+      return callback(null, server);
     } else {
       console.log(server);
-      callback({err: 'error'});
+      return callback({err: 'error'});
     }
   },
   update: (id, status, callback) => {
     var index = serverList.findIndex(server => server.id === id);
 
     if (index === -1) {
-      callback({err: 'error'});
+      return callback({err: 'error'});
     } else {
       serverList[index].status = status;
-      callback(null, true);
+      return callback(null, true);
     }
   },
   serverInit: (data) => {

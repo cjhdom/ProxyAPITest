@@ -7,7 +7,7 @@ var express = require('express');
 var router = express.Router();
 
 router.use((req, res, next) => {
-  console.log('/');
+  console.log('logging!');
   next();
 });
 
