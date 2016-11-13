@@ -2,8 +2,9 @@
  * Created by 지환 on 2016-11-07.
  */
 var _ = require('lodash');
+var Promise = require('bluebird');
 
-var serverList = {};
+var serverList = [];
 var isMultiProxy = null;
 
 function DbTest(data) {
@@ -12,26 +13,32 @@ function DbTest(data) {
 }
 
 module.exports = exports = {
-  fetch: (test, callback) => {
-    var server = _.find(serverList, { id: parseInt(test) });
+  fetch: (prxName, serverName) => {
+    return new Promise((resolve, reject) => {
+      var servers = _.find(serverList, {name: prxName});
+      var server = _.find(servers, {id: serverName});
 
-    if (typeof server != 'undefined') {
-      console.log(server);
-      return callback(null, server);
-    } else {
-      console.log(server);
-      return callback({err: 'error'});
-    }
+      if (typeof server != 'undefined') {
+        console.log(server);
+        return resolve(server);
+      } else {
+        console.log(server);
+        return reject({err: 'error'});
+      }
+    });
   },
-  update: (id, status, callback) => {
-    var index = serverList.findIndex(server => server.id === id);
+  update: (prxName, serverName, status) => {
+    return new Promise((resolve, reject) => {
+      var prxIdx = serverList.findIndex(server => server.name === prxName);
+      var serverIdx = serverList[prxIdx].servers.findIndex(server => server.name === serverName);
 
-    if (index === -1) {
-      return callback({err: 'error'});
-    } else {
-      serverList[index].status = status;
-      return callback(null, true);
-    }
+      if (serverIdx === -1) {
+        return reject({err: 'error'});
+      } else {
+        serverList[prxIdx].servers[serverIdx].status = status;
+        return resolve({code: '000'});
+      }
+    });
   },
   serverInit: (data) => {
     DbTest(data);

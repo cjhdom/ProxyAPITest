@@ -17,7 +17,6 @@ router.get('/fetch/:value', (req, res, next) => {
    if (err) {
      res.send('error fetching ');
    } else {
-     //res.send('result\n' + JSON.stringify(data));
      res.json(data);
    }
   });

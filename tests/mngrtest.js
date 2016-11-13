@@ -2,32 +2,51 @@
  * Created by 지환 on 2016-11-10.
  */
 var _ = require('lodash');
+var Promise = require('bluebird');
 
 function MngrTest(data) {
-  this.serverList = data.servers;
+  this.serverList = data.server;
+  this.isMultiProxy = data.isMultiProxy;
 }
 
-MngrTest.prototype.getStatus = (server, callback) => {
-  var target = _.find(this.serverList, { id: parseInt(test) });
+MngrTest.prototype.getStatus = (prxName, serverName) => {
+  return new Promise((resolve, reject) => {
+    var servers = _.find(this.serverList, { name: prxName });
+    var server = _.find(servers, { id: serverName });
 
-  if (typeof target != 'undefined') {
-    console.log(target);
-    callback(null, target.status);
-  } else {
-    console.log(target);
-    callback({err: 'error'});
-  }
+    if (typeof server != 'undefined') {
+      console.log(server);
+      return resolve(server.status);
+    } else {
+      console.log(server);
+      return reject({code: '999', message: 'couldn\'t find the requested server'});
+    }
+  });
 };
 
-MngrTest.prototype.setStatus = (serverToSet, status, callback) => {
-  var index = this.serverList.findIndex(server => server.id === id);
+MngrTest.prototype.setStatus = (prxName, serverName, status) => {
+  return new Promise((resolve, reject) => {
+    var prxIdx = this.serverList.findIndex(server => server.name === prxName);
+    var serverIdx = this.serverList[prxIdx].servers.findIndex(server => server.name === serverName);
 
-  if (index === -1) {
-    return callback({err: 'cannot find'});
-  } else {
-    this.serverList[index].status = status;
-    return callback(null, {res: '000'});
-  }
+    if (serverIdx === -1) {
+      return reject({code: '999', message: 'couldn\'t set the status'});
+    } else {
+      this.serverList[prxIdx].servers[serverIdx].status = status;
+      return resolve({code: '000'});
+    }
+  });
+};
+
+MngrTest.prototype.getIsMultiProxy = () => {
+  return new Promise(resolve =>
+    resolve(this.isMultiProxy)
+  )
+};
+
+MngrTest.prototype.setIsMultiProxy = (status) => {
+  this.isMultiProxy = status;
+  return new Promise(resolve => this.isMultiProxy);
 };
 
 module.exports = exports = MngrTest;

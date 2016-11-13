@@ -2,33 +2,111 @@
   "servers": [
     {
       "id": 0,
-      "name" : "fe01",
-      "status": true
+      "name" : "prx01",
+      "servers": [
+        { "id": "fe01gm", "status": true },
+        { "id": "fe02gm", "status": true },
+        { "id": "fe03gm", "status": true },
+        { "id": "fe04gm", "status": true },
+        { "id": "fe05gm", "status": true },
+        { "id": "fe06gm", "status": true },
+        { "id": "fe01gh", "status": true },
+        { "id": "fe02gh", "status": true },
+        { "id": "fe03gh", "status": true },
+        { "id": "fe04gh", "status": true },
+        { "id": "fe05gh", "status": true },
+        { "id": "fe06gh", "status": true }
+      ]
     },
     {
       "id": 1,
-      "name" : "fe02",
-      "status": true
+      "name" : "prx02",
+      "servers": [
+        { "id": "fe01gm", "status": true },
+        { "id": "fe02gm", "status": true },
+        { "id": "fe03gm", "status": true },
+        { "id": "fe04gm", "status": true },
+        { "id": "fe05gm", "status": true },
+        { "id": "fe06gm", "status": true },
+        { "id": "fe01gh", "status": true },
+        { "id": "fe02gh", "status": true },
+        { "id": "fe03gh", "status": true },
+        { "id": "fe04gh", "status": true },
+        { "id": "fe05gh", "status": true },
+        { "id": "fe06gh", "status": true }
+      ]
     },
     {
       "id": 2,
-      "name" : "fe03",
-      "status": true
+      "name" : "prx03",
+      "servers": [
+        { "id": "fe01gm", "status": true },
+        { "id": "fe02gm", "status": true },
+        { "id": "fe03gm", "status": true },
+        { "id": "fe04gm", "status": true },
+        { "id": "fe05gm", "status": true },
+        { "id": "fe06gm", "status": true },
+        { "id": "fe01gh", "status": true },
+        { "id": "fe02gh", "status": true },
+        { "id": "fe03gh", "status": true },
+        { "id": "fe04gh", "status": true },
+        { "id": "fe05gh", "status": true },
+        { "id": "fe06gh", "status": true }
+      ]
     },
     {
       "id": 3,
-      "name" : "fe04",
-      "status": true
+      "name" : "prx04",
+      "servers": [
+        { "id": "fe01gm", "status": true },
+        { "id": "fe02gm", "status": true },
+        { "id": "fe03gm", "status": true },
+        { "id": "fe04gm", "status": true },
+        { "id": "fe05gm", "status": true },
+        { "id": "fe06gm", "status": true },
+        { "id": "fe01gh", "status": true },
+        { "id": "fe02gh", "status": true },
+        { "id": "fe03gh", "status": true },
+        { "id": "fe04gh", "status": true },
+        { "id": "fe05gh", "status": true },
+        { "id": "fe06gh", "status": true }
+      ]
     },
     {
       "id": 4,
-      "name" : "fe05",
-      "status": true
+      "name" : "prx05",
+      "servers": [
+        { "id": "fe01gm", "status": true },
+        { "id": "fe02gm", "status": true },
+        { "id": "fe03gm", "status": true },
+        { "id": "fe04gm", "status": true },
+        { "id": "fe05gm", "status": true },
+        { "id": "fe06gm", "status": true },
+        { "id": "fe01gh", "status": true },
+        { "id": "fe02gh", "status": true },
+        { "id": "fe03gh", "status": true },
+        { "id": "fe04gh", "status": true },
+        { "id": "fe05gh", "status": true },
+        { "id": "fe06gh", "status": true }
+      ]
     },
     {
       "id": 5,
-      "name" : "fe06",
-      "status": true
+      "name" : "prx06",
+      "servers": [
+        { "id": "fe01gm", "status": true },
+        { "id": "fe02gm", "status": true },
+        { "id": "fe03gm", "status": true },
+        { "id": "fe04gm", "status": true },
+        { "id": "fe05gm", "status": true },
+        { "id": "fe06gm", "status": true },
+        { "id": "fe01gh", "status": true },
+        { "id": "fe02gh", "status": true },
+        { "id": "fe03gh", "status": true },
+        { "id": "fe04gh", "status": true },
+        { "id": "fe05gh", "status": true },
+        { "id": "fe06gh", "status": true }
+      ]
     }
   ],
   "isMultiProxy": true
