@@ -1,25 +1,38 @@
 /**
  * Created by 지환 on 2016-11-07.
  */
-var mngr = null
+var async = require('async');
 
-function serverStatus(_mngr) {
-    mngr = _mngr;
+function ServerStatus(db) {
+    this.db = db;
 }
 
-serverStatus.prototype.getServerStatus = (prxName, serverName) => {
-    return mngr.getStatus(prxName, serverName)
+ServerStatus.prototype.getServerWeight = (prxName, serverName) => {
+    async.auto({
+        getFromDb: (callback) => {
+            db.fetch(prxName, serverName)
+                .then(response => callback(null, response))
+                .catch(response => callback(response));
+        },
+        getFromMngr: (callback) => {
+            /
+        }
+    });
+    return this.mngr.getStatus(prxName, serverName)
         .then(
-          response => response,
-          response => response
+            response => response
+        )
+        .catch(
+            response => response
         );
 };
 
-serverStatus.prototype.setServerStatus = (prxName, serverName, status) => {
-    return mngr.setStatus(prxName, serverName, status)
+ServerStatus.prototype.setServerWeight = (prxName, serverName, weight) => {
+    return this.mngr.setStatus(prxName, serverName, weight)
         .then(
-          response => response,
-          response => response
+            response => response
+        )
+        .catch(
+            response => response
         );
 };
-

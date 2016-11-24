@@ -3,7 +3,6 @@ var router = express.Router();
 var dbtest = require('../tests/dbtest');
 var serverStatus = require('../models/serverStatus');
 
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
   //dbtest.echoServerList();
@@ -11,15 +10,30 @@ router.get('/', function(req, res, next) {
   res.send('hello world');
 });
 
-router.get('/fetch/:value', (req, res, next) => {
-  var value = req.params.value;
-  dbtest.fetch(value, (err, data) => {
-   if (err) {
-     res.send('error fetching ');
-   } else {
-     res.json(data);
-   }
-  });
+router.get('/fetch/:prxName/:serverName', (req, res, next) => {
+  var prxName = req.params.prxName;
+  var serverName = req.params.serverName;
+  dbtest.fetch(prxName, serverName)
+      .then((response) =>
+          res.json(response)
+      )
+      .catch((response) =>
+          res.json(response)
+      );
+});
+
+router.get('/update/:prxName/:serverName/:weight', (req, res, next) => {
+    var prxName = req.params.prxName;
+    var serverName = req.params.serverName;
+    var weight = req.params.weight;
+
+    dbtest.update(prxName, serverName, weight)
+        .then((response) =>
+            res.json(response)
+        )
+        .catch((response) =>
+            res.json(response)
+        );
 });
 
 module.exports = router;

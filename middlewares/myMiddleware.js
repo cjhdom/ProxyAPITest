@@ -7,12 +7,12 @@ var express = require('express');
 var router = express.Router();
 
 router.use((req, res, next) => {
-  console.log('logging!');
+  //console.log('logging!');
   next();
 });
 
 router.use('/fetch', (req, res, next) => {
-  console.log('fetch');
+  //console.log('fetch');
   next();
 });
 
