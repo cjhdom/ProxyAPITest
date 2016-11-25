@@ -2,12 +2,19 @@
  * Created by 지환 on 2016-11-07.
  */
 var async = require('async');
+var _ = require('lodash');
 
-function ServerStatus(db) {
-    this.db = db;
-}
+module.exports = exports = {};
 
-ServerStatus.prototype.getServerWeight = (prxName, serverName) => {
+var db = null;
+var mngrs = [];
+
+exports.initServerStatus = (dbconn, mngrsList) => {
+    db = dbconn;
+    mngrs = mngrsList;
+};
+
+exports.getServerWeight = (prxName, serverName) => {
     async.auto({
         getFromDb: (callback) => {
             db.fetch(prxName, serverName)
@@ -15,19 +22,37 @@ ServerStatus.prototype.getServerWeight = (prxName, serverName) => {
                 .catch(response => callback(response));
         },
         getFromMngr: (callback) => {
-            /
+            mngrs.some(mngr => {
+                console.log(mngr.getName());
+               if (mngr.getName() === prxName) {
+                   console.log('found');
+                   mngr.getWeight(serverName).then(server => callback(null, server))
+                       .catch(callback({err: 'oops'}));
+                   return true;
+               }
+                return false;
+            });
+        }
+    }, (err, res) => {
+        if (err) {
+            console.log('error in getServerWeight');
+            console.log(JSON.stringify(err));
+        } else {
+            console.log('successful');
+            console.log(res);
         }
     });
+    /*
     return this.mngr.getStatus(prxName, serverName)
         .then(
             response => response
         )
         .catch(
             response => response
-        );
+        );*/
 };
 
-ServerStatus.prototype.setServerWeight = (prxName, serverName, weight) => {
+exports.setServerWeight = (prxName, serverName, weight) => {
     return this.mngr.setStatus(prxName, serverName, weight)
         .then(
             response => response
@@ -36,3 +61,5 @@ ServerStatus.prototype.setServerWeight = (prxName, serverName, weight) => {
             response => response
         );
 };
+
+

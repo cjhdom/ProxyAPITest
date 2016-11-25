@@ -30,6 +30,9 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+var Mngr = require('../tests/mngrtest');
+var serverStatus = require('../models/serverStatus');
+
 /**
  * on server init, inject sample db data
  */
@@ -41,6 +44,17 @@ server.on('listening', () => {
     } else {
       console.log('successfully loaded dbtest! good to go~');
       dbtest.serverInit(JSON.parse(data));
+
+      var mngrs = [];
+      dbtest.fetchAll().then(servers => {
+          servers.forEach(server => {
+            var test = require('../tests/mngrtest')(server);
+            mngrs.push(test);
+          });
+
+          serverStatus.initServerStatus(dbtest, mngrs);
+      })
+          .catch(res => console.log(JSON.stringify(res)));
     }
   });
 });

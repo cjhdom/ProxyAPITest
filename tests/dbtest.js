@@ -37,6 +37,20 @@ exports.fetch = (prxName, serverName) => {
 
 /**
  *
+ * @returns {bluebird|exports|module.exports}
+ */
+exports.fetchAll = () => {
+  return new Promise((resolve, reject) => {
+    if (serverList.length > 0) {
+      return resolve(serverList);
+    } else {
+      return reject({err: 'there is no server!'});
+    }
+  });
+};
+
+/**
+ *
  * @param {String} prxName
  * @param {String} serverName
  * @param {int} weight

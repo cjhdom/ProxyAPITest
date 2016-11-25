@@ -5,14 +5,21 @@ var _ = require('lodash');
 var Promise = require('bluebird');
 
 function MngrTest(data) {
-  this.serverList = data.server;
-  this.isMultiProxy = data.isMultiProxy;
+  this.serverList = data.servers;
+  this.name = data.name;
+  console.log('hi from ' + JSON.stringify(this.serverList));
+  console.log('hi from ' + this.name);
 }
 
-MngrTest.prototype.getWeight = (prxName, serverName) => {
+
+MngrTest.prototype.getName = () => {
+  console.log(this.name + this.serverList.length);
+  return this.name;
+};
+
+MngrTest.prototype.getWeight = (serverName) => {
   return new Promise((resolve, reject) => {
-    var servers = _.find(this.serverList, { name: prxName });
-    var server = _.find(servers, { id: serverName });
+    var server = _.find(this.serverList, { id: serverName });
 
     if (typeof server != 'undefined') {
       console.log(server);
@@ -38,5 +45,8 @@ MngrTest.prototype.setWeight = (prxName, serverName, weight) => {
   });
 };
 
+
 module.exports = exports = MngrTest;
+
+
 
