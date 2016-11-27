@@ -13,7 +13,8 @@ router.get('/', function(req, res, next) {
 router.get('/fetch/:prxName/:serverName', (req, res, next) => {
   var prxName = req.params.prxName;
   var serverName = req.params.serverName;
-    serverStatus.getServerWeight(prxName, serverName);
+
+  serverStatus.getServerWeight(prxName, serverName);
 /*  dbtest.fetch(prxName, serverName)
       .then((response) =>
           res.json(response)

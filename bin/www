@@ -46,15 +46,18 @@ server.on('listening', () => {
       dbtest.serverInit(JSON.parse(data));
 
       var mngrs = [];
-      dbtest.fetchAll().then(servers => {
+      dbtest.fetchAll()
+        .then(servers => {
           servers.forEach(server => {
-            var test = require('../tests/mngrtest')(server);
+            //var test = require('../tests/mngrtest')(server);
+            var test = new Mngr(server);
+            //console.log('pushing ' + test.getName());
             mngrs.push(test);
           });
 
           serverStatus.initServerStatus(dbtest, mngrs);
-      })
-          .catch(res => console.log(JSON.stringify(res)));
+        })
+        .catch(res => console.log(JSON.stringify(res)));
     }
   });
 });

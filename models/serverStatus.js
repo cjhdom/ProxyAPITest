@@ -12,6 +12,7 @@ var mngrs = [];
 exports.initServerStatus = (dbconn, mngrsList) => {
     db = dbconn;
     mngrs = mngrsList;
+    //console.log(mngrs);
 };
 
 exports.getServerWeight = (prxName, serverName) => {
@@ -22,18 +23,21 @@ exports.getServerWeight = (prxName, serverName) => {
                 .catch(response => callback(response));
         },
         getFromMngr: (callback) => {
+            console.log(JSON.stringify(mngrs));
             mngrs.some(mngr => {
-                console.log(mngr.getName());
+                console.log('got ' + mngr.getName());
                if (mngr.getName() === prxName) {
                    console.log('found');
-                   mngr.getWeight(serverName).then(server => callback(null, server))
-                       .catch(callback({err: 'oops'}));
+                   mngr.getWeight(serverName)
+                       .then(server => callback(null, server))
+                       .catch(response => callback({err: 'oops'}));
                    return true;
                }
                 return false;
             });
         }
     }, (err, res) => {
+        console.log('hello');
         if (err) {
             console.log('error in getServerWeight');
             console.log(JSON.stringify(err));

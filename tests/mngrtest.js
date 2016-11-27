@@ -7,13 +7,10 @@ var Promise = require('bluebird');
 function MngrTest(data) {
   this.serverList = data.servers;
   this.name = data.name;
-  console.log('hi from ' + JSON.stringify(this.serverList));
-  console.log('hi from ' + this.name);
 }
 
 
-MngrTest.prototype.getName = () => {
-  console.log(this.name + this.serverList.length);
+MngrTest.prototype.getName = function () {
   return this.name;
 };
 
