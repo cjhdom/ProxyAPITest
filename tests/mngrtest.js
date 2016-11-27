@@ -9,12 +9,11 @@ function MngrTest(data) {
   this.name = data.name;
 }
 
-
 MngrTest.prototype.getName = function () {
   return this.name;
 };
 
-MngrTest.prototype.getWeight = (serverName) => {
+MngrTest.prototype.getWeight = function (serverName) {
   return new Promise((resolve, reject) => {
     var server = _.find(this.serverList, { id: serverName });
 
@@ -28,15 +27,14 @@ MngrTest.prototype.getWeight = (serverName) => {
   });
 };
 
-MngrTest.prototype.setWeight = (prxName, serverName, weight) => {
+MngrTest.prototype.setWeight = function (serverName, weight) {
   return new Promise((resolve, reject) => {
-    var prxIdx = this.serverList.findIndex(server => server.name === prxName);
-    var serverIdx = this.serverList[prxIdx].servers.findIndex(server => server.id === serverName);
+    var serverIdx = this.serverList.findIndex(server => server.id === serverName);
 
     if (serverIdx === -1) {
       return reject({code: '999', message: 'couldn\'t set the status'});
     } else {
-      this.serverList[prxIdx].servers[serverIdx].weight = weight;
+      this.serverList[serverIdx].weight = weight;
       return resolve({code: '000'});
     }
   });

@@ -15,7 +15,7 @@ exports.initServerStatus = (dbconn, mngrsList) => {
     //console.log(mngrs);
 };
 
-exports.getServerWeight = (prxName, serverName) => {
+exports.getServerWeight = (prxName, serverName, callback) => {
     async.auto({
         getFromDb: (callback) => {
             db.fetch(prxName, serverName)
@@ -39,31 +39,39 @@ exports.getServerWeight = (prxName, serverName) => {
     }, (err, res) => {
         console.log('hello');
         if (err) {
-            console.log('error in getServerWeight');
-            console.log(JSON.stringify(err));
+            return callback(err)
         } else {
-            console.log('successful');
-            console.log(res);
+            return callback(null, res);
         }
     });
-    /*
-    return this.mngr.getStatus(prxName, serverName)
-        .then(
-            response => response
-        )
-        .catch(
-            response => response
-        );*/
 };
 
-exports.setServerWeight = (prxName, serverName, weight) => {
-    return this.mngr.setStatus(prxName, serverName, weight)
-        .then(
-            response => response
-        )
-        .catch(
-            response => response
-        );
+exports.setServerWeight = (prxName, serverName, weight, callback) => {
+    async.auto({
+        setDb: (callback) => {
+            db.update(prxName, serverName. weight)
+                .then(response => callback(null, response))
+                .catch(response => callback(response));
+        },
+        setMngr: (callback) => {
+            mngrs.some(mngr => {
+                if (mngr.getName() === prxName) {
+                    mngr.setWeight(serverName, weight)
+                        .then(server => callback(null, server))
+                        .catch(response => callback({err: 'oops'}));
+                    return true;
+                }
+                return false;
+            });
+        }
+    }, (err, res) => {
+        console.log('hello');
+        if (err) {
+            return callback(err)
+        } else {
+            return callback(null, res);
+        }
+    });
 };
 
 

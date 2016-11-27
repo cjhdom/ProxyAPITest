@@ -14,14 +14,13 @@ router.get('/fetch/:prxName/:serverName', (req, res, next) => {
   var prxName = req.params.prxName;
   var serverName = req.params.serverName;
 
-  serverStatus.getServerWeight(prxName, serverName);
-/*  dbtest.fetch(prxName, serverName)
-      .then((response) =>
-          res.json(response)
-      )
-      .catch((response) =>
-          res.json(response)
-      );*/
+  serverStatus.getServerWeight(prxName, serverName, (err, response) => {
+    if (err) {
+        res.json('err ' + err);
+    } else {
+        res.json(response);
+    }
+  });
 });
 
 router.get('/update/:prxName/:serverName/:weight', (req, res, next) => {

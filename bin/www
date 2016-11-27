@@ -37,7 +37,7 @@ var serverStatus = require('../models/serverStatus');
  * on server init, inject sample db data
  */
 server.on('listening', () => {
-  fs.readFile('./sample_data/sample.json', 'utf-8', (err, data) => {
+  fs.readFile('../sample_data/sample.json', 'utf-8', (err, data) => {
     if (err) {
       console.log('error reading file ' + console.log(err));
       server.close();
