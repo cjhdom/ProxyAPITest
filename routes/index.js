@@ -28,13 +28,13 @@ router.get('/update/:prxName/:serverName/:weight', (req, res, next) => {
     var serverName = req.params.serverName;
     var weight = req.params.weight;
 
-    dbtest.update(prxName, serverName, weight)
-        .then((response) =>
-            res.json(response)
-        )
-        .catch((response) =>
-            res.json(response)
-        );
+    serverStatus.setServerWeight(prxName, serverName, weight, (err, response) => {
+        if (err) {
+            res.json('err ' + err);
+        } else {
+            res.json(response);
+        }
+    });
 });
 
 module.exports = router;
