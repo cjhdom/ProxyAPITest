@@ -28,7 +28,8 @@ exports.fetch = (prxName, serverName) => {
     var server = _.find(servers.servers, {id: serverName});
 
     if (typeof server !== 'undefined') {
-      return resolve(server);
+      return reject({err: 'error'});
+      //return resolve(server);
     } else {
       return reject({err: 'error'});
     }
