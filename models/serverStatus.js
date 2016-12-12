@@ -124,4 +124,10 @@ exports.setServerWeight = (prxName, serverName, weight, callback) => {
   });
 };
 
+exports.getIsMultiProxy = (callback) => {
+  db.getMultiProxy()
+    .then(response => callback(null, response))
+    .catch(response => callback(response));
+};
+
 

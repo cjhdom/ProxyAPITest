@@ -75,11 +75,16 @@ exports.update = (prxName, serverName, weight) => {
  *
  * @param {boolean} onOff
  */
-exports.setMultiProxy = (onOff) => {
+exports.setMultiProxy = (onOff) =>
+  new Promise((resolve) => {
+    isMultiProxy = onOff;
+    resolve({code: '000'});
+  });
 
-};
-
-exports.getMultiProxy = () => isMultiProxy;
+exports.getMultiProxy = () =>
+  new Promise((resolve) =>
+    resolve(isMultiProxy)
+  );
 
 exports.serverInit = (data) => {
   DbTest(data);

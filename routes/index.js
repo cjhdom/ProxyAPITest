@@ -10,7 +10,7 @@ router.get('/', function(req, res, next) {
   res.send('hello world');
 });
 
-router.get('/fetch/:prxName/:serverName', (req, res, next) => {
+router.get('/weight/:prxName/:serverName', (req, res, next) => {
   var prxName = req.params.prxName;
   var serverName = req.params.serverName;
 
@@ -27,7 +27,7 @@ router.get('/fetch/:prxName/:serverName', (req, res, next) => {
   });
 });
 
-router.get('/update/:prxName/:serverName/:weight', (req, res, next) => {
+router.put('/weight/:prxName/:serverName/:weight', (req, res, next) => {
   var prxName = req.params.prxName;
   var serverName = req.params.serverName;
   var weight = req.params.weight;
@@ -39,6 +39,12 @@ router.get('/update/:prxName/:serverName/:weight', (req, res, next) => {
     res.json(response);
   }
   });
+});
+
+router.get('/multiproxy/:onOff', (req, res, next) => {
+  var onOff = req.params.onOff;
+
+  serverStatus
 });
 
 module.exports = router;
