@@ -5,7 +5,7 @@ var serverStatus = require('../models/serverStatus');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  //dbtest.echoServerList();
+//dbtest.echoServerList();
   console.log('here');
   res.send('hello world');
 });
@@ -15,26 +15,30 @@ router.get('/fetch/:prxName/:serverName', (req, res, next) => {
   var serverName = req.params.serverName;
 
   serverStatus.getServerWeight(prxName, serverName, (err, response) => {
-    if (err) {
-        res.json('err ' + err);
+  if (err) {
+    if (response) {
+    res.json(response);
     } else {
-        res.json(response);
+    res.res(err);
     }
+  } else {
+    res.json(response);
+  }
   });
 });
 
 router.get('/update/:prxName/:serverName/:weight', (req, res, next) => {
-    var prxName = req.params.prxName;
-    var serverName = req.params.serverName;
-    var weight = req.params.weight;
+  var prxName = req.params.prxName;
+  var serverName = req.params.serverName;
+  var weight = req.params.weight;
 
-    serverStatus.setServerWeight(prxName, serverName, weight, (err, response) => {
-        if (err) {
-            res.json('err ' + err);
-        } else {
-            res.json(response);
-        }
-    });
+  serverStatus.setServerWeight(prxName, serverName, weight, (err, response) => {
+  if (err) {
+    res.json('err ' + err);
+  } else {
+    res.json(response);
+  }
+  });
 });
 
 module.exports = router;

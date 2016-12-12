@@ -29,7 +29,7 @@ exports.fetch = (prxName, serverName) => {
 
     if (typeof server !== 'undefined') {
       return reject({err: 'error'});
-      //return resolve(server);
+//return resolve(server);
     } else {
       return reject({err: 'error'});
     }

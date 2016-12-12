@@ -1,113 +1,119 @@
 {
   "servers": [
-    {
-      "id": 0,
-      "name" : "prx01",
-      "servers": [
-        { "id": "fe01gm", "weight": 1 },
-        { "id": "fe02gm", "weight": 1 },
-        { "id": "fe03gm", "weight": 1 },
-        { "id": "fe04gm", "weight": 1 },
-        { "id": "fe05gm", "weight": 1 },
-        { "id": "fe06gm", "weight": 1 },
-        { "id": "fe01gh", "weight": 1 },
-        { "id": "fe02gh", "weight": 1 },
-        { "id": "fe03gh", "weight": 1 },
-        { "id": "fe04gh", "weight": 1 },
-        { "id": "fe05gh", "weight": 1 },
-        { "id": "fe06gh", "weight": 1 }
-      ]
-    },
-    {
-      "id": 1,
-      "name" : "prx02",
-      "servers": [
-        { "id": "fe01gm", "weight": 1 },
-        { "id": "fe02gm", "weight": 1 },
-        { "id": "fe03gm", "weight": 1 },
-        { "id": "fe04gm", "weight": 1 },
-        { "id": "fe05gm", "weight": 1 },
-        { "id": "fe06gm", "weight": 1 },
-        { "id": "fe01gh", "weight": 1 },
-        { "id": "fe02gh", "weight": 1 },
-        { "id": "fe03gh", "weight": 1 },
-        { "id": "fe04gh", "weight": 1 },
-        { "id": "fe05gh", "weight": 1 },
-        { "id": "fe06gh", "weight": 1 }
-      ]
-    },
-    {
-      "id": 2,
-      "name" : "prx03",
-      "servers": [
-        { "id": "fe01gm", "weight": 1 },
-        { "id": "fe02gm", "weight": 1 },
-        { "id": "fe03gm", "weight": 1 },
-        { "id": "fe04gm", "weight": 1 },
-        { "id": "fe05gm", "weight": 1 },
-        { "id": "fe06gm", "weight": 1 },
-        { "id": "fe01gh", "weight": 1 },
-        { "id": "fe02gh", "weight": 1 },
-        { "id": "fe03gh", "weight": 1 },
-        { "id": "fe04gh", "weight": 1 },
-        { "id": "fe05gh", "weight": 1 },
-        { "id": "fe06gh", "weight": 1 }
-      ]
-    },
-    {
-      "id": 3,
-      "name" : "prx04",
-      "servers": [
-        { "id": "fe01gm", "weight": 1 },
-        { "id": "fe02gm", "weight": 1 },
-        { "id": "fe03gm", "weight": 1 },
-        { "id": "fe04gm", "weight": 1 },
-        { "id": "fe05gm", "weight": 1 },
-        { "id": "fe06gm", "weight": 1 },
-        { "id": "fe01gh", "weight": 1 },
-        { "id": "fe02gh", "weight": 1 },
-        { "id": "fe03gh", "weight": 1 },
-        { "id": "fe04gh", "weight": 1 },
-        { "id": "fe05gh", "weight": 1 },
-        { "id": "fe06gh", "weight": 1 }
-      ]
-    },
-    {
-      "id": 4,
-      "name" : "prx05",
-      "servers": [
-        { "id": "fe01gm", "weight": 1 },
-        { "id": "fe02gm", "weight": 1 },
-        { "id": "fe03gm", "weight": 1 },
-        { "id": "fe04gm", "weight": 1 },
-        { "id": "fe05gm", "weight": 1 },
-        { "id": "fe06gm", "weight": 1 },
-        { "id": "fe01gh", "weight": 1 },
-        { "id": "fe02gh", "weight": 1 },
-        { "id": "fe03gh", "weight": 1 },
-        { "id": "fe04gh", "weight": 1 },
-        { "id": "fe05gh", "weight": 1 },
-        { "id": "fe06gh", "weight": 1 }
-      ]
-    },
-    {
-      "id": 5,
-      "name" : "prx06",
-      "servers": [
-        { "id": "fe01gm", "weight": 1 },
-        { "id": "fe02gm", "weight": 1 },
-        { "id": "fe03gm", "weight": 1 },
-        { "id": "fe04gm", "weight": 1 },
-        { "id": "fe05gm", "weight": 1 },
-        { "id": "fe06gm", "weight": 1 },
-        { "id": "fe01gh", "weight": 1 },
-        { "id": "fe02gh", "weight": 1 },
-        { "id": "fe03gh", "weight": 1 },
-        { "id": "fe04gh", "weight": 1 },
-        { "id": "fe05gh", "weight": 1 },
-        { "id": "fe06gh", "weight": 1 }
-      ]
-    }
+  {
+  "id": 0,
+  "name" : "prx01",
+  "type": "proxy",
+  "servers": [
+  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
+  ]
+  },
+  {
+  "id": 1,
+  "name" : "prx02",
+  "type": "proxy",
+  "servers": [
+  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
+  ]
+  },
+  {
+  "id": 2,
+  "name" : "prx03",
+  "type": "proxy",
+  "servers": [
+  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
+  ]
+  },
+  {
+  "id": 3,
+  "name" : "prx04",
+  "type": "proxy",
+  "servers": [
+  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
+  ]
+  },
+  {
+  "id": 4,
+  "name" : "prx05",
+  "type": "proxy",
+  "servers": [
+  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
+  ]
+  },
+  {
+  "id": 5,
+  "name" : "prx06",
+  "type": "proxy",
+  "servers": [
+  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
+  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
+  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
+  ]
+  }
   ],
   "isMultiProxy": 1
 }

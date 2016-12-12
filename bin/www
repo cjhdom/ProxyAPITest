@@ -37,7 +37,7 @@ var serverStatus = require('../models/serverStatus');
  * on server init, inject sample db data
  */
 server.on('listening', () => {
-  fs.readFile('../sample_data/sample.json', 'utf-8', (err, data) => {
+  fs.readFile('./sample_data/sample.json', 'utf-8', (err, data) => {
     if (err) {
       console.log('error reading file ' + console.log(err));
       server.close();
@@ -49,9 +49,9 @@ server.on('listening', () => {
       dbtest.fetchAll()
         .then(servers => {
           servers.forEach(server => {
-            //var test = require('../tests/mngrtest')(server);
+//var test = require('../tests/mngrtest')(server);
             var test = new Mngr(server);
-            //console.log('pushing ' + test.getName());
+//console.log('pushing ' + test.getName());
             mngrs.push(test);
           });
 
@@ -70,12 +70,12 @@ function normalizePort(val) {
   var port = parseInt(val, 10);
 
   if (isNaN(port)) {
-    // named pipe
+// named pipe
     return val;
   }
 
   if (port >= 0) {
-    // port number
+// port number
     return port;
   }
 
@@ -95,7 +95,7 @@ function onError(error) {
     ? 'Pipe ' + port
     : 'Port ' + port;
 
-  // handle specific listen errors with friendly messages
+// handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
