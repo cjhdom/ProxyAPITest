@@ -97,14 +97,28 @@ exports.getServerWeightAll = (callback) => {
   });
 };
 
-exports.setServerWeight = (prxName, serverName, weight, callback) => {
+exports.setServerWeight = (serverName, weight, callback) => {
   async.auto({
-    setDb: (callback) => {
-      db.update(prxName, serverName. weight)
-        .then(response => callback(null, response))
-        .catch(response => callback(response));
+    isMultiProxy: (callback) => {
+      db.getMultiProxy()
+        .then(response => {
+          callback(null, response);
+        })
+        .catch(response => {
+          console.log(JSON.stringify(response));
+          callback(new Error('could not get ismultiproxy'));
+        });
     },
-    setMngr: (callback) => {
+    setDb: ['isMultiProxy', (callback) => {
+      if (isMultiProxy) {
+
+      } else {
+        db.update(prxName, serverName.weight)
+          .then(response => callback(null, response))
+          .catch(response => callback(response));
+      }
+    }],
+    setMngr: ['isMultiProxy', (callback) => {
       mngrs.some(mngr => {
         if (mngr.getName() === prxName) {
           mngr.setWeight(serverName, weight)
@@ -114,7 +128,7 @@ exports.setServerWeight = (prxName, serverName, weight, callback) => {
         }
         return false;
       });
-    }
+    }]
   }, (err, res) => {
     if (err) {
       return callback(err)

@@ -81,10 +81,16 @@ exports.setMultiProxy = (onOff) =>
     resolve({code: '000'});
   });
 
-exports.getMultiProxy = () =>
-  new Promise((resolve) =>
-    resolve(isMultiProxy)
-  );
+exports.getMultiProxy = () => {
+  if (isMultiProxy) {
+    new Promise((resolve) =>
+      resolve(isMultiProxy)
+    );
+  } else {
+    reject(new Error('test'));
+  }
+};
+
 
 exports.serverInit = (data) => {
   DbTest(data);

@@ -1,119 +1,125 @@
 {
   "servers": [
-  {
-  "id": 0,
-  "name" : "prx01",
-  "type": "proxy",
-  "servers": [
-  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
-  ]
-  },
-  {
-  "id": 1,
-  "name" : "prx02",
-  "type": "proxy",
-  "servers": [
-  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
-  ]
-  },
-  {
-  "id": 2,
-  "name" : "prx03",
-  "type": "proxy",
-  "servers": [
-  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
-  ]
-  },
-  {
-  "id": 3,
-  "name" : "prx04",
-  "type": "proxy",
-  "servers": [
-  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
-  ]
-  },
-  {
-  "id": 4,
-  "name" : "prx05",
-  "type": "proxy",
-  "servers": [
-  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
-  ]
-  },
-  {
-  "id": 5,
-  "name" : "prx06",
-  "type": "proxy",
-  "servers": [
-  { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
-  { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
-  { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
-  ]
-  }
+    {
+      "id": 0,
+      "name" : "prx01",
+      "type": "proxy",
+      "IDC": "gm",
+      "servers": [
+        { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe01gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe02gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe03gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe04gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe05gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe06gh", "weight": 0, "type": "fe", "IDC": "gh" }
+      ]
+    },
+    {
+      "id": 1,
+      "name" : "prx02",
+      "type": "proxy",
+      "IDC": "gm",
+      "servers": [
+        { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe01gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe02gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe03gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe04gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe05gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe06gh", "weight": 0, "type": "fe", "IDC": "gh" }
+      ]
+    },
+    {
+      "id": 2,
+      "name" : "prx03",
+      "type": "proxy",
+      "IDC": "gm",
+      "servers": [
+        { "id": "fe01gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe02gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe03gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe04gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe05gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe06gm", "weight": 1, "type": "fe", "IDC": "gm" },
+        { "id": "fe01gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe02gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe03gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe04gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe05gh", "weight": 0, "type": "fe", "IDC": "gh" },
+        { "id": "fe06gh", "weight": 0, "type": "fe", "IDC": "gh" }
+      ]
+    },
+    {
+      "id": 3,
+      "name" : "prx04",
+      "type": "proxy",
+      "IDC": "gh",
+      "servers": [
+        { "id": "fe01gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe02gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe03gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe04gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe05gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe06gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
+      ]
+    },
+    {
+      "id": 4,
+      "name" : "prx05",
+      "type": "proxy",
+      "IDC": "gh",
+      "servers": [
+        { "id": "fe01gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe02gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe03gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe04gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe05gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe06gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
+      ]
+    },
+    {
+      "id": 5,
+      "name" : "prx06",
+      "type": "proxy",
+      "IDC": "gh",
+      "servers": [
+        { "id": "fe01gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe02gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe03gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe04gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe05gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe06gm", "weight": 0, "type": "fe", "IDC": "gm" },
+        { "id": "fe01gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe02gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe03gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe04gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe05gh", "weight": 1, "type": "fe", "IDC": "gh" },
+        { "id": "fe06gh", "weight": 1, "type": "fe", "IDC": "gh" }
+      ]
+    }
   ],
-  "isMultiProxy": 1
+  "isMultiProxy": false
 }
