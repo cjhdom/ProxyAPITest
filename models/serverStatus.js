@@ -12,7 +12,7 @@ var mngrs = [];
 exports.initServerStatus = (dbconn, mngrsList) => {
   db = dbconn;
   mngrs = mngrsList;
-//console.log(mngrs);
+  //console.log(mngrs);
 };
 
 exports.getServerWeight = (prxName, serverName, callback) => {
@@ -43,7 +43,7 @@ exports.getServerWeight = (prxName, serverName, callback) => {
       var dbWeight = res.dbWeight.weight;
       var mngrWeight = res.mngrWeight.weight;
 
-//DB와 실제 값이 다르면 실제 값을 리턴해주고 DB 값을 실제값으로 업데이트 해준다
+      //DB와 실제 값이 다르면 실제 값을 리턴해주고 DB 값을 실제값으로 업데이트 해준다
       if (dbWeight !== mngrWeight) {
         db.update(prxName, serverName. weight)
           .then(() => false)
@@ -85,7 +85,7 @@ exports.getServerWeightAll = (callback) => {
       var dbWeight = res.dbWeight.weight;
       var mngrWeight = res.mngrWeight.weight;
 
-//DB와 실제 값이 다르면 실제 값을 리턴해주고 DB 값을 실제값으로 업데이트 해준다
+      //DB와 실제 값이 다르면 실제 값을 리턴해주고 DB 값을 실제값으로 업데이트 해준다
       if (dbWeight !== mngrWeight) {
         db.update(prxName, serverName. weight)
           .then(() => false)
@@ -97,7 +97,7 @@ exports.getServerWeightAll = (callback) => {
   });
 };
 
-exports.setServerWeight = (serverName, weight, callback) => {
+exports.setServerWeight = (prxName, serverName, weight, callback) => {
   async.auto({
     isMultiProxy: (callback) => {
       db.getMultiProxy()
@@ -121,7 +121,7 @@ exports.setServerWeight = (serverName, weight, callback) => {
     setMngr: ['isMultiProxy', (callback) => {
       mngrs.some(mngr => {
         if (mngr.getName() === prxName) {
-          mngr.setWeight(serverName, weight)
+          mngr.setWeight(prxName, serverName, weight)
             .then(server => callback(null, server))
             .catch(response => callback({err: 'oops'}));
           return true;
@@ -131,7 +131,7 @@ exports.setServerWeight = (serverName, weight, callback) => {
     }]
   }, (err, res) => {
     if (err) {
-      return callback(err)
+      return callback(err);
     } else {
       return callback(null, res);
     }
@@ -142,6 +142,40 @@ exports.getIsMultiProxy = (callback) => {
   db.getMultiProxy()
     .then(response => callback(null, response))
     .catch(response => callback(response));
+};
+
+exports.setMultiProxy = (onOff, callback) => {
+  db.setMultiProxy(onOff)
+    .then(response => {
+      async.auto({
+        setDb: (callback) => {
+          if (isMultiProxy) {
+
+          } else {
+            db.update(prxName, serverName.weight)
+              .then(response => callback(null, response))
+              .catch(response => callback(response));
+          }
+        },
+        setMngr: (callback) => {
+          mngrs.forEach(mngr => {
+            mngr.setWeight(serverName, weight)
+                .then(server => callback(null, server))
+                .catch(response => callback({err: 'oops'}));
+          });
+        }
+      }, (err, res) => {
+        if (err) {
+          return callback(err);
+        } else {
+          return callback(null, res);
+        }
+      });
+      callback(null, response);
+    })
+    .catch(response => {
+      callback(response);
+    });
 };
 
 

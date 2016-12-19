@@ -27,11 +27,12 @@ router.get('/:prxName/:serverName/weight', (req, res, next) => {
   });
 });
 
-router.put('/:serverName/weight/:weight', (req, res, next) => {
+router.put('/:prxName/:serverName/weight/:weight', (req, res, next) => {
+  var prxName = req.params.prxName;
   var serverName = req.params.serverName;
   var weight = req.params.weight;
 
-  serverStatus.setServerWeight(serverName, weight, (err, response) => {
+  serverStatus.setServerWeight(prxName, serverName, weight, (err, response) => {
   if (err) {
     res.json('err ' + err);
   } else {

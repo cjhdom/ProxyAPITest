@@ -49,9 +49,9 @@ server.on('listening', () => {
       dbtest.fetchAll()
         .then(servers => {
           servers.forEach(server => {
-//var test = require('../tests/mngrtest')(server);
+            //var test = require('../tests/mngrtest')(server);
             var test = new Mngr(server);
-//console.log('pushing ' + test.getName());
+            //console.log('pushing ' + test.getName());
             mngrs.push(test);
           });
 
@@ -95,7 +95,7 @@ function onError(error) {
     ? 'Pipe ' + port
     : 'Port ' + port;
 
-// handle specific listen errors with friendly messages
+  // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');

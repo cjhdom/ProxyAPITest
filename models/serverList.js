@@ -6,11 +6,12 @@ var _ = require('lodash');
 
 module.exports = exports = {};
 
-var db = null;
+var proxyServerList = [];
 
-exports.initServerList = (dbconn) => {
-  mngrs = mngrsList;
-//console.log(mngrs);
+exports.initServerList = (mngrsList) => {
+  proxyServerList = mngrsList;
 };
 
-exports.
+exports.getAllServerList = () => {
+
+};

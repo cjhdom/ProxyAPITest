@@ -75,20 +75,21 @@ exports.update = (prxName, serverName, weight) => {
  *
  * @param {boolean} onOff
  */
-exports.setMultiProxy = (onOff) =>
+exports.setMultiProxy = (onOff) => {
   new Promise((resolve) => {
     isMultiProxy = onOff;
     resolve({code: '000'});
   });
+};
 
 exports.getMultiProxy = () => {
-  if (isMultiProxy) {
-    new Promise((resolve) =>
-      resolve(isMultiProxy)
-    );
-  } else {
-    reject(new Error('test'));
-  }
+  new Promise((resolve, reject) => {
+    if (isMultiProxy) {
+      resolve(isMultiProxy);
+    } else {
+      reject(new Error('test'));
+    }
+  });
 };
 
 
