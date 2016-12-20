@@ -149,13 +149,21 @@ exports.setMultiProxy = (onOff, callback) => {
     .then(response => {
       async.auto({
         setDb: (callback) => {
-          if (isMultiProxy) {
+          mngrs.forEach(mngr => {
+            var proxyIDC = mngr.IDC;
+            var weight = onOff ? 1 : 0;
+            var targetServers = mngr.servers.filter(server => {
+              return server.IDC !== proxyIDC;
+            });
 
-          } else {
-            db.update(prxName, serverName.weight)
-              .then(response => callback(null, response))
-              .catch(response => callback(response));
-          }
+            // 이부분을 async가 다 끝나고 위에 마지막 콜백을 호출하도록 해야하는데..
+            // async.each?? async안에 async를 넣을 수 있나 araboza
+            targetServers.forEach(targetServer => {
+              db.update(mngr.name, targetServer.id, weight)
+                .then(() => false)
+                .catch(() => false);
+            });
+          });
         },
         setMngr: (callback) => {
           mngrs.forEach(mngr => {
