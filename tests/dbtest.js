@@ -53,21 +53,24 @@ exports.fetchAll = () => {
 /**
  *
  * @param {String} prxName
- * @param {String} serverName
+ * @param {array} targetServers
  * @param {int} weight
  * @returns {bluebird|exports|module.exports}
  */
-exports.update = (prxName, serverName, weight) => {
+exports.update = (prxName, targetServers, weight) => {
   return new Promise((resolve, reject) => {
-    var prxIdx = serverList.findIndex(server => server.name === prxName);
-    var serverIdx = serverList[prxIdx].servers.findIndex(server => server.id === serverName);
+    targetServers.forEach(targetServer => {
+      var prxIdx = targetServer.findIndex(server => server.name === prxName);
+      var serverIdx = targetServer[prxIdx].servers.findIndex(server => server.id === serverName);
 
-    if (prxIdx === -1 || serverIdx === -1) {
-      return reject({err: 'couldn\'t find the requested server'});
-    } else {
-      serverList[prxIdx].servers[serverIdx].weight = weight;
-      return resolve({code: '000'});
-    }
+      if (prxIdx === -1 || serverIdx === -1) {
+        return reject({err: 'couldn\'t find the requested server'});
+      } else {
+        targetServer[prxIdx].servers[serverIdx].weight = weight;
+      }
+    });
+
+    return resolve({code: '000'});
   });
 };
 
