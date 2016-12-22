@@ -3,6 +3,7 @@
  */
 var _ = require('lodash');
 var Promise = require('bluebird');
+var async = require('async');
 
 function MngrTest(data) {
   this.serverList = data.servers;
@@ -37,16 +38,25 @@ MngrTest.prototype.getWeightAll = function () {
   });
 };
 
-MngrTest.prototype.setWeight = function (serverName, weight) {
+MngrTest.prototype.setWeight = function (targetServerList, weight) {
   return new Promise((resolve, reject) => {
-    var serverIdx = this.serverList.findIndex(server => server.id === serverName);
+    async.each(targetServerList, (targetServer, callbackEach) => {
+      var serverName = targetServer.id;
+      var serverIdx = this.serverList.findIndex(server => server.id === serverName);
 
-    if (serverIdx === -1) {
-      return reject({code: '999', message: 'couldn\'t set the status'});
-    } else {
-      this.serverList[serverIdx].weight = weight;
-      return resolve({code: '000'});
-    }
+      if (serverIdx === -1) {
+        callbackEach(new Error('no such server'));
+      } else {
+        this.serverList[serverIdx].weight = weight;
+        callbackEach();
+      }
+    }, (err) => {
+      if (err) {
+        return reject(new Error('error in setWeight mngrtest'));
+      } else {
+        return resolve({result: '000'});
+      }
+    });
   });
 };
 

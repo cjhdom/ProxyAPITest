@@ -149,28 +149,45 @@ exports.setMultiProxy = (onOff, callback) => {
     .then(response => {
       async.auto({
         setDb: (callback) => {
-          mngrs.forEach(mngr => {
+          async.each(mngrs, (mngr, callbackEach) => {
             var proxyIDC = mngr.IDC;
             var weight = onOff ? 1 : 0;
-            var targetServers = mngr.servers.filter(server => {
+            var targetIDCServers = mngr.servers.filter(server => {
               return server.IDC !== proxyIDC;
             });
 
-            // 이부분을 async가 다 끝나고 위에 마지막 콜백을 호출하도록 해야하는데..
-            // async.each?? async안에 async를 넣을 수 있나 araboza
-            targetServers.forEach(targetServer => {
-              db.update(mngr.name, targetServer.id, weight)
-                .then(() => false)
-                .catch(() => false);
-            });
+            var serverNameList = targetIDCServers.servers.map(server => server.name);
+            db.update(mngr.name, serverNameList, weight)
+              .then(() => callbackEach())
+              .catch((res) => callbackEach(res));
+          }, (err) => {
+            if (err) {
+              callback(err);
+            } else {
+              callback(null, {result: '000'});
+            }
           });
         },
         setMngr: (callback) => {
-          mngrs.forEach(mngr => {
-            mngr.setWeight(serverName, weight)
-                .then(server => callback(null, server))
-                .catch(response => callback({err: 'oops'}));
+          async.each(mngrs, (mngr, callbackEach) => {
+            var proxyIDC = mngr.IDC;
+            var weight = onOff ? 1 : 0;
+            var targetIDCServers = mngr.servers.filter(server => {
+              return server.IDC !== proxyIDC;
+            });
+
+            var serverNameList = targetIDCServers.servers.map(server => server.name);
+            mngr.setWeight(serverNameList, weight)
+              .then(server => callback(null, server))
+              .catch(response => callback(new Error('error in setMngr in serverStatus.js')));
+          }, (err) => {
+            if (err) {
+              callback(err);
+            } else {
+              callback(null, {result: '000'});
+            }
           });
+
         }
       }, (err, res) => {
         if (err) {

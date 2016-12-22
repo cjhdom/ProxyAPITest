@@ -61,12 +61,17 @@ exports.update = (prxName, targetServers, weight) => {
   return new Promise((resolve, reject) => {
     targetServers.forEach(targetServer => {
       var prxIdx = targetServer.findIndex(server => server.name === prxName);
-      var serverIdx = targetServer[prxIdx].servers.findIndex(server => server.id === serverName);
 
-      if (prxIdx === -1 || serverIdx === -1) {
-        return reject({err: 'couldn\'t find the requested server'});
+      if (prxIdx === -1) {
+        return reject({err: 'could not find the requested server'});
       } else {
-        targetServer[prxIdx].servers[serverIdx].weight = weight;
+        var serverIdx = targetServer[prxIdx].servers.findIndex(server => server.id === serverName);
+
+        if (serverIdx === -1) {
+          return reject({err: 'couldn\'t find the requested server'});
+        } else {
+          targetServer[prxIdx].servers[serverIdx].weight = weight;
+        }
       }
     });
 
