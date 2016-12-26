@@ -2,12 +2,13 @@ var express = require('express');
 var router = express.Router();
 var dbtest = require('../tests/dbtest');
 var serverStatus = require('../models/serverStatus');
+var serverList = require('../models/serverList');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-//dbtest.echoServerList();
-  console.log('here');
-  res.send('hello world');
+  res.render('index.html', {
+    serverData: serverList.getAllServerList()
+  });
 });
 
 router.get('/:prxName/:serverName/weight', (req, res, next) => {

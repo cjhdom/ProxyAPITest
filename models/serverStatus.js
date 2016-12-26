@@ -178,8 +178,8 @@ exports.setMultiProxy = (onOff, callback) => {
 
             var serverNameList = targetIDCServers.servers.map(server => server.name);
             mngr.setWeight(serverNameList, weight)
-              .then(server => callback(null, server))
-              .catch(response => callback(new Error('error in setMngr in serverStatus.js')));
+              .then(server => callbackEach())
+              .catch(response => callbackEach(new Error('error in setMngr in serverStatus.js')));
           }, (err) => {
             if (err) {
               callback(err);

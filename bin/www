@@ -32,18 +32,21 @@ server.on('listening', onListening);
 
 var Mngr = require('../tests/mngrtest');
 var serverStatus = require('../models/serverStatus');
+var serverList = require('../models/serverList');
 
 /**
  * on server init, inject sample db data
  */
 server.on('listening', () => {
-  fs.readFile('./sample_data/sample.json', 'utf-8', (err, data) => {
+  fs.readFile('../sample_data/sample.json', 'utf-8', (err, data) => {
     if (err) {
       console.log('error reading file ' + console.log(err));
       server.close();
     } else {
       console.log('successfully loaded dbtest! good to go~');
       dbtest.serverInit(JSON.parse(data));
+      serverList.initServerList(data);
+
 
       var mngrs = [];
       dbtest.fetchAll()

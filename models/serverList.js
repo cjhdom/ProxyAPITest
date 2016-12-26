@@ -13,5 +13,5 @@ exports.initServerList = (mngrsList) => {
 };
 
 exports.getAllServerList = () => {
-
+  return proxyServerList;
 };
