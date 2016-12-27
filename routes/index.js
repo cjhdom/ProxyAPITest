@@ -6,9 +6,7 @@ var serverList = require('../models/serverList');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index.html', {
-    serverData: serverList.getAllServerList()
-  });
+  res.render('index.html');
 });
 
 router.get('/:prxName/:serverName/weight', (req, res, next) => {
@@ -32,12 +30,9 @@ router.get('/weight', (req, res, next) => {
 
   serverStatus.getServerWeightAll((err, response) => {
     if (err) {
-      if (response) {
-        res.json(response);
-      } else {
         res.res(err);
-      }
     } else {
+      console.log(JSON.stringify(response));
       res.json(response);
     }
   });

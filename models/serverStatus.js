@@ -63,6 +63,7 @@ exports.getServerWeightAll = (callback) => {
         .catch(response => callbackAuto(response));
     },
     mngrWeight: (callbackAuto) => {
+      return callbackAuto(null, {});
       var result = mngrs.map(mngr => {
         mngr.getWeightAll()
           .then((response) => {
@@ -80,7 +81,7 @@ exports.getServerWeightAll = (callback) => {
       }
       return callback(err)
     } else {
-      var dbWeight = res.dbWeight.weight;
+      /*var dbWeight = res.dbWeight.weight;
       var mngrWeight = res.mngrWeight.weight;
 
       //DB와 실제 값이 다르면 실제 값을 리턴해주고 DB 값을 실제값으로 업데이트 해준다
@@ -88,9 +89,9 @@ exports.getServerWeightAll = (callback) => {
         db.update(prxName, serverName. weight)
           .then(() => false)
           .catch(() => false);
-      }
+      }*/
 
-      return callback(null, res.mngrWeight);
+      return callback(null, res.dbWeight);
     }
   });
 };

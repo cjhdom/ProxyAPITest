@@ -20,9 +20,9 @@
 <div class="container">
     <table class="table" id="serverTable">
         <thead>
-            <tr id="tableHeading">
+        <tr id="tableHeading">
 
-            </tr>
+        </tr>
         </thead>
         <tbody id="tableBody">
 
@@ -33,64 +33,63 @@
 </div>
 
 <script>
-  var data = <%-serverData %>;
-</script>
+  $(function() {
+    setInterval(reloadTable(), 1000);
+  });
 
-<script>
-    $(function() {
-       //setInterval(reloadTable(), 1000);
-    });
-
-    function reloadTable() {
-        $.ajax({
-            url: 'http://localhost:8989/weight'
-        })
-            .then(function (data) {
-                if (data) {
-                    var table = [];
-                    data.servers.forEach(function (proxyServer, outerIdx) {
-                        $("#tableHeading").append($("<td></td>").html(proxyServer.name));
-                        table[outerIdx] = [];
-                        proxyServer.servers.forEach(function (server) {
-                            table[outerIdx].push(server.id + ':' + server.weight);
-                        });
-                    });
-
-                    var i = 0;
-                    for (var j = 0; j < table[0].length; j++) {
-                        var row = $("<tr></tr>");
-                        for (i = 0; i < table.length; i++) {
-                            row.append($("<td></td>").html(table[i][j]));
-                        }
-                        $("#tableBody").append(row);
-
-                    }
-                }
-            })
-            .fail(function (response) {
-                console.log(JSON.stringify(response));
+  function reloadTable() {
+    $.ajax({
+      url: 'http://localhost:8989/weight'
+    })
+      .then(function (data) {
+        if (data) {
+          console.log('success');
+          $("#tableHeading").html('');
+          $("#tableBody").html('');
+          var table = [];
+          data.forEach(function (proxyServer, outerIdx) {
+            $("#tableHeading").append($("<td></td>").html(proxyServer.name));
+            table[outerIdx] = [];
+            proxyServer.servers.forEach(function (server) {
+              table[outerIdx].push(server.id + ':' + server.weight);
             });
+          });
 
-    }
+          var i = 0;
+          for (var j = 0; j < table[0].length; j++) {
+            var row = $("<tr></tr>");
+            for (i = 0; i < table.length; i++) {
+              row.append($("<td></td>").html(table[i][j]));
+            }
+            $("#tableBody").append(row);
+
+          }
+        }
+      })
+      .fail(function (response) {
+        console.log(JSON.stringify(response));
+      });
+
+  }
 </script>
 
 <script>
-    $(function () {
-        reloadTable();
+  $(function () {
+    reloadTable();
 
-        $("#overIDC").click(function () {
-            $.ajax({
-                url: 'http://localhost:8989/multiproxy/true',
-                dataType: 'json'
-            })
-                .done(function (response) {
-                    console.log(response);
-                })
-                .fail(function (response) {
-                    console.log(response);
-                });
+    $("#overIDC").click(function () {
+      $.ajax({
+        url: 'http://localhost:8989/multiproxy/true',
+        dataType: 'json'
+      })
+        .done(function (response) {
+          console.log(response);
+        })
+        .fail(function (response) {
+          console.log(response);
         });
     });
+  });
 </script>
 
 </body>
