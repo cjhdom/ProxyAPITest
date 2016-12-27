@@ -84,18 +84,18 @@ exports.update = (prxName, targetServers, weight) => {
  * @param {boolean} onOff
  */
 exports.setMultiProxy = (onOff) => {
-  new Promise((resolve) => {
+  return new Promise((resolve) => {
     isMultiProxy = onOff;
-    resolve({code: '000'});
+    return resolve({code: '000'});
   });
 };
 
 exports.getMultiProxy = () => {
-  new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     if (isMultiProxy) {
-      resolve(isMultiProxy);
+      return resolve(isMultiProxy);
     } else {
-      reject(new Error('test'));
+      return reject(new Error('test'));
     }
   });
 };

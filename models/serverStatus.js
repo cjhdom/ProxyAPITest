@@ -57,23 +57,21 @@ exports.getServerWeight = (prxName, serverName, callback) => {
 
 exports.getServerWeightAll = (callback) => {
   async.auto({
-    dbWeight: (callback) => {
+    dbWeight: (callbackAuto) => {
       db.fetchAll()
-        .then(response => callback(null, response))
-        .catch(response => callback(response));
+        .then(response => callbackAuto(null, response))
+        .catch(response => callbackAuto(response));
     },
-    mngrWeight: (callback) => {
+    mngrWeight: (callbackAuto) => {
       var result = mngrs.map(mngr => {
-        mngr.getWeightAll().forEach(server => {
-
-        })
+        mngr.getWeightAll()
+          .then((response) => {
+            return callbackAuto(null, response);
+          })
+          .catch((response) => {
+            return callbackAuto(new Error('error in getServerWeightAll in mngrWeight'));
+          });
       });
-
-      if (!result) {
-        return callback({message: 'hi'});
-      } else {
-        return callback(null, result);
-      }
     }
   }, (err, res) => {
     if (err) {
@@ -148,7 +146,7 @@ exports.setMultiProxy = (onOff, callback) => {
   db.setMultiProxy(onOff)
     .then(response => {
       async.auto({
-        setDb: (callback) => {
+        setDb: (callbackAuto) => {
           async.each(mngrs, (mngr, callbackEach) => {
             var proxyIDC = mngr.IDC;
             var weight = onOff ? 1 : 0;
@@ -162,13 +160,13 @@ exports.setMultiProxy = (onOff, callback) => {
               .catch((res) => callbackEach(res));
           }, (err) => {
             if (err) {
-              callback(err);
+              callbackAuto(new Error('error in async each setDb in setMultiProxy'));
             } else {
-              callback(null, {result: '000'});
+              callbackAuto(null, {result: '000'});
             }
           });
         },
-        setMngr: (callback) => {
+        setMngr: (callbackAuto) => {
           async.each(mngrs, (mngr, callbackEach) => {
             var proxyIDC = mngr.IDC;
             var weight = onOff ? 1 : 0;
@@ -182,12 +180,11 @@ exports.setMultiProxy = (onOff, callback) => {
               .catch(response => callbackEach(new Error('error in setMngr in serverStatus.js')));
           }, (err) => {
             if (err) {
-              callback(err);
+              callbackAuto(new Error('error in async each setMngr in setMultiProxy'));
             } else {
-              callback(null, {result: '000'});
+              callbackAuto(null, {result: '000'});
             }
           });
-
         }
       }, (err, res) => {
         if (err) {
@@ -196,7 +193,6 @@ exports.setMultiProxy = (onOff, callback) => {
           return callback(null, res);
         }
       });
-      callback(null, response);
     })
     .catch(response => {
       callback(response);

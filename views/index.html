@@ -28,6 +28,8 @@
 
         </tbody>
     </table>
+
+    <button type="button" class="btn btn-primary" id="overIDC">Over IDC</button>
 </div>
 
 <script>
@@ -35,15 +37,60 @@
 </script>
 
 <script>
-    if (data) {
-      var row = [];
-      data.servers.forEach(function (proxyServer) {
-        $("#serverHeading").append("<td></td>").html(proxyServer.name);
-        proxyServer.servers.forEach(function (server) {
+    $(function() {
+       //setInterval(reloadTable(), 1000);
+    });
 
-        });
-      });
+    function reloadTable() {
+        $.ajax({
+            url: 'http://localhost:8989/weight'
+        })
+            .then(function (data) {
+                if (data) {
+                    var table = [];
+                    data.servers.forEach(function (proxyServer, outerIdx) {
+                        $("#tableHeading").append($("<td></td>").html(proxyServer.name));
+                        table[outerIdx] = [];
+                        proxyServer.servers.forEach(function (server) {
+                            table[outerIdx].push(server.id + ':' + server.weight);
+                        });
+                    });
+
+                    var i = 0;
+                    for (var j = 0; j < table[0].length; j++) {
+                        var row = $("<tr></tr>");
+                        for (i = 0; i < table.length; i++) {
+                            row.append($("<td></td>").html(table[i][j]));
+                        }
+                        $("#tableBody").append(row);
+
+                    }
+                }
+            })
+            .fail(function (response) {
+                console.log(JSON.stringify(response));
+            });
+
     }
+</script>
+
+<script>
+    $(function () {
+        reloadTable();
+
+        $("#overIDC").click(function () {
+            $.ajax({
+                url: 'http://localhost:8989/multiproxy/true',
+                dataType: 'json'
+            })
+                .done(function (response) {
+                    console.log(response);
+                })
+                .fail(function (response) {
+                    console.log(response);
+                });
+        });
+    });
 </script>
 
 </body>

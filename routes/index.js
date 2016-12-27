@@ -16,15 +16,30 @@ router.get('/:prxName/:serverName/weight', (req, res, next) => {
   var serverName = req.params.serverName;
 
   serverStatus.getServerWeight(prxName, serverName, (err, response) => {
-  if (err) {
-    if (response) {
-    res.json(response);
+    if (err) {
+      if (response) {
+        res.json(response);
+      } else {
+        res.res(err);
+      }
     } else {
-    res.res(err);
+      res.json(response);
     }
-  } else {
-    res.json(response);
-  }
+  });
+});
+
+router.get('/weight', (req, res, next) => {
+
+  serverStatus.getServerWeightAll((err, response) => {
+    if (err) {
+      if (response) {
+        res.json(response);
+      } else {
+        res.res(err);
+      }
+    } else {
+      res.json(response);
+    }
   });
 });
 
@@ -45,7 +60,13 @@ router.put('/:prxName/:serverName/weight/:weight', (req, res, next) => {
 router.get('/multiproxy/:onOff', (req, res, next) => {
   var onOff = req.params.onOff;
 
-  serverStatus
+  serverStatus.setMultiProxy(onOff, (err, response) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(response);
+    }
+  });
 });
 
 module.exports = router;
