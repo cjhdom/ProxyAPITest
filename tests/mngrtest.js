@@ -8,6 +8,7 @@ var async = require('async');
 function MngrTest(data) {
   this.serverList = data.servers;
   this.name = data.name;
+  this.IDC = data.IDC;
 }
 
 MngrTest.prototype.getName = function () {
@@ -41,8 +42,7 @@ MngrTest.prototype.getWeightAll = function () {
 MngrTest.prototype.setWeight = function (targetServerList, weight) {
   return new Promise((resolve, reject) => {
     async.each(targetServerList, (targetServer, callbackEach) => {
-      var serverName = targetServer.id;
-      var serverIdx = this.serverList.findIndex(server => server.id === serverName);
+      var serverIdx = this.serverList.findIndex(server => server.id === targetServer);
 
       if (serverIdx === -1) {
         callbackEach(new Error('no such server'));

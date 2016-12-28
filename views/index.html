@@ -1,49 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
 
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" crossorigin="anonymous">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" crossorigin="anonymous">
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
 
 </head>
 <body>
 <div class="container">
-    <table class="table" id="serverTable">
-        <thead>
-        <tr id="tableHeading">
+  <table class="table" id="serverTable">
+    <thead>
+    <tr id="tableHeading">
 
-        </tr>
-        </thead>
-        <tbody id="tableBody">
+    </tr>
+    </thead>
+    <tbody id="tableBody">
 
-        </tbody>
-    </table>
+    </tbody>
+  </table>
 
-    <button type="button" class="btn btn-primary" id="overIDC">Over IDC</button>
+  <button type="button" class="btn btn-primary" id="overIDCtrue">Over IDC on</button>
+  <button type="button" class="btn btn-primary" id="overIDCfalse">Over IDC off</button>
 </div>
 
 <script>
-  $(function() {
-    setInterval(reloadTable(), 1000);
-  });
+  var isAjax = false;
 
   function reloadTable() {
+    if (isAjax) {
+      console.log('stop' + isAjax);
+      return false;
+    }
+
     $.ajax({
-      url: 'http://localhost:8989/weight'
-    })
+        url: 'http://localhost:8989/weight'
+      })
       .then(function (data) {
         if (data) {
-          console.log('success');
           $("#tableHeading").html('');
           $("#tableBody").html('');
           var table = [];
@@ -62,7 +65,6 @@
               row.append($("<td></td>").html(table[i][j]));
             }
             $("#tableBody").append(row);
-
           }
         }
       })
@@ -75,20 +77,47 @@
 
 <script>
   $(function () {
-    reloadTable();
 
-    $("#overIDC").click(function () {
+    $("#overIDCtrue").click(function () {
+      isAjax = true;
       $.ajax({
-        url: 'http://localhost:8989/multiproxy/true',
-        dataType: 'json'
-      })
+          url: 'http://localhost:8989/multiproxy/true',
+          dataType: 'json'
+        })
         .done(function (response) {
           console.log(response);
         })
         .fail(function (response) {
           console.log(response);
+        })
+        .always(function () {
+          isAjax = false;
+          reloadTable();
+
         });
     });
+
+    $("#overIDCfalse").click(function () {
+      isAjax = true;
+      $.ajax({
+          url: 'http://localhost:8989/multiproxy/false',
+          dataType: 'json'
+        })
+        .done(function (response) {
+          console.log(response);
+        })
+        .fail(function (response) {
+          console.log(response);
+        })
+        .always(function () {
+          isAjax = false;
+          reloadTable();
+
+        });
+    });
+
+    reloadTable();
+    //setInterval(reloadTable(), 1000);
   });
 </script>
 

@@ -60,17 +60,17 @@ exports.fetchAll = () => {
 exports.update = (prxName, targetServers, weight) => {
   return new Promise((resolve, reject) => {
     targetServers.forEach(targetServer => {
-      var prxIdx = targetServer.findIndex(server => server.name === prxName);
+      var prxIdx = serverList.findIndex(server => server.name === prxName);
 
       if (prxIdx === -1) {
         return reject({err: 'could not find the requested server'});
       } else {
-        var serverIdx = targetServer[prxIdx].servers.findIndex(server => server.id === serverName);
+        var serverIdx = serverList[prxIdx].servers.findIndex(server => server.id === targetServer);
 
         if (serverIdx === -1) {
           return reject({err: 'couldn\'t find the requested server'});
         } else {
-          targetServer[prxIdx].servers[serverIdx].weight = weight;
+          serverList[prxIdx].servers[serverIdx].weight = weight;
         }
       }
     });
@@ -85,8 +85,12 @@ exports.update = (prxName, targetServers, weight) => {
  */
 exports.setMultiProxy = (onOff) => {
   return new Promise((resolve) => {
-    isMultiProxy = onOff;
-    return resolve({code: '000'});
+    if (isMultiProxy === onOff) {
+      return resolve({code: '000', doNothing: true});
+    } else {
+      isMultiProxy = onOff;
+      return resolve({code: '000', doNothing: false});
+    }
   });
 };
 

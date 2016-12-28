@@ -146,54 +146,61 @@ exports.getIsMultiProxy = (callback) => {
 exports.setMultiProxy = (onOff, callback) => {
   db.setMultiProxy(onOff)
     .then(response => {
-      async.auto({
-        setDb: (callbackAuto) => {
-          async.each(mngrs, (mngr, callbackEach) => {
-            var proxyIDC = mngr.IDC;
-            var weight = onOff ? 1 : 0;
-            var targetIDCServers = mngr.servers.filter(server => {
-              return server.IDC !== proxyIDC;
-            });
+      if (!response.doNothing) {
+        async.auto({
+          setDb: (callbackAuto) => {
+            async.each(mngrs, (mngr, callbackEach) => {
+              var proxyIDC = mngr.IDC;
+              var weight = onOff ? 1 : 0;
+              var targetIDCServers = mngr.serverList.filter(server => {
+                return server.IDC !== proxyIDC;
+              });
 
-            var serverNameList = targetIDCServers.servers.map(server => server.name);
-            db.update(mngr.name, serverNameList, weight)
-              .then(() => callbackEach())
-              .catch((res) => callbackEach(res));
-          }, (err) => {
-            if (err) {
-              callbackAuto(new Error('error in async each setDb in setMultiProxy'));
-            } else {
-              callbackAuto(null, {result: '000'});
-            }
-          });
-        },
-        setMngr: (callbackAuto) => {
-          async.each(mngrs, (mngr, callbackEach) => {
-            var proxyIDC = mngr.IDC;
-            var weight = onOff ? 1 : 0;
-            var targetIDCServers = mngr.servers.filter(server => {
-              return server.IDC !== proxyIDC;
+              var serverNameList = targetIDCServers.map(server => server.id);
+              db.update(mngr.name, serverNameList, weight)
+                .then(() => callbackEach())
+                .catch((res) => callbackEach(res));
+            }, (err) => {
+              if (err) {
+                callbackAuto(new Error('error in async each setDb in setMultiProxy'));
+              } else {
+                callbackAuto(null, {result: '000'});
+              }
             });
+          },
+          setMngr: (callbackAuto) => {
+            async.each(mngrs, (mngr, callbackEach) => {
+              var proxyIDC = mngr.IDC;
+              var weight = onOff ? 1 : 0;
+              var targetIDCServers = mngr.serverList.filter(server => {
+                return server.IDC !== proxyIDC;
+              });
 
-            var serverNameList = targetIDCServers.servers.map(server => server.name);
-            mngr.setWeight(serverNameList, weight)
-              .then(server => callbackEach())
-              .catch(response => callbackEach(new Error('error in setMngr in serverStatus.js')));
-          }, (err) => {
-            if (err) {
-              callbackAuto(new Error('error in async each setMngr in setMultiProxy'));
-            } else {
-              callbackAuto(null, {result: '000'});
-            }
-          });
-        }
-      }, (err, res) => {
-        if (err) {
-          return callback(err);
-        } else {
-          return callback(null, res);
-        }
-      });
+              var serverNameList = targetIDCServers.map(server => server.id);
+              mngr.setWeight(serverNameList, weight)
+                .then(server => callbackEach())
+                .catch(response => callbackEach(new Error('error in setMngr in serverStatus.js')));
+            }, (err) => {
+              if (err) {
+                callbackAuto(new Error('error in async each setMngr in setMultiProxy'));
+              } else {
+                callbackAuto(null, {result: '000'});
+              }
+            });
+          }
+        }, (err, res) => {
+          if (err) {
+            console.log('err ' + JSON.stringify(err));
+            return callback(err);
+          } else {
+            console.log('res ' + JSON.stringify(res));
+            return callback(null, res);
+          }
+        });
+      } else {
+        console.log('nothing happened');
+        callback();
+      }
     })
     .catch(response => {
       callback(response);
