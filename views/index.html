@@ -38,58 +38,47 @@
 
 <script>
   var isAjax = false;
-  var serverList = [];
+  var serverList = <%= result %>;
 
   function reloadTable() {
-    $.ajax({
-        url: 'http://localhost:8989/weight'
-      })
-      .then(function (data) {
-        if (data) {
-          // 테이블 리셋
-          $("#tableHeading").html('<th>control</th>');
-          $("#tableBody").html('');
-          var table = [];
+    // 테이블 리셋
+    $("#tableHeading").html('<th>control</th>');
+    $("#tableBody").html('');
+    var table = [];
 
-          //테이블 헤더 생성
-          data.forEach(function (proxyServer, outerIdx) {
-            $("#tableHeading").append($("<th></th>").html(proxyServer.name));
-            table[outerIdx] = [];
-            proxyServer.servers.forEach(function (server) {
-              table[outerIdx].push(server.id + ':' + server.weight);
-            });
-          });
-
-          // 테이블 정보 생성
-          for (var j = 0; j < serverList.length; j++) {
-            var row = $("<tr></tr>");
-
-            // 제어 버튼 생성 시작
-            var button = $("<button>" + serverList[j] + "</button>");
-            button.attr('class', 'btn btn-default btn-xs');
-            button.attr('name', serverList[j]);
-
-            button.click(function () {
-              //alert(this.name);
-            });
-            // 제어 버튼 생성 종료
-
-            var controlCell = $('<th></th>').append(button);
-            row.append(controlCell);
-
-            for (var i = 0; i < table.length; i++) {
-              var cell = $("<td></td>");
-              cell.html(table[i][j]);
-              row.append(cell);
-            }
-            $("#tableBody").append(row);
-          }
-        }
-      })
-      .fail(function (response) {
-        console.log(JSON.stringify(response));
+    //테이블 헤더 생성
+    data.forEach(function (proxyServer, outerIdx) {
+      $("#tableHeading").append($("<th></th>").html(proxyServer.name));
+      table[outerIdx] = [];
+      proxyServer.servers.forEach(function (server) {
+        table[outerIdx].push(server.id + ':' + server.weight);
       });
+    });
 
+    // 테이블 정보 생성
+    for (var j = 0; j < serverList.length; j++) {
+      var row = $("<tr></tr>");
+
+      // 제어 버튼 생성 시작
+      var button = $("<button>" + serverList[j] + "</button>");
+      button.attr('class', 'btn btn-default btn-xs');
+      button.attr('name', serverList[j]);
+
+      button.click(function () {
+        //alert(this.name);
+      });
+      // 제어 버튼 생성 종료
+
+      var controlCell = $('<th></th>').append(button);
+      row.append(controlCell);
+
+      for (var i = 0; i < table.length; i++) {
+        var cell = $("<td></td>");
+        cell.html(table[i][j]);
+        row.append(cell);
+      }
+      $("#tableBody").append(row);
+    }
   }
 </script>
 

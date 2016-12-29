@@ -79,11 +79,23 @@ exports.update = (prxName, targetServers, weight) => {
   });
 };
 
-exports.updateServers = (targetServers, weight) => {
+exports.updateServersInAllProxy = (targetServer, weight) => {
   return new Promise((resolve, reject) => {
-    targetServers.forEach(targetServer => {
+    serverList.forEach(proxyServer => {
+      var serverIdx = _.findIndex(proxyServer.servers, { id: targetServer });
 
+      if (serverIdx !== -1) {
+        var isSameIDC = proxyServer.servers[serverIdx].IDC === proxyServer.IDC;
+
+        if (!isMultiProxy && !isSameIDC) {
+          return false;
+        } else {
+          proxyServer.servers[serverIdx].weight = weight;
+        }
+      }
     });
+
+    resolve();
   });
 };
 

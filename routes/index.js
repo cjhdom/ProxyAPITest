@@ -1,29 +1,24 @@
-var express = require('express');
-var router = express.Router();
-var dbtest = require('../tests/dbtest');
-var serverStatus = require('../models/serverStatus');
-var serverList = require('../models/serverList');
-var toBoolean = require('to-boolean');
+const express = require('express');
+const router = express.Router();
+const dbtest = require('../tests/dbtest');
+const serverStatus = require('../models/serverStatus');
+const serverList = require('../models/serverList');
+const toBoolean = require('to-boolean');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index.html');
-});
-
-router.get('/servers', (req, res, next) => {
   serverList.getServersList((err, result) => {
     if (err) {
       next(err);
     } else {
-      console.log(JSON.stringify(result));
-      res.json(result);
+      res.render('index.html', result);
     }
   });
 });
 
 router.get('/:prxName/:serverName/weight', (req, res, next) => {
-  var prxName = req.params.prxName;
-  var serverName = req.params.serverName;
+  const prxName = req.params.prxName;
+  const serverName = req.params.serverName;
 
   serverStatus.getServerWeight(prxName, serverName, (err, response) => {
     if (err) {
@@ -50,16 +45,22 @@ router.get('/weight', (req, res, next) => {
 });
 
 router.put('/weight', (req, res, next) => {
-  var weight = Number(req.body.weight);
-  var serverName = req.body.serverName;
+  const weight = Number(req.body.weight);
+  const serverName = req.body.serverName;
 
-  serverStatus.set
+  serverStatus.setServerWeight(serverName, weight, (err, response) => {
+    if (err) {
+      res.json(err);
+    } else {
+      res.json(response);
+    }
+  });
 });
 
 router.put('/:prxName/:serverName/weight/:weight', (req, res, next) => {
-  var prxName = req.params.prxName;
-  var serverName = req.params.serverName;
-  var weight = Number(req.params.weight);
+  const prxName = req.params.prxName;
+  const serverName = req.params.serverName;
+  const weight = Number(req.params.weight);
 
   serverStatus.setSingleServerWeight(prxName, serverName, weight, (err, response) => {
     if (err) {
@@ -81,7 +82,7 @@ router.get('/multiproxy', (req, res, next) => {
 });
 
 router.put('/multiproxy', (req, res, next) => {
-  var onOff = toBoolean(req.body.onOff);
+  const onOff = toBoolean(req.body.onOff);
 
   serverStatus.setMultiProxy(onOff, (err, response) => {
     if (err) {
@@ -91,7 +92,5 @@ router.put('/multiproxy', (req, res, next) => {
     }
   });
 });
-
-
 
 module.exports = router;
