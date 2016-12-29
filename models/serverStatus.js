@@ -15,6 +15,12 @@ exports.initServerStatus = (dbconn, mngrsList) => {
   //console.log(mngrs);
 };
 
+/**
+ * 하나의 서버에 대한 weight 가져오기
+ * @param prxName
+ * @param serverName
+ * @param callback
+ */
 exports.getServerWeight = (prxName, serverName, callback) => {
   async.auto({
     dbWeight: (callback) => {
@@ -27,7 +33,7 @@ exports.getServerWeight = (prxName, serverName, callback) => {
         if (mngr.getName() === prxName) {
           mngr.getWeight(serverName)
             .then(server => callback(null, server))
-            .catch(response => callback({err: 'oops'}));
+            .catch(response => callback(response));
           return true;
         }
         return false;
@@ -55,6 +61,10 @@ exports.getServerWeight = (prxName, serverName, callback) => {
   });
 };
 
+/**
+ * 모든 서버의 weight를 가져오는 것
+ * @param callback
+ */
 exports.getServerWeightAll = (callback) => {
   async.auto({
     dbWeight: (callbackAuto) => {
@@ -96,7 +106,14 @@ exports.getServerWeightAll = (callback) => {
   });
 };
 
-exports.setServerWeight = (prxName, serverName, weight, callback) => {
+/**
+ * 하나의 서버에 weight 조정
+ * @param prxName
+ * @param serverName
+ * @param weight
+ * @param callback
+ */
+exports.setSingleServerWeight = (prxName, serverName, weight, callback) => {
   async.auto({
     isMultiProxy: (callback) => {
       db.getMultiProxy()
@@ -104,15 +121,14 @@ exports.setServerWeight = (prxName, serverName, weight, callback) => {
           callback(null, response);
         })
         .catch(response => {
-          console.log(JSON.stringify(response));
-          callback(new Error('could not get ismultiproxy'));
+          callback(response);
         });
     },
     setDb: ['isMultiProxy', (callback) => {
       if (isMultiProxy) {
 
       } else {
-        db.update(prxName, serverName.weight)
+        db.update(prxName, serverName, weight)
           .then(response => callback(null, response))
           .catch(response => callback(response));
       }
@@ -120,7 +136,47 @@ exports.setServerWeight = (prxName, serverName, weight, callback) => {
     setMngr: ['isMultiProxy', (callback) => {
       mngrs.some(mngr => {
         if (mngr.getName() === prxName) {
-          mngr.setWeight(prxName, serverName, weight)
+          mngr.setWeight(serverName, weight)
+            .then(server => callback(null, server))
+            .catch(response => callback(response));
+          return true;
+        }
+        return false;
+      });
+    }]
+  }, (err, res) => {
+    if (err) {
+      return callback(err);
+    } else {
+      return callback(null, res);
+    }
+  });
+};
+
+exports.setServerWeight = (serverName, weight, callback) => {
+  async.auto({
+    isMultiProxy: (callback) => {
+      db.getMultiProxy()
+        .then(response => {
+          callback(null, response);
+        })
+        .catch(response => {
+          callback(response);
+        });
+    },
+    setDb: ['isMultiProxy', (callback) => {
+      if (isMultiProxy) {
+
+      } else {
+        db.update(prxName, serverName, weight)
+          .then(response => callback(null, response))
+          .catch(response => callback(response));
+      }
+    }],
+    setMngr: ['isMultiProxy', (callback) => {
+      mngrs.some(mngr => {
+        if (mngr.getName() === prxName) {
+          mngr.setWeight(serverName, weight)
             .then(server => callback(null, server))
             .catch(response => callback({err: 'oops'}));
           return true;

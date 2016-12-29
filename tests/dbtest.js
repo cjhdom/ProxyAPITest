@@ -79,6 +79,14 @@ exports.update = (prxName, targetServers, weight) => {
   });
 };
 
+exports.updateServers = (targetServers, weight) => {
+  return new Promise((resolve, reject) => {
+    targetServers.forEach(targetServer => {
+
+    });
+  });
+};
+
 /**
  *
  * @param {boolean} onOff
@@ -96,10 +104,10 @@ exports.setMultiProxy = (onOff) => {
 
 exports.getMultiProxy = () => {
   return new Promise((resolve, reject) => {
-    if (isMultiProxy) {
+    if (isMultiProxy !== null) {
       return resolve(isMultiProxy);
     } else {
-      return reject(new Error('test'));
+      return reject(new Error('get multi proxy error in db'));
     }
   });
 };

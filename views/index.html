@@ -29,40 +29,58 @@
     </tbody>
   </table>
 
-  <button type="button" class="btn btn-primary" id="overIDCtrue">Over IDC on</button>
-  <button type="button" class="btn btn-primary" id="overIDCfalse">Over IDC off</button>
+  <button type="button" class="btn btn-primary" id="btnOverIDC">Over IDC toggle</button>
 </div>
+
+<form>
+  <input type="hidden" id="isOverIDC" value="true">
+</form>
 
 <script>
   var isAjax = false;
+  var serverList = [];
 
   function reloadTable() {
-    if (isAjax) {
-      console.log('stop' + isAjax);
-      return false;
-    }
-
     $.ajax({
         url: 'http://localhost:8989/weight'
       })
       .then(function (data) {
         if (data) {
-          $("#tableHeading").html('');
+          // 테이블 리셋
+          $("#tableHeading").html('<th>control</th>');
           $("#tableBody").html('');
           var table = [];
+
+          //테이블 헤더 생성
           data.forEach(function (proxyServer, outerIdx) {
-            $("#tableHeading").append($("<td></td>").html(proxyServer.name));
+            $("#tableHeading").append($("<th></th>").html(proxyServer.name));
             table[outerIdx] = [];
             proxyServer.servers.forEach(function (server) {
               table[outerIdx].push(server.id + ':' + server.weight);
             });
           });
 
-          var i = 0;
-          for (var j = 0; j < table[0].length; j++) {
+          // 테이블 정보 생성
+          for (var j = 0; j < serverList.length; j++) {
             var row = $("<tr></tr>");
-            for (i = 0; i < table.length; i++) {
-              row.append($("<td></td>").html(table[i][j]));
+
+            // 제어 버튼 생성 시작
+            var button = $("<button>" + serverList[j] + "</button>");
+            button.attr('class', 'btn btn-default btn-xs');
+            button.attr('name', serverList[j]);
+
+            button.click(function () {
+              //alert(this.name);
+            });
+            // 제어 버튼 생성 종료
+
+            var controlCell = $('<th></th>').append(button);
+            row.append(controlCell);
+
+            for (var i = 0; i < table.length; i++) {
+              var cell = $("<td></td>");
+              cell.html(table[i][j]);
+              row.append(cell);
             }
             $("#tableBody").append(row);
           }
@@ -77,11 +95,50 @@
 
 <script>
   $(function () {
+    /**
+     * 서버 리스트 조회
+     */
+    $.ajax({
+        url: 'http://localhost:8989/servers',
+        dataType: 'json'
+      })
+      .then(function (response) {
+        serverList = response;
+        reloadTable();
+      })
+      .fail(function () {
+        alert('서버 정보 불러오기 실패');
+      });
 
-    $("#overIDCtrue").click(function () {
-      isAjax = true;
+    /**
+     * Over IDC 모드 인지 조회
+     */
+    $.ajax({
+        url: 'http://localhost:8989/multiproxy',
+        method: 'GET'
+      })
+      .then(function (response) {
+        $("#isOverIDC").val(response.isMultiProxy);
+      })
+      .fail(function (response) {
+        console.log(JSON.stringify(response));
+      });
+
+    /**
+     * OverIDC toggle 버튼 클릭 이벤트
+     */
+    $("#btnOverIDC").click(function () {
+      if ($("#isOverIDC").val() === "true") {
+        $("#isOverIDC").val("false");
+      } else {
+        $("#isOverIDC").val("true");
+      }
       $.ajax({
-          url: 'http://localhost:8989/multiproxy/true',
+          url: 'http://localhost:8989/multiproxy/',
+          method: 'PUT',
+          data: {
+            onOff: $("#isOverIDC").val()
+          },
           dataType: 'json'
         })
         .done(function (response) {
@@ -91,33 +148,27 @@
           console.log(response);
         })
         .always(function () {
-          isAjax = false;
           reloadTable();
-
         });
     });
 
-    $("#overIDCfalse").click(function () {
-      isAjax = true;
+    function setWeight(serverName, weight) {
       $.ajax({
-          url: 'http://localhost:8989/multiproxy/false',
+          url: 'http://localhost:8989/weight',
+          method: 'put',
+          data: {
+            serverName: serverName,
+            weight: weight
+          },
           dataType: 'json'
         })
-        .done(function (response) {
-          console.log(response);
+        .then(function (response) {
+          reloadTable();
         })
         .fail(function (response) {
-          console.log(response);
-        })
-        .always(function () {
-          isAjax = false;
-          reloadTable();
-
+          console.log('set weight failed');
         });
-    });
-
-    reloadTable();
-    //setInterval(reloadTable(), 1000);
+    }
   });
 </script>
 

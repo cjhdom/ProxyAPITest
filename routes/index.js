@@ -10,6 +10,17 @@ router.get('/', function(req, res, next) {
   res.render('index.html');
 });
 
+router.get('/servers', (req, res, next) => {
+  serverList.getServersList((err, result) => {
+    if (err) {
+      next(err);
+    } else {
+      console.log(JSON.stringify(result));
+      res.json(result);
+    }
+  });
+});
+
 router.get('/:prxName/:serverName/weight', (req, res, next) => {
   var prxName = req.params.prxName;
   var serverName = req.params.serverName;
@@ -38,12 +49,19 @@ router.get('/weight', (req, res, next) => {
   });
 });
 
+router.put('/weight', (req, res, next) => {
+  var weight = Number(req.body.weight);
+  var serverName = req.body.serverName;
+
+  serverStatus.set
+});
+
 router.put('/:prxName/:serverName/weight/:weight', (req, res, next) => {
   var prxName = req.params.prxName;
   var serverName = req.params.serverName;
   var weight = Number(req.params.weight);
 
-  serverStatus.setServerWeight(prxName, serverName, weight, (err, response) => {
+  serverStatus.setSingleServerWeight(prxName, serverName, weight, (err, response) => {
     if (err) {
       res.json('err ' + err);
     } else {
@@ -52,17 +70,28 @@ router.put('/:prxName/:serverName/weight/:weight', (req, res, next) => {
   });
 });
 
-router.get('/multiproxy/:onOff', (req, res, next) => {
-  var onOff = toBoolean(req.params.onOff);
+router.get('/multiproxy', (req, res, next) => {
+  serverStatus.getIsMultiProxy((err, response) => {
+    if (err) {
+      next(err);
+    } else {
+      res.send(response);
+    }
+  });
+});
+
+router.put('/multiproxy', (req, res, next) => {
+  var onOff = toBoolean(req.body.onOff);
 
   serverStatus.setMultiProxy(onOff, (err, response) => {
     if (err) {
       next(err);
     } else {
-      console.log('success');
       res.send(response);
     }
   });
 });
+
+
 
 module.exports = router;

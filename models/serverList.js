@@ -6,12 +6,15 @@ var _ = require('lodash');
 
 module.exports = exports = {};
 
-var proxyServerList = [];
+var servers = [];
 
 exports.initServerList = (mngrsList) => {
-  proxyServerList = mngrsList;
+  mngrsList.forEach((mngr) => {
+    _.difference(mngr.servers.map((server) => server.id), servers)
+      .forEach((server) => servers.push(server));
+  });
 };
 
-exports.getAllServerList = () => {
-  return proxyServerList;
+exports.getServersList = (callback) => {
+  callback(null, servers);
 };
