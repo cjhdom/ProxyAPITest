@@ -65,7 +65,7 @@ exports.update = (prxName, targetServers, weight) => {
       if (prxIdx === -1) {
         return reject({err: 'could not find the requested server'});
       } else {
-        var serverIdx = serverList[prxIdx].servers.findIndex(server => server.id === targetServer);
+        var serverIdx = serverList[prxIdx].servers.findIndex(server => server.name === targetServer);
 
         if (serverIdx === -1) {
           return reject({err: 'couldn\'t find the requested server'});

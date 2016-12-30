@@ -42,7 +42,7 @@ MngrTest.prototype.getWeightAll = function () {
 MngrTest.prototype.setWeight = function (targetServerList, weight) {
   return new Promise((resolve, reject) => {
     async.each(targetServerList, (targetServer, callbackEach) => {
-      var serverIdx = this.serverList.findIndex(server => server.id === targetServer);
+      var serverIdx = this.serverList.findIndex(server => server.name === targetServer);
 
       if (serverIdx === -1) {
         callbackEach(new Error('no such server'));

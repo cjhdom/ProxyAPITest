@@ -11,7 +11,9 @@ router.get('/', function(req, res, next) {
     if (err) {
       next(err);
     } else {
-      res.render('index.html', result);
+      res.render('index.html', {
+        servers: JSON.stringify(result.map((server) => server.name))
+      });
     }
   });
 });
@@ -45,10 +47,9 @@ router.get('/weight', (req, res, next) => {
 });
 
 router.put('/weight', (req, res, next) => {
-  const weight = Number(req.body.weight);
   const serverName = req.body.serverName;
 
-  serverStatus.setServerWeight(serverName, weight, (err, response) => {
+  serverStatus.setServerWeight(serverName, (err, response) => {
     if (err) {
       res.json(err);
     } else {
