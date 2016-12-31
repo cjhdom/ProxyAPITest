@@ -40,6 +40,24 @@
   var isAjax = false;
   var serverList = <%- servers %>;
 
+  function setWeight(serverName) {
+    $.ajax({
+      url: 'http://localhost:8989/weight',
+      method: 'put',
+      data: {
+        serverName: serverName
+      },
+      dataType: 'json'
+    })
+      .then(function (response) {
+        console.log(response);
+        reloadTable();
+      })
+      .fail(function (response) {
+        console.log('set weight failed ' + JSON.stringify(response));
+      });
+  }
+
   function reloadTable() {
     $.ajax({
         url: 'http://localhost:8989/weight'
@@ -136,23 +154,6 @@
           reloadTable();
         });
     });
-
-    function setWeight(serverName) {
-      $.ajax({
-          url: 'http://localhost:8989/weight',
-          method: 'put',
-          data: {
-            serverName: serverName
-          },
-          dataType: 'json'
-        })
-        .then(function (response) {
-          reloadTable();
-        })
-        .fail(function (response) {
-          console.log('set weight failed');
-        });
-    }
   });
 </script>
 

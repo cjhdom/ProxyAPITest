@@ -47,14 +47,14 @@ exports.getServerWeightAll = (callback) => {
     } else {
       // @todo db와 싱크 맞춰주는 작업이 필요 할듯...
       /*var dbWeight = res.dbWeight.weight;
-      var mngrWeight = res.mngrWeight.weight;
+       var mngrWeight = res.mngrWeight.weight;
 
-      //DB와 실제 값이 다르면 실제 값을 리턴해주고 DB 값을 실제값으로 업데이트 해준다
-      if (dbWeight !== mngrWeight) {
-        db.update(prxName, serverName. weight)
-          .then(() => false)
-          .catch(() => false);
-      }*/
+       //DB와 실제 값이 다르면 실제 값을 리턴해주고 DB 값을 실제값으로 업데이트 해준다
+       if (dbWeight !== mngrWeight) {
+       db.update(prxName, serverName. weight)
+       .then(() => false)
+       .catch(() => false);
+       }*/
 
       return callback(null, res.dbWeight);
     }
@@ -69,67 +69,96 @@ exports.getServerWeightAll = (callback) => {
  */
 exports.setServerWeight = (serverName,  callback) => {
   async.auto({
-    isMultiProxy: (callback) => {
+    isMultiProxy: (callbackAsync) => {
       db.getMultiProxy()
         .then(response => {
-          callback(null, response);
+          return callbackAsync(null, response);
         })
         .catch(response => {
-          callback(response);
+          return callbackAsync(response);
         });
     },
-    getMngrs: ['isMultiProxy', (callback) => {
+    getMngrs: ['isMultiProxy', (results, callbackAsync) => {
       var result = [];
 
       async.each(mngrs, (mngr, callbackEach) => {
-        // 멀티 프록시 모드가 아닌 경우 다른 IDC로의 것은 스킵
-        if (!isMultiProxy) {
-          serverList.getServer((serverName, (err, res) => {
-            if (err) {
-              return callbackEach(true);
+        serverList.getServer(serverName, (err, res) => {
+          if (err) {
+            return callbackEach(err);
+          } else {
+            var proxyIDC = mngr.IDC;
+            var serverIDC = res.IDC;
+
+            if (!results.isMultiProxy && proxyIDC !== serverIDC) {
+              return callbackEach();
             } else {
-              var proxyIDC = mngr.IDC;
-              var serverIDC = res.IDC;
-
-              if (proxyIDC === serverIDC) {
-                return callbackEach();
-              }
+              mngr.getWeight(serverName)
+                .then(server => {
+                  result.push(server);
+                  return callbackEach();
+                })
+                .catch(response => callbackEach(err));
             }
-          }));
-        }
-
-        mngr.getWeight(serverName)
-          .then(server => {
-            result.push(server);
-            return callbackEach();
-          })
-          .catch(response => callbackEach(new Error('error in setMngr in serverStatus.js')));
+          }
+        });
       }, (err) => {
         if (err) {
-          callback(new Error('error in async each setMngr in setMultiProxy'));
+          return callbackAsync(err);
         } else {
-          callback(null, result);
+          return callbackAsync(null, result);
         }
       });
     }],
-    setDb: ['isMultiProxy', 'getMngrs', (callback) => {
+    weight: ['getMngrs', (results, callbackAsync) => {
+      var getWeight = results.getMngrs.every((server, index, array) =>
+        index === 0 || server.weight === array[index - 1].weight
+      );
+
+      if (getWeight) {
+        return callbackAsync(null, results.getMngrs[0].weight === 0 ? 1 : 0);
+      } else {
+        return callbackAsync(new Error('weight not set! ' + getWeight));
+      }
+    }],
+    setDb: ['isMultiProxy', 'weight', (results, callbackAsync) => {
       /**
        * @todo is it right for db to find correct proxy servers?
        */
-      db.updateServersInAllProxy(serverName, weight)
-        .then(response => callback(null, response))
-        .catch(response => callback(response));
+      db.updateServersInAllProxy(serverName, results.weight)
+        .then(response => callbackAsync(null, response))
+        .catch(response => callbackAsync(response));
     }],
-    setMngr: ['isMultiProxy', 'getMngrs', (callback) => {
-      mngrs.some(mngr => {
-        if (mngr.getName() === prxName) {
-          mngr.setWeight(serverName, weight)
-            .then(server => callback(null, server))
-            .catch(response => callback(response));
-          return true;
+    setMngr: ['isMultiProxy', 'weight', (results, callbackAsync) => {
+      /**
+       * @todo 여기에 딱 필요한 mngr에게 만 setWeight 호출하도록!
+       */
+      async.each(mngrs, (mngr, callbackEach) => {
+        serverList.getServer(serverName, (err, res) => {
+          if (err) {
+            return callbackEach(err);
+          } else {
+            var proxyIDC = mngr.IDC;
+            var serverIDC = res.IDC;
+
+            if (!results.isMultiProxy && proxyIDC !== serverIDC) {
+              return callbackEach();
+            } else {
+              mngr.setWeight([].push(serverName), results.weight)
+                .then(server => {
+                  result.push(server);
+                  return callbackEach();
+                })
+                .catch(response => callbackEach(err));
+            }
+          }
+        });
+      }, (err) => {
+        if (err) {
+          callbackAsync(err);
+        } else {
+          callbackAsync(null, {message: 'success'});
         }
-        return false;
-      });
+      })
     }]
   }, (err, res) => {
     if (err) {
@@ -193,15 +222,12 @@ exports.setMultiProxy = (onOff, callback) => {
           }
         }, (err, res) => {
           if (err) {
-            console.log('err ' + JSON.stringify(err));
             return callback(err);
           } else {
-            console.log('res ' + JSON.stringify(res));
             return callback(null, res);
           }
         });
       } else {
-        console.log('nothing happened');
         callback();
       }
     })

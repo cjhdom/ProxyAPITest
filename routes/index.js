@@ -27,7 +27,7 @@ router.get('/:prxName/:serverName/weight', (req, res, next) => {
       if (response) {
         res.json(response);
       } else {
-        res.res(err);
+        next(err);
       }
     } else {
       res.json(response);
@@ -39,7 +39,7 @@ router.get('/weight', (req, res, next) => {
 
   serverStatus.getServerWeightAll((err, response) => {
     if (err) {
-      res.res(err);
+      next(err);
     } else {
       res.json(response);
     }
@@ -51,7 +51,7 @@ router.put('/weight', (req, res, next) => {
 
   serverStatus.setServerWeight(serverName, (err, response) => {
     if (err) {
-      res.json(err);
+      next(err);
     } else {
       res.json(response);
     }
@@ -65,7 +65,7 @@ router.put('/:prxName/:serverName/weight/:weight', (req, res, next) => {
 
   serverStatus.setSingleServerWeight(prxName, serverName, weight, (err, response) => {
     if (err) {
-      res.json('err ' + err);
+      next(err);
     } else {
       res.json(response);
     }

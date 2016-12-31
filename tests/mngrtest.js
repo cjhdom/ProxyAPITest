@@ -17,14 +17,11 @@ MngrTest.prototype.getName = function () {
 
 MngrTest.prototype.getWeight = function (serverName) {
   return new Promise((resolve, reject) => {
-    var server = _.find(this.serverList, { id: serverName });
-
+    var server = _.find(this.serverList, { name: serverName });
     if (typeof server != 'undefined') {
-      console.log(server);
       return resolve(server);
     } else {
-      console.log(server);
-      return reject({code: '999', message: 'couldn\'t find the requested server'});
+      return reject({code: '999', message: 'couldn\'t find the requested server ' + serverName});
     }
   });
 };

@@ -37,16 +37,16 @@ exports.getProxyServerList = (callback) => {
   if (!proxyServers || proxyServers.length === 0) {
     callback(new Error('proxy server list not initialized!"'));
   } else {
-    callback(null, pr);
+    callback(null, proxyServers);
   }
 };
 
 exports.getServer = (serverName, callback) => {
   var server = _.find(servers, { name: serverName });
 
-  if (typeof server === 'undefined') {
+  if (typeof server == 'undefined') {
     callback(new Error('no such server'));
   } else {
-    callback(server);
+    callback(null, server);
   }
 };

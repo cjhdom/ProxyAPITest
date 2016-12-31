@@ -4,7 +4,7 @@
 'use strict';
 
 var _ = require('lodash');
-var Promise = require('bluebird');
+var Promise = require('promise');
 
 var serverList = [];
 var isMultiProxy = null;
@@ -82,7 +82,7 @@ exports.update = (prxName, targetServers, weight) => {
 exports.updateServersInAllProxy = (targetServer, weight) => {
   return new Promise((resolve, reject) => {
     serverList.forEach(proxyServer => {
-      var serverIdx = _.findIndex(proxyServer.servers, { id: targetServer });
+      var serverIdx = _.findIndex(proxyServer.servers, { name: targetServer });
 
       if (serverIdx !== -1) {
         var isSameIDC = proxyServer.servers[serverIdx].IDC === proxyServer.IDC;
@@ -115,13 +115,7 @@ exports.setMultiProxy = (onOff) => {
 };
 
 exports.getMultiProxy = () => {
-  return new Promise((resolve, reject) => {
-    if (isMultiProxy !== null) {
-      return resolve(isMultiProxy);
-    } else {
-      return reject(new Error('get multi proxy error in db'));
-    }
-  });
+  return Promise.resolve(isMultiProxy);
 };
 
 
