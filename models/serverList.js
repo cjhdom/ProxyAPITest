@@ -44,7 +44,7 @@ exports.getProxyServerList = (callback) => {
 exports.getServer = (serverName, callback) => {
   var server = _.find(servers, { name: serverName });
 
-  if (typeof server == 'undefined') {
+  if (typeof server === 'undefined') {
     callback(new Error('no such server'));
   } else {
     callback(null, server);
