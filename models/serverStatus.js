@@ -181,6 +181,7 @@ exports.setMultiProxy = (onOff, callback) => {
       if (!response.doNothing) {
         async.auto({
           getMngrs: (callbackAsync) => {
+            // 멀티 프록시를 끌 땐 건너뛸 서버가 없다
             if (!onOff) {
               return callbackAsync();
             }
@@ -202,6 +203,7 @@ exports.setMultiProxy = (onOff, callback) => {
             });
           },
           skipServers: ['getMngrs', (results, callbackAsync) => {
+            // 멀티 프록시를 끌 땐 건너뛸 서버가 없다
             if (!onOff) {
               return callbackAsync();
             }
