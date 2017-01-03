@@ -27,11 +27,22 @@ exports.fetch = (prxName, serverName) => {
     var servers = _.find(serverList, {name: prxName});
     var server = _.find(servers.servers, {id: serverName});
 
-    if (typeof server !== 'undefined') {
+    if (typeof server === 'undefined') {
       return reject({err: 'error'});
-//return resolve(server);
     } else {
-      return reject({err: 'error'});
+      return resolve(server);
+    }
+  });
+};
+
+exports.fetchInProxy = (prxName) => {
+  return new Promise((resolve, reject) => {
+    var prxServer = _.find(serverList, {name: prxName});
+
+    if (typeof prxServer === 'undefined') {
+      return reject(new Error('no prx server'));
+    } else {
+      return resolve(prxServer);
     }
   });
 };

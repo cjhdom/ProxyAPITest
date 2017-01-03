@@ -180,7 +180,61 @@ exports.setMultiProxy = (onOff, callback) => {
     .then(response => {
       if (!response.doNothing) {
         async.auto({
-          setDb: (callbackAuto) => {
+          getMngrs: (callbackAsync) => {
+            if (!onOff) {
+              return callbackAsync();
+            }
+            var result = [];
+
+            async.each(mngrs, (mngr, callbackEach) => {
+              mngr.getWeightAll()
+                .then(response => {
+                  result.push(response);
+                  callbackEach();
+                })
+                .catch(response => callbackEach(response));
+            }, (err) => {
+              if (err) {
+                return callbackAsync(err);
+              } else {
+                return callbackAsync(null, result);
+              }
+            });
+          },
+          skipServers: ['getMngrs', (results, callbackAsync) => {
+            if (!onOff) {
+              return callbackAsync();
+            }
+
+            var allServersList = [];
+            var result = [];
+
+            // 프록시 서버의 서버 리스트들은 2차원 배열이다
+            // 요걸 1차원 배열로 flatten
+            results.getMngrs.forEach(prxServer =>
+              allServersList = allServersList.concat(prxServer)
+            );
+
+            serverList.getServersList((err, res) => {
+              if (err) {
+                callbackAsync(err);
+              } else {
+                res.forEach(server => {
+                  var serversToCheck = _.filter(allServersList, {name: server.name});
+                  var getWeight = serversToCheck.every(server =>
+                    server.weight === 0
+                  );
+
+                  if (getWeight) {
+                    result.push(server.name);
+                  }
+                });
+              }
+            });
+
+            callbackAsync(null, result);
+          }],
+          setDb: ['skipServers', (results, callbackAuto) => {
             async.each(mngrs, (mngr, callbackEach) => {
               var proxyIDC = mngr.IDC;
               var weight = onOff ? 1 : 0;
@@ -189,6 +243,8 @@ exports.setMultiProxy = (onOff, callback) => {
               });
 
               var serverNameList = targetIDCServers.map(server => server.name);
+              serverNameList = _.difference(serverNameList, results.skipServers);
+
               db.update(mngr.name, serverNameList, weight)
                 .then(() => callbackEach())
                 .catch((res) => callbackEach(res));
@@ -199,8 +255,8 @@ exports.setMultiProxy = (onOff, callback) => {
                 callbackAuto(null, {result: '000'});
               }
             });
-          },
-          setMngr: (callbackAuto) => {
+          }],
+          setMngr: ['skipServers', (results, callbackAuto) => {
             async.each(mngrs, (mngr, callbackEach) => {
               var proxyIDC = mngr.IDC;
               var weight = onOff ? 1 : 0;
@@ -209,17 +265,19 @@ exports.setMultiProxy = (onOff, callback) => {
               });
 
               var serverNameList = targetIDCServers.map(server => server.name);
+              serverNameList = _.difference(serverNameList, results.skipServers);
+
               mngr.setWeight(serverNameList, weight)
                 .then(server => callbackEach())
-                .catch(response => callbackEach(new Error('error in setMngr in serverStatus.js')));
+                .catch(response => callbackEach(response));
             }, (err) => {
               if (err) {
-                callbackAuto(new Error('error in async each setMngr in setMultiProxy'));
+                callbackAuto(err);
               } else {
                 callbackAuto(null, {result: '000'});
               }
             });
-          }
+          }]
         }, (err, res) => {
           if (err) {
             return callback(err);
