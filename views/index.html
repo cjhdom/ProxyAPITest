@@ -64,6 +64,7 @@
       })
       .then(function (data) {
         if (data) {
+          console.log(JSON.stringify(data));
 // 테이블 리셋
           $("#tableHeading").html('<th>control</th>');
           $("#tableBody").html('');

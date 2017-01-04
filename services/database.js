@@ -1,64 +1,48 @@
 /**
- * Created by 지환 on 2016-11-07.
+ * Created by jihwchoi on 2017-01-04.
  */
-'use strict';
+const MongoClient = require('mongodb').MongoClient;
+const _ = require('lodash');
+const Promise = require('bluebird');
+Promise.promisifyAll(_);
+const url = getUrl();
 
-var _ = require('lodash');
-var Promise = require('bluebird');
-
-var serverList = [];
-var isMultiProxy = null;
-
-function DbTest(data) {
-  serverList = data.servers;
-  isMultiProxy = data.isMultiProxy;
-}
-
-module.exports = exports = {};
-
-/**
- *
- * @param {String} prxName
- * @param {String} serverName
- * @returns {bluebird|exports|module.exports}
- */
 exports.fetch = (prxName, serverName) => {
-  return new Promise((resolve, reject) => {
-    var servers = _.find(serverList, {name: prxName});
-    var server = _.find(servers.servers, {id: serverName});
+  return MongoClient.connect(url)
+    .then(db => {
+      const col = db.collection('proxyServers');
+      const proxyServer = {
+        name: prxName
+      };
 
-    if (typeof server === 'undefined') {
-      return reject({err: 'error'});
-    } else {
-      return resolve(server);
-    }
-  });
+      return col.findOne(proxyServer);
+    })
+    .then(proxyServer =>
+      _.findAsync(proxyServer.servers, {name: serverName})
+    )
+    .catch(response => response);
 };
 
 exports.fetchInProxy = (prxName) => {
-  return new Promise((resolve, reject) => {
-    var prxServer = _.find(serverList, {name: prxName});
+  return MongoClient.connect(url)
+    .then(db => {
+      const col = db.collection('proxyServers');
+      const proxyServer = {
+        name: prxName
+      };
 
-    if (typeof prxServer === 'undefined') {
-      return reject(new Error('no prx server'));
-    } else {
-      return resolve(prxServer);
-    }
-  });
+      return col.findOne(proxyServer);
+    })
+    .catch(response => response);
 };
 
-/**
- *
- * @returns {bluebird|exports|module.exports}
- */
 exports.fetchAll = () => {
-  return new Promise((resolve, reject) => {
-    if (serverList.length > 0) {
-      return resolve(serverList);
-    } else {
-      return reject({err: 'there is no server!'});
-    }
-  });
+  return MongoClient.connect(url)
+    .then(db => {
+      const col = db.collection('proxyServers');
+      return col.findOne({});
+    })
+    .catch(response => response);
 };
 
 /**
@@ -126,10 +110,36 @@ exports.setMultiProxy = (onOff) => {
 };
 
 exports.getMultiProxy = () => {
-  return Promise.resolve(isMultiProxy);
+  return MongoClient.connect(url)
+    .then(db => {
+      const col = db.collection('config');
+      const config = {
+        fieldName: 'isMultiProxy'
+      };
+
+      return col.findOne(config);
+    })
+    .then(config =>
+      Promise.resolve(config.value)
+    )
+    .catch(response => response);
 };
 
 
-exports.serverInit = (data) => {
-  DbTest(data);
-};
+//////////////////////////////////////////////////////////////////////////////////////
+///////////////////// HELPERS ////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+function getUrl() {
+  const env = process.env.NOVA_ENV;
+  switch (env) {
+    case 'local':
+      return 'mongodb://192.168.56.102:27017/proxyapi';
+    case 'dev':
+      return 'mongodb://localhost:27017/proxyapi';
+    case 'real':
+      return 'mongodb://localhost:27017/proxyapi';
+    default:
+      return '';
+  }
+}

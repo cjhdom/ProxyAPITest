@@ -18,22 +18,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.get('/:prxName/:serverName/weight', (req, res, next) => {
-  const prxName = req.params.prxName;
-  const serverName = req.params.serverName;
 
-  serverStatus.getServerWeight(prxName, serverName, (err, response) => {
-    if (err) {
-      if (response) {
-        res.json(response);
-      } else {
-        next(err);
-      }
-    } else {
-      res.json(response);
-    }
-  });
-});
 
 router.get('/weight', (req, res, next) => {
 
@@ -58,7 +43,24 @@ router.put('/weight', (req, res, next) => {
   });
 });
 
-router.put('/:prxName/:serverName/weight/:weight', (req, res, next) => {
+router.get('weight/:prxName/:serverName/', (req, res, next) => {
+  const prxName = req.params.prxName;
+  const serverName = req.params.serverName;
+
+  serverStatus.getServerWeight(prxName, serverName, (err, response) => {
+    if (err) {
+      if (response) {
+        res.json(response);
+      } else {
+        next(err);
+      }
+    } else {
+      res.json(response);
+    }
+  });
+});
+
+router.put('/weight/:weight/:prxName/:serverName', (req, res, next) => {
   const prxName = req.params.prxName;
   const serverName = req.params.serverName;
   const weight = Number(req.params.weight);

@@ -12,6 +12,7 @@ var mngrs = [];
 
 exports.initServerStatus = (dbconn, mngrsList) => {
   db = dbconn;
+  db = require('../services/database');
   mngrs = mngrsList;
 };
 
