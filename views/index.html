@@ -121,6 +121,7 @@
         method: 'GET'
       })
       .then(function (response) {
+        console.log(response);
         $("#isOverIDC").val(response.isMultiProxy);
         reloadTable();
       })

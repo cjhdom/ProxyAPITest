@@ -5,26 +5,47 @@ const MongoClient = require('mongodb').MongoClient;
 const _ = require('lodash');
 const Promise = require('bluebird');
 Promise.promisifyAll(_);
-const url = getUrl();
+
+var db = null;
+
+
+function getDb() {
+  if (db) {
+    return db;
+  } else {
+    console.log('no db');
+    throw new Error('no db');
+  }
+}
+
+function setDb(dbconn) {
+  db = dbconn;
+}
+
+module.exports = exports = {};
+
+exports.init = (dbconn) => {
+  setDb(dbconn);
+};
 
 exports.fetch = (prxName, serverName) => {
-  return MongoClient.connect(url)
-    .then(db => {
-      const col = db.collection('proxyServers');
-      const proxyServer = {
-        name: prxName
-      };
+  return new Promise((resolve, reject) => {
+    const col = getDb().collection('proxyServers');
+    const proxyServer = {
+      name: prxName
+    };
 
-      return col.findOne(proxyServer);
-    })
-    .then(proxyServer =>
-      _.findAsync(proxyServer.servers, {name: serverName})
-    )
-    .catch(response => response);
+    col.findOne(proxyServer)
+      .then(response =>
+        _.findAsync(response.servers, {name: serverName})
+      )
+      .then(response => resolve(response))
+      .catch(response => reject(response));
+  });
 };
 
 exports.fetchInProxy = (prxName) => {
-  return MongoClient.connect(url)
+/*  return MongoClient.connect(url)
     .then(db => {
       const col = db.collection('proxyServers');
       const proxyServer = {
@@ -33,16 +54,23 @@ exports.fetchInProxy = (prxName) => {
 
       return col.findOne(proxyServer);
     })
-    .catch(response => response);
+    .catch(response => response);*/
 };
 
 exports.fetchAll = () => {
-  return MongoClient.connect(url)
+  return new Promise((resolve, reject) => {
+    const col = getDb().collection('proxyServers');
+
+    col.find().toArray()
+      .then(response => resolve(response))
+      .catch(response => reject(response));
+  });
+/*  return MongoClient.connect(url)
     .then(db => {
       const col = db.collection('proxyServers');
       return col.findOne({});
     })
-    .catch(response => response);
+    .catch(response => response);*/
 };
 
 /**
@@ -75,7 +103,7 @@ exports.update = (prxName, targetServers, weight) => {
 };
 
 exports.updateServersInAllProxy = (targetServer, weight) => {
-  return new Promise((resolve, reject) => {
+/*  return new Promise((resolve, reject) => {
     serverList.forEach(proxyServer => {
       var serverIdx = _.findIndex(proxyServer.servers, { name: targetServer });
 
@@ -91,7 +119,7 @@ exports.updateServersInAllProxy = (targetServer, weight) => {
     });
 
     resolve();
-  });
+  });*/
 };
 
 /**
@@ -99,30 +127,27 @@ exports.updateServersInAllProxy = (targetServer, weight) => {
  * @param {boolean} onOff
  */
 exports.setMultiProxy = (onOff) => {
-  return new Promise((resolve) => {
+/*  return new Promise((resolve) => {
     if (isMultiProxy === onOff) {
       return resolve({code: '000', doNothing: true});
     } else {
       isMultiProxy = onOff;
       return resolve({code: '000', doNothing: false});
     }
-  });
+  });*/
 };
 
 exports.getMultiProxy = () => {
-  return MongoClient.connect(url)
-    .then(db => {
-      const col = db.collection('config');
-      const config = {
-        fieldName: 'isMultiProxy'
-      };
+  return new Promise((resolve, reject) => {
+    const col = getDb().collection('config');
+    const config = {
+      fieldName: 'isMultiProxy'
+    };
 
-      return col.findOne(config);
-    })
-    .then(config =>
-      Promise.resolve(config.value)
-    )
-    .catch(response => response);
+    col.findOne(config)
+      .then(response => resolve(response.value))
+      .catch(response => reject(response));
+  });
 };
 
 
@@ -130,16 +155,3 @@ exports.getMultiProxy = () => {
 ///////////////////// HELPERS ////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-function getUrl() {
-  const env = process.env.NOVA_ENV;
-  switch (env) {
-    case 'local':
-      return 'mongodb://192.168.56.102:27017/proxyapi';
-    case 'dev':
-      return 'mongodb://localhost:27017/proxyapi';
-    case 'real':
-      return 'mongodb://localhost:27017/proxyapi';
-    default:
-      return '';
-  }
-}
