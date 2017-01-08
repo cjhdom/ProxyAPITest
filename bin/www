@@ -33,6 +33,8 @@ MongoClient.connect(getUrl(), (err, db) => {
   if (!err) {
     database.init(db);
     server.listen(port);
+  } else {
+    console.log(err);
   }
 });
 
@@ -40,7 +42,7 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 function getUrl() {
-  return 'mongodb://localhost:27017/proxyAPI';
+  //return 'mongodb://localhost:27017/proxyAPI';
   const env = process.env.NOVA_ENV;
   switch (env) {
     case 'local':
@@ -50,7 +52,7 @@ function getUrl() {
     case 'real':
       return 'mongodb://localhost:27017/proxyAPI';
     case 'home':
-      return 'mongodb://localhost:27017/proxyAPI';
+      return 'mongodb://52.231.38.182:27017/proxyAPI';
     default:
       console.log('huh');
       return '';
@@ -65,7 +67,7 @@ var serverList = require('../models/serverList');
  * on server init, inject sample db data
  */
 server.on('listening', () => {
-  fs.readFile(path.normalize('./sample_data/sample.json'), 'utf-8', (err, data) => {
+  fs.readFile(path.normalize('../sample_data/sample.json'), 'utf-8', (err, data) => {
     if (err) {
       console.log('error reading file ' + console.log(err));
       server.close();
@@ -73,7 +75,6 @@ server.on('listening', () => {
       console.log('successfully loaded dbtest! good to go~');
       dbtest.serverInit(JSON.parse(data));
       serverList.initServerList((JSON.parse(data)).servers);
-
 
       var mngrs = [];
       dbtest.fetchAll()

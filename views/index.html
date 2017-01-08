@@ -29,7 +29,7 @@
     </tbody>
   </table>
 
-  <button type="button" class="btn btn-primary" id="btnOverIDC">Over IDC toggle</button>
+  <button type="button" class="btn btn-primary" id="btnOverIDC">Over IDC toggle <p id="overIDC"></p></button>
 </div>
 
 <form>
@@ -38,6 +38,7 @@
 
 <script>
   var isAjax = false;
+  var isMultiProxy = null;
   var serverList = <%- servers %>;
 
   function setWeight(serverName) {
@@ -50,7 +51,7 @@
       dataType: 'json'
     })
       .then(function (response) {
-        console.log(response);
+        console.log(JSON.stringify(response));
         reloadTable();
       })
       .fail(function (response) {
@@ -64,7 +65,6 @@
       })
       .then(function (data) {
         if (data) {
-          console.log(JSON.stringify(data));
 // 테이블 리셋
           $("#tableHeading").html('<th>control</th>');
           $("#tableBody").html('');
@@ -121,8 +121,8 @@
         method: 'GET'
       })
       .then(function (response) {
-        console.log(response);
-        $("#isOverIDC").val(response.isMultiProxy);
+        isMultiProxy = response;
+
         reloadTable();
       })
       .fail(function (response) {
@@ -133,21 +133,25 @@
      * OverIDC toggle 버튼 클릭 이벤트
      */
     $("#btnOverIDC").click(function () {
-      if ($("#isOverIDC").val() === "true") {
-        $("#isOverIDC").val("false");
+      var onOff = null;
+      if (isMultiProxy) {
+        onOff = false;
       } else {
-        $("#isOverIDC").val("true");
+        onOff = true;
       }
+      console.log('setting isMultiProxy to ' + onOff);
       $.ajax({
           url: 'http://localhost:8989/multiproxy/',
           method: 'PUT',
           data: {
-            onOff: $("#isOverIDC").val()
+            onOff: onOff
           },
           dataType: 'json'
         })
         .done(function (response) {
-          console.log(response);
+          isMultiProxy = onOff;
+          $("#overIDC").html('' + onOff);
+          console.log(JSON.stringify(response));
         })
         .fail(function (response) {
           console.log(response);

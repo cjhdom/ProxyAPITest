@@ -125,7 +125,32 @@ exports.setServerWeight = (serverName,  callback) => {
       /**
        * @todo is it right for db to find correct proxy servers?
        */
-      db.updateServersInAllProxy(serverName, results.weight)
+      var targetProxyServerList = [];
+
+      serverList.getServer(serverName, (err1, server) => {
+        if (err1) {
+          callbackAsync(err1);
+        } else {
+          serverList.getProxyServerList((err2, proxyServerList) => {
+            if (err2) {
+              callbackAsync(err2);
+            } else {
+              proxyServerList.forEach(proxyServer => {
+                var proxyIDC = proxyServer.IDC;
+                var serverIDC = server.IDC;
+
+                if (!results.isMultiProxy && proxyIDC !== serverIDC) {
+                  return false;
+                } else {
+                  targetProxyServerList.push(proxyServer.name);
+                }
+              });
+            }
+          });
+        }
+      });
+
+      db.updateServerinProxies(targetProxyServerList, serverName, results.weight)
         .then(response => callbackAsync(null, response))
         .catch(response => callbackAsync(response));
     }],
@@ -144,7 +169,7 @@ exports.setServerWeight = (serverName,  callback) => {
             if (!results.isMultiProxy && proxyIDC !== serverIDC) {
               return callbackEach();
             } else {
-              mngr.setWeight([].push(serverName), results.weight)
+              mngr.setWeight([serverName], results.weight)
                 .then(server => {
                   result.push(server);
                   return callbackEach();
@@ -159,7 +184,7 @@ exports.setServerWeight = (serverName,  callback) => {
         } else {
           callbackAsync(null, {message: 'success'});
         }
-      })
+      });
     }]
   }, (err, res) => {
     if (err) {
@@ -241,11 +266,11 @@ exports.setMultiProxy = (onOff, callback) => {
             async.each(mngrs, (mngr, callbackEach) => {
               var proxyIDC = mngr.IDC;
               var weight = onOff ? 1 : 0;
-              var targetIDCServers = mngr.serverList.filter(server => {
+              var targetServers = mngr.serverList.filter(server => {
                 return server.IDC !== proxyIDC;
               });
 
-              var serverNameList = targetIDCServers.map(server => server.name);
+              var serverNameList = targetServers.map(server => server.name);
               serverNameList = _.difference(serverNameList, results.skipServers);
 
               db.update(mngr.name, serverNameList, weight)
@@ -253,13 +278,13 @@ exports.setMultiProxy = (onOff, callback) => {
                 .catch((res) => callbackEach(res));
             }, (err) => {
               if (err) {
-                callbackAuto(new Error('error in async each setDb in setMultiProxy'));
+                callbackAuto(err);
               } else {
                 callbackAuto(null, {result: '000'});
               }
             });
           }],
-          setMngr: ['skipServers', (results, callbackAuto) => {
+          setMngr: ['skipServers', 'getMngrs', (results, callbackAuto) => {
             async.each(mngrs, (mngr, callbackEach) => {
               var proxyIDC = mngr.IDC;
               var weight = onOff ? 1 : 0;

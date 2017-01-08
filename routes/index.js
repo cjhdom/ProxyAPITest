@@ -79,7 +79,7 @@ router.get('/multiproxy', (req, res, next) => {
     if (err) {
       next(err);
     } else {
-      res.send(response);
+      res.json(response);
     }
   });
 });
@@ -91,9 +91,20 @@ router.put('/multiproxy', (req, res, next) => {
     if (err) {
       next(err);
     } else {
-      res.send(response);
+      res.json(response);
     }
   });
+});
+
+router.get('/reset', (req, res, next) => {
+  var db = require('../services/database');
+  db.resetDb((err, response) => {
+    if (err) {
+      next(err);
+    } else {
+      res.send(response);
+    }
+  })
 });
 
 module.exports = router;
