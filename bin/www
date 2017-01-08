@@ -67,7 +67,7 @@ var serverList = require('../models/serverList');
  * on server init, inject sample db data
  */
 server.on('listening', () => {
-  fs.readFile(path.normalize('../sample_data/sample.json'), 'utf-8', (err, data) => {
+  fs.readFile(path.normalize('./sample_data/sample.json'), 'utf-8', (err, data) => {
     if (err) {
       console.log('error reading file ' + console.log(err));
       server.close();

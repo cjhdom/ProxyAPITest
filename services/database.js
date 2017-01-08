@@ -188,7 +188,7 @@ exports.getMultiProxy = () => {
 exports.resetDb = (callback) => {
   var fs = require('fs');
   var path = require('path');
-  fs.readFile(path.normalize('../sample_data/sample.json'), 'utf-8', (err, data) => {
+  fs.readFile(path.normalize('./sample_data/sample.json'), 'utf-8', (err, data) => {
     if (err) {
       callback(err);
     } else {

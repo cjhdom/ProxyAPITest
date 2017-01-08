@@ -122,9 +122,6 @@ exports.setServerWeight = (serverName,  callback) => {
       }
     }],
     setDb: ['isMultiProxy', 'weight', (results, callbackAsync) => {
-      /**
-       * @todo is it right for db to find correct proxy servers?
-       */
       var targetProxyServerList = [];
 
       serverList.getServer(serverName, (err1, server) => {
@@ -145,24 +142,24 @@ exports.setServerWeight = (serverName,  callback) => {
                   targetProxyServerList.push(proxyServer.name);
                 }
               });
+
+              db.updateServerinProxies(targetProxyServerList, serverName, results.weight)
+                .then(response => callbackAsync(null, response))
+                .catch(response => callbackAsync(response));
             }
           });
         }
       });
-
-      db.updateServerinProxies(targetProxyServerList, serverName, results.weight)
-        .then(response => callbackAsync(null, response))
-        .catch(response => callbackAsync(response));
     }],
     setMngr: ['isMultiProxy', 'weight', (results, callbackAsync) => {
       /**
        * @todo 여기에 딱 필요한 mngr에게 만 setWeight 호출하도록!
        */
-      async.each(mngrs, (mngr, callbackEach) => {
-        serverList.getServer(serverName, (err, res) => {
-          if (err) {
-            return callbackEach(err);
-          } else {
+      serverList.getServer(serverName, (err, res) => {
+        if (err) {
+          return callbackAsync(err);
+        } else {
+          async.each(mngrs, (mngr, callbackEach) => {
             var proxyIDC = mngr.IDC;
             var serverIDC = res.IDC;
 
@@ -176,13 +173,13 @@ exports.setServerWeight = (serverName,  callback) => {
                 })
                 .catch(response => callbackEach(err));
             }
-          }
-        });
-      }, (err) => {
-        if (err) {
-          callbackAsync(err);
-        } else {
-          callbackAsync(null, {message: 'success'});
+          }, (err) => {
+            if (err) {
+              callbackAsync(err);
+            } else {
+              callbackAsync(null, {message: 'success'});
+            }
+          });
         }
       });
     }]
