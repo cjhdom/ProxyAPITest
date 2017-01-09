@@ -260,7 +260,10 @@ exports.setMultiProxy = (onOff, callback) => {
 
             callbackAsync(null, result);
           }],
-          setDb: ['skipServers', (results, callbackAuto) => {
+          setDb: ['getMngrs', 'skipServers', (results, callbackAuto) => {
+            /*
+             @todo: why added getMngrs? to not call unnecessary servers
+             */
             async.each(mngrs, (mngr, callbackEach) => {
               var proxyIDC = mngr.IDC;
               var weight = onOff ? 1 : 0;
