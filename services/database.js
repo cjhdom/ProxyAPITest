@@ -185,23 +185,16 @@ exports.getMultiProxy = () => {
 ///////////////////// HELPERS ////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-exports.resetDb = (callback) => {
-  var fs = require('fs');
-  var path = require('path');
-  fs.readFile(path.normalize('./sample_data/sample.json'), 'utf-8', (err, data) => {
-    if (err) {
-      callback(err);
-    } else {
-      var col = getDb().collection('servers');
-      col.deleteMany({})
-        .then(response =>
-          col.insertMany(JSON.parse(data).servers)
-        )
-        .then(response => {
-          col = getDb().collection('config');
-          return col.updateOne({fieldName: 'isMultiProxy'}, {$set: {value: false}}, callback);
-        })
-        .catch(response => callback(response));
-    }
-  });
+exports.resetDb = (data, callback) => {
+  var col = getDb().collection('servers');
+  col.deleteMany({})
+    .then(response =>
+      col.insertMany(JSON.parse(data).servers)
+    )
+    .then(response => {
+      col = getDb().collection('config');
+      return col.updateOne({fieldName: 'isMultiProxy'}, {$set: {value: false}}, callback);
+    })
+    .catch(response => callback(response));
+
 };

@@ -227,6 +227,7 @@ exports.setMultiProxy = (onOff, callback) => {
           },
           skipServers: ['getMngrs', (results, callbackAsync) => {
             // 멀티 프록시를 끌 땐 건너뛸 서버가 없다
+            // @todo: 끌 땐 이미 꺼진 서버는 request 안날리도록 해보자
             if (!onOff) {
               return callbackAsync();
             }

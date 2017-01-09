@@ -44,13 +44,13 @@
 
   function setWeight(serverName) {
     $.ajax({
-      url: 'http://localhost:8989/weight',
-      method: 'put',
-      data: {
-        serverName: serverName
-      },
-      dataType: 'json'
-    })
+        url: 'http://localhost:8989/weight',
+        method: 'put',
+        data: {
+          serverName: serverName
+        },
+        dataType: 'json'
+      })
       .then(function (response) {
         reloadTable();
       })
@@ -70,12 +70,13 @@
           $("#tableBody").html('');
           var table = [];
 
+          $("#tableHeading").append($("<th></th>").html('목동'));
+          $("#tableHeading").append($("<th></th>").html('논현'));
           //테이블 헤더 생성
           data.forEach(function (proxyServer, outerIdx) {
-            $("#tableHeading").append($("<th></th>").html(proxyServer.name));
             table[outerIdx] = [];
             proxyServer.servers.forEach(function (server) {
-              table[outerIdx].push(server.name + ':' + server.weight);
+              table[outerIdx].push(server.weight);
             });
           });
 
@@ -85,7 +86,7 @@
 
             // 제어 버튼 생성 시작
             var button = $("<button>" + serverList[j] + "</button>");
-            button.attr('class', 'btn btn-default btn-xs');
+            button.attr('class', 'btn btn-default ');
             button.attr('name', serverList[j]);
 
             button.click(function () {
@@ -96,11 +97,52 @@
             var controlCell = $('<th></th>').append(button);
             row.append(controlCell);
 
-            for (var i = 0; i < table.length; i++) {
+            if (table[0][j] === table[1][j] && table[1][j] === table[2][j] && table[0][j] === 1) {
+              var statBtn = $("<button>" + table[0][j] + "</button>");
+              statBtn.attr('class', 'btn btn-success ');
+              statBtn.attr('name', serverList[j]);
               var cell = $("<td></td>");
-              cell.html(table[i][j]);
+              cell.html(statBtn);
+              row.append(cell);
+            } else if (table[0][j] === table[1][j] && table[1][j] === table[2][j] && table[0][j] === 0) {
+              var statBtn = $("<button>" + table[0][j] + "</button>");
+              statBtn.attr('class', 'btn btn-danger ');
+              statBtn.attr('name', serverList[j]);
+              var cell = $("<td></td>");
+              cell.html(statBtn);
+              row.append(cell);
+            } else {
+              var statBtn = $("<button>" + table[0][j] + "</button>");
+              statBtn.attr('class', 'btn btn-warning ');
+              statBtn.attr('name', serverList[j]);
+              var cell = $("<td></td>");
+              cell.html(statBtn);
               row.append(cell);
             }
+
+            if (table[3][j] === table[4][j] && table[4][j] === table[5][j] && table[5][j] === 1) {
+              var statBtn = $("<button>" + table[3][j] + "</button>");
+              statBtn.attr('class', 'btn btn-success ');
+              statBtn.attr('name', serverList[j]);
+              var cell = $("<td></td>");
+              cell.html(statBtn);
+              row.append(cell);
+            } else if (table[3][j] === table[4][j] && table[4][j] === table[5][j] && table[5][j] === 0) {
+              var statBtn = $("<button>" + table[3][j] + "</button>");
+              statBtn.attr('class', 'btn btn-danger ');
+              statBtn.attr('name', serverList[j]);
+              var cell = $("<td></td>");
+              cell.html(statBtn);
+              row.append(cell);
+            } else {
+              var statBtn = $("<button>" + table[3][j] + "</button>");
+              statBtn.attr('class', 'btn btn-warning ');
+              statBtn.attr('name', serverList[j]);
+              var cell = $("<td></td>");
+              cell.html(statBtn);
+              row.append(cell);
+            }
+
             $("#tableBody").append(row);
           }
         }
@@ -155,7 +197,6 @@
         })
         .done(function (response) {
           isMultiProxy = onOff;
-          $("#overIDC").html('' + onOff);
         })
         .fail(function (response) {
           console.log(response);

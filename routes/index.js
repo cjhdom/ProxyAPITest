@@ -11,13 +11,24 @@ router.get('/', function(req, res, next) {
     if (err) {
       next(err);
     } else {
-      res.render('index.html', {
+      res.render('index2.html', {
         servers: JSON.stringify(result.map((server) => server.name))
       });
     }
   });
 });
 
+router.get('/2', function(req, res, next) {
+  serverList.getServersList((err, result) => {
+    if (err) {
+      next(err);
+    } else {
+      res.render('index.html', {
+        servers: JSON.stringify(result.map((server) => server.name))
+      });
+    }
+  });
+});
 
 
 router.get('/weight', (req, res, next) => {
@@ -98,13 +109,40 @@ router.put('/multiproxy', (req, res, next) => {
 
 router.get('/reset', (req, res, next) => {
   var db = require('../services/database');
-  db.resetDb((err, response) => {
+  var fs = require('fs');
+  var path = require('path');
+  var Mngr = require('../tests/mngrtest');
+
+  fs.readFile(path.normalize('./sample_data/sample.json'), 'utf-8', (err, data) => {
     if (err) {
-      next(err);
+      callback(err);
     } else {
-      res.send(response);
+      db.resetDb(data, (err, response) => {
+        if (err) {
+          next(err);
+        } else {
+          var mngrs = [];
+          db.fetchAll()
+            .then(servers => {
+              servers.forEach(server => {
+                //var test = require('../tests/mngrtest')(server);
+                var test = new Mngr(server);
+                //console.log('pushing ' + test.getName());
+                mngrs.push(test);
+              });
+
+              serverStatus.initServerStatus(dbtest, mngrs);
+              res.send(response);
+            })
+            .catch(res => console.log(JSON.stringify(res)));
+
+
+        }
+      });
+
+
     }
-  })
+  });
 });
 
 module.exports = router;
