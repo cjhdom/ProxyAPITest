@@ -168,7 +168,7 @@ exports.setServerWeight = (serverName,  callback) => {
             } else {
               mngr.setWeight([serverName], results.weight)
                 .then(server => {
-                  result.push(server);
+                  //result.push(server);
                   return callbackEach();
                 })
                 .catch(response => callbackEach(err));
