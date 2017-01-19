@@ -1,0 +1,25 @@
+{
+  "feServer": [
+    { "name": "novafe01gm", "IDC": "gm" },
+    { "name": "novafe02gm", "IDC": "gm" },
+    { "name": "novafe03gm", "IDC": "gm" },
+    { "name": "novafe04gm", "IDC": "gm" },
+    { "name": "novafe05gm", "IDC": "gm" },
+    { "name": "novafe06gm", "IDC": "gm" },
+    { "name": "novafe01gh", "IDC": "gh" },
+    { "name": "novafe02gh", "IDC": "gh" },
+    { "name": "novafe03gh", "IDC": "gh" },
+    { "name": "novafe04gh", "IDC": "gh" },
+    { "name": "novafe05gh", "IDC": "gh" },
+    { "name": "novafe06gh", "IDC": "gh" }
+  ],
+  "proxyServer": [
+    { "proxyName": "novafeprx01gm", "IDC": "gm" },
+    { "proxyName": "novafeprx02gm", "IDC": "gm" },
+    { "proxyName": "novafeprx03gm", "IDC": "gm" },
+    { "proxyName": "novafeprx01gh", "IDC": "gh" },
+    { "proxyName": "novafeprx02gh", "IDC": "gh" },
+    { "proxyName": "novafeprx03gh", "IDC": "gh" }
+  ],
+  "service": ["PC_KR", "PC_KR_VT", "PC_GLOBAL", "MOBILE_KR", "MOBILE_KR_VT", "MOBILE_GLOBAL"]
+}

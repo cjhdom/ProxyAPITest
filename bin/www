@@ -1,7 +1,4 @@
 #!/usr/bin/env node
-var dbtest = require('../tests/dbtest');
-var fs = require('fs');
-const path = require('path');
 /**
  * Module dependencies.
  */
@@ -22,76 +19,21 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+//server.listen(port);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
-var database = require('../services/database');
-var MongoClient = require('mongodb').MongoClient;
 
-MongoClient.connect(getUrl(), (err, db) => {
-  if (!err) {
-    database.init(db);
-    server.listen(port);
-  } else {
-    console.log(err);
-  }
-});
 
 server.on('error', onError);
 server.on('listening', onListening);
-
-function getUrl() {
-  //return 'mongodb://localhost:27017/proxyAPI';
-  const env = process.env.NOVA_ENV;
-  switch (env) {
-    case 'local':
-      return 'mongodb://192.168.56.102:27017/proxyAPI';
-    case 'dev':
-      return 'mongodb://localhost:27017/proxyAPI';
-    case 'real':
-      return 'mongodb://localhost:27017/proxyAPI';
-    case 'home':
-      return 'mongodb://52.231.38.182:27017/proxyAPI';
-    default:
-      console.log('huh');
-      return '';
-  }
-}
-
-var Mngr = require('../tests/mngrtest');
-var serverStatus = require('../models/serverStatus');
-var serverList = require('../models/serverList');
-var database = require('../services/database');
 
 /**
  * on server init, inject sample db data
  */
 server.on('listening', () => {
-  fs.readFile(path.normalize('./sample_data/sample.json'), 'utf-8', (err, data) => {
-    if (err) {
-      console.log('error reading file ' + console.log(err));
-      server.close();
-    } else {
-      console.log('successfully loaded dbtest! good to go~');
-      dbtest.serverInit(JSON.parse(data));
-      serverList.initServerList((JSON.parse(data)).servers);
 
-      var mngrs = [];
-      database.fetchAll()
-        .then(servers => {
-          servers.forEach(server => {
-            //var test = require('../tests/mngrtest')(server);
-            var test = new Mngr(server);
-            //console.log('pushing ' + test.getName());
-            mngrs.push(test);
-          });
-
-          serverStatus.initServerStatus(dbtest, mngrs);
-        })
-        .catch(res => console.log(JSON.stringify(res)));
-    }
-  });
 });
 
 /**
@@ -151,5 +93,5 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  console.log('Listening on ' + bind);
 }
