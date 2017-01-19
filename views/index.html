@@ -38,6 +38,26 @@
 </form>
 
 <script>
+  var test = ['hi', 'my', 'name', 'is', 'jihwchoi'];
+
+    $.ajax({
+      url: 'http://52.231.38.182:8998/setWeightList',
+      method: 'put',
+      data: {
+        servers: test
+      },
+      dataType: 'json'
+    })
+      .then(function (response) {
+        console.log(JSON.stringify(response));
+      })
+      .catch(function (response) {
+        console.log('err ' + JSON.stringify(response));
+      });
+
+
+
+
   var isAjax = false;
   var isMultiProxy = null;
   var serverList = <%- servers %>;

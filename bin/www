@@ -19,7 +19,7 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-//server.listen(port);
+server.listen(port);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -28,6 +28,9 @@ var server = http.createServer(app);
 
 server.on('error', onError);
 server.on('listening', onListening);
+/*
+var init = require('../services/init');
+init.init();*/
 
 /**
  * on server init, inject sample db data

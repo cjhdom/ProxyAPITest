@@ -14,8 +14,8 @@ const rootPath = path.normalize(__dirname + '/..');
 
 exports = module.exports = {};
 
-exports.init = () => {
-  fs.readFile(path.normalize('./sample_data/sample.json'), 'utf-8', (err, data) => {
+exports.init = (callback1) => {
+  /*fs.readFile(path.normalize('./sample_data/sample.json'), 'utf-8', (err, data) => {
     if (err) {
       console.log('error reading file ' + console.log(err));
       server.close();
@@ -37,6 +37,13 @@ exports.init = () => {
           serverStatus.initServerStatus(dbtest, mngrs);
         })
         .catch(res => console.log(JSON.stringify(res)));
+    }
+  });*/
+  fs.readFile(path.join(rootPath, 'sample_data/sample.json'), 'utf-8', (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+      callback1(null, JSON.parse(data));
     }
   });
 };

@@ -30,6 +30,33 @@ router.get('/2', function(req, res, next) {
   });
 });
 
+router.get('/3', function(req, res, next) {
+  res.render('index.html', {
+    servers: []
+  });
+});
+
+router.get('/send', (req, res, next) => {
+  var init = require('../services/init');
+  var request = require('request');
+  console.log('hello');
+  init.init((err, data) => {
+    if (err) {
+      return res.json(err);
+    } else {
+      //console.log(data.servers[0].servers);
+      request.put({url: 'http://52.231.38.182:8998/setWeightList', form: {servers: data.servers[0].servers}}, (error, response, body) => {
+        if (error) {
+          return res.json(error);
+        } else {
+          console.log(response);
+          return res.json(response);
+        }
+      });
+    }
+  });
+});
+
 
 router.get('/weight', (req, res, next) => {
 
