@@ -10,11 +10,12 @@ var serverList = require('../models/serverList');
 var database = require('../services/database');
 
 const path = require('path');
-const rootPath = path.normalize(__dirname + '/..');
+const rootPath = require('../config/config').rootPath;
 
 exports = module.exports = {};
 
 exports.init = (callback1) => {
+
   /*fs.readFile(path.normalize('./sample_data/sample.json'), 'utf-8', (err, data) => {
     if (err) {
       console.log('error reading file ' + console.log(err));

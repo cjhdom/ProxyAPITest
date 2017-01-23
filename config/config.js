@@ -4,6 +4,6 @@
 const path = require('path');
 
 exports = module.exports = {
-  rootPath: path.normalize(__dirname + '/..')
-  port:
+  rootPath: path.normalize(__dirname + '/..'),
+  port: 8989
 };

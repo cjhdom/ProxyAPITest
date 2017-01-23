@@ -39,18 +39,26 @@ router.get('/3', function(req, res, next) {
 router.get('/send', (req, res, next) => {
   var init = require('../services/init');
   var request = require('request');
-  console.log('hello');
+
   init.init((err, data) => {
     if (err) {
       return res.json(err);
     } else {
-      //console.log(data.servers[0].servers);
-      request.put({url: 'http://52.231.38.182:8998/setWeightList', form: {servers: data.servers[0].servers}}, (error, response, body) => {
-        if (error) {
-          return res.json(error);
+      console.log(data.servers[0].servers);
+      request({
+        uri: 'http://localhost:8998/setWeightList',
+        method: 'put',
+        body: {
+          servers: data.servers[0].servers
+        },
+        json: true
+      }, (err, response, body) => {
+        if (err) {
+          console.log(JSON.stringify(err));
+          res.json(err);
         } else {
-          console.log(response);
-          return res.json(response);
+          console.log(JSON.stringify(response));
+          res.json(response);
         }
       });
     }
@@ -117,6 +125,7 @@ router.get('/multiproxy', (req, res, next) => {
     if (err) {
       next(err);
     } else {
+      console.log('done');
       res.json(response);
     }
   });
@@ -136,40 +145,19 @@ router.put('/multiproxy', (req, res, next) => {
 
 router.get('/reset', (req, res, next) => {
   var db = require('../services/database');
-  var fs = require('fs');
-  var path = require('path');
-  var Mngr = require('../tests/mngrtest');
-
-  fs.readFile(path.normalize('./sample_data/sample.json'), 'utf-8', (err, data) => {
+  db.resetDb((err, result) => {
     if (err) {
-      callback(err);
+      console.log('error');
+      console.log(err);
+      res.json(err);
     } else {
-      db.resetDb(data, (err, response) => {
-        if (err) {
-          next(err);
-        } else {
-          var mngrs = [];
-          db.fetchAll()
-            .then(servers => {
-              servers.forEach(server => {
-                //var test = require('../tests/mngrtest')(server);
-                var test = new Mngr(server);
-                //console.log('pushing ' + test.getName());
-                mngrs.push(test);
-              });
-
-              serverStatus.initServerStatus(dbtest, mngrs);
-              res.send(response);
-            })
-            .catch(res => console.log(JSON.stringify(res)));
-
-
-        }
-      });
-
-
+      console.log('success');
+      console.log(result);
+      res.json(result);
     }
   });
+
+
 });
 
 module.exports = router;

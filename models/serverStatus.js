@@ -7,7 +7,7 @@ const serverList = require('./serverList');
 
 module.exports = exports = {};
 
-var db = null;
+var db = require('../services/database');
 var mngrs = [];
 
 exports.initServerStatus = (dbconn, mngrsList) => {
