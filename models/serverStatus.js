@@ -28,15 +28,10 @@ exports.getServerWeightAll = (callback) => {
         .catch(response => callbackAuto(response));
     },
     mngrWeight: (callbackAuto) => {
-      return callbackAuto(null, {});
       var result = mngrs.map(mngr => {
         mngr.getWeightAll()
-          .then((response) => {
-            return callbackAuto(null, response);
-          })
-          .catch((response) => {
-            return callbackAuto(new Error('error in getServerWeightAll in mngrWeight'));
-          });
+          .then(response => response)
+          .catch(response => callbackAuto(new Error('error in getServerWeightAll in mngrWeight ' + response)));
       });
     }
   }, (err, res) => {
@@ -47,17 +42,8 @@ exports.getServerWeightAll = (callback) => {
       return callback(err)
     } else {
       // @todo db와 싱크 맞춰주는 작업이 필요 할듯...
-      /*var dbWeight = res.dbWeight.weight;
-       var mngrWeight = res.mngrWeight.weight;
 
-       //DB와 실제 값이 다르면 실제 값을 리턴해주고 DB 값을 실제값으로 업데이트 해준다
-       if (dbWeight !== mngrWeight) {
-       db.updateServersInProxies(prxName, serverName. weight)
-       .then(() => false)
-       .catch(() => false);
-       }*/
-
-      return callback(null, res.dbWeight);
+      return callback(null, res.mngrWeight);
     }
   });
 };

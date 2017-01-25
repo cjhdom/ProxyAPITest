@@ -40,17 +40,17 @@ exports.fetchAll = () => {
     .catch(result => Promise.reject(result));
 };
 
-exports.updateServersInProxies = (prxNameList, serverNameList, weight) => {
+exports.updateAllServices = (prxNameList, serverNameList, weight) => {
   return pool.query('update weight set weight = ? where proxyServerName in (?) AND serverName in (?)', [
     weight, prxNameList, serverNameList
   ]).then(() => Promise.resolve({result: '000'}))
     .catch(result => Promise.reject(result));
 };
 
-exports.updateServerinProxies = (prxNameList, serverName, serviceName, weight) => {
+exports.updateSingleService = (prxNameList, serverNameList, serviceName, weight) => {
   return pool.query('update weight set weight = ? where proxyServerName in (?) AND ' +
-    'serverName = ? AND serviceName = ?', [
-    weight, prxNameList, serverName, serverName
+    'serverName = (?) AND serviceName = ?', [
+    weight, prxNameList, serverNameList, serviceName
   ]).then(() => Promise.resolve({result: '000'}))
     .catch(result => Promise.reject(result));
 };
