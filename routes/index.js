@@ -5,7 +5,9 @@ const serverStatus = require('../models/serverStatus');
 const serverList = require('../models/serverList');
 const toBoolean = require('to-boolean');
 
-/* GET home page. */
+/////////////////////////////////////////////////////////////
+/*                   webpages start                        */
+/////////////////////////////////////////////////////////////
 router.get('/', function(req, res, next) {
   serverList.getServersList((err, result) => {
     if (err) {
@@ -36,38 +38,14 @@ router.get('/3', function(req, res, next) {
   });
 });
 
-router.get('/send', (req, res, next) => {
-  var init = require('../services/init');
-  var request = require('request');
+/////////////////////////////////////////////////////////////
+/*                   weight control                        */
+/////////////////////////////////////////////////////////////
 
-  init.init((err, data) => {
-    if (err) {
-      return res.json(err);
-    } else {
-      console.log(data.servers[0].servers);
-      request({
-        uri: 'http://localhost:8998/setWeightList',
-        method: 'put',
-        body: {
-          servers: data.servers[0].servers
-        },
-        json: true
-      }, (err, response, body) => {
-        if (err) {
-          console.log(JSON.stringify(err));
-          res.json(err);
-        } else {
-          console.log(JSON.stringify(response));
-          res.json(response);
-        }
-      });
-    }
-  });
-});
-
-
+/**
+ * 전체 서버 weight 조회
+ */
 router.get('/weight', (req, res, next) => {
-
   serverStatus.getServerWeightAll((err, response) => {
     if (err) {
       next(err);
@@ -77,8 +55,12 @@ router.get('/weight', (req, res, next) => {
   });
 });
 
+/**
+ * 모든 프록시의 특정 서버의 서비스 제어
+ */
 router.put('/weight', (req, res, next) => {
   const serverName = req.body.serverName;
+  const serviceName = req.body.serviceName;
 
   serverStatus.setServerWeight(serverName, (err, response) => {
     if (err) {
@@ -89,6 +71,9 @@ router.put('/weight', (req, res, next) => {
   });
 });
 
+/**
+ * 특정 서버의 서비스 값 가져오기
+ */
 router.get('weight/:prxName/:serverName/', (req, res, next) => {
   const prxName = req.params.prxName;
   const serverName = req.params.serverName;
@@ -120,12 +105,15 @@ router.put('/weight/:weight/:prxName/:serverName', (req, res, next) => {
   });
 });
 
+/////////////////////////////////////////////////////////////
+/*                   multiproxy control                    */
+/////////////////////////////////////////////////////////////
+
 router.get('/multiproxy', (req, res, next) => {
   serverStatus.getIsMultiProxy((err, response) => {
     if (err) {
       next(err);
     } else {
-      console.log('done');
       res.json(response);
     }
   });
@@ -143,6 +131,9 @@ router.put('/multiproxy', (req, res, next) => {
   });
 });
 
+/////////////////////////////////////////////////////////////
+/*                      re-setter                          */
+/////////////////////////////////////////////////////////////
 router.get('/reset', (req, res, next) => {
   var db = require('../services/database');
   db.resetDb((err, result) => {
@@ -156,8 +147,6 @@ router.get('/reset', (req, res, next) => {
       res.json(result);
     }
   });
-
-
 });
 
 module.exports = router;
