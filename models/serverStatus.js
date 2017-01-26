@@ -28,10 +28,17 @@ exports.getServerWeightAll = (callback) => {
         .catch(response => callbackAuto(response));
     },
     mngrWeight: (callbackAuto) => {
-      var result = mngrs.map(mngr => {
-        mngr.getWeightAll()
-          .then(response => response)
-          .catch(response => callbackAuto(new Error('error in getServerWeightAll in mngrWeight ' + response)));
+      var result = [];
+      async.each(mngrs, (mngr, cbEach) => {
+        return mngr.getWeightAll()
+          .then(response => result.push(response))
+          .catch(response => cbEach(new Error('error in getServerWeightAll in mngrWeight ' + response)));
+      }, (err) => {
+        if (err) {
+          callbackAuto(err);
+        } else {
+          callbackAuto(null, result);
+        }
       });
     }
   }, (err, res) => {
