@@ -5,5 +5,6 @@ const path = require('path');
 
 exports = module.exports = {
   rootPath: path.normalize(__dirname + '/..'),
-  port: 8989
+  port: 8989,
+  env: process.env.NOVA_ENV
 };
