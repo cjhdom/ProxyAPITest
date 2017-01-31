@@ -31,7 +31,10 @@ exports.getServerWeightAll = (callback) => {
       var result = [];
       async.each(mngrs, (mngr, cbEach) => {
         return mngr.getWeightAll()
-          .then(response => result.push(response))
+          .then(response => {
+            result.push(response);
+            return cbEach();
+          })
           .catch(response => cbEach(new Error('error in getServerWeightAll in mngrWeight ' + response)));
       }, (err) => {
         if (err) {

@@ -61,12 +61,14 @@
   }
 
   function reloadTable() {
+    console.log('??');
     $.ajax({
         url: 'http://localhost:8989/weight'
       })
       .then(function (data) {
         if (data) {
-// 테이블 리셋
+          console.log(JSON.stringify(data));
+          // 테이블 리셋
           $("#tableHeading").html('<th>control</th>');
           $("#tableBody").html('');
           var table = [];
@@ -147,7 +149,7 @@
         onOff = true;
         $("#btnOverIDC").attr('class', 'btn btn-success');
       }
-      
+
       $.ajax({
           url: 'http://localhost:8989/multiproxy/',
           method: 'PUT',

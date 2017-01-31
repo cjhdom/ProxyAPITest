@@ -60,8 +60,10 @@ router.get('/3', function(req, res, next) {
  * 전체 서버 weight 조회
  */
 router.get('/weight', (req, res, next) => {
+  console.log('weight...');
   serverStatus.getServerWeightAll((err, response) => {
     if (err) {
+      console.log(err);
       next(err);
     } else {
       res.json(response);
