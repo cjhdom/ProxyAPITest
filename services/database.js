@@ -61,7 +61,8 @@ exports.updateSingleService = (prxNameList, serverNameList, serviceName, weight)
  */
 exports.setMultiProxy = (onOff) => {
   return exports.getMultiProxy().then(result => {
-    if (result.configValue && toBoolean(result.configValue) === onOff) {
+    console.log(JSON.stringify(result));
+    if (result && toBoolean(result) === onOff) {
       return Promise.resolve({
         doNothing: true
       });
@@ -75,7 +76,19 @@ exports.setMultiProxy = (onOff) => {
 
 exports.getMultiProxy = () => {
   return pool.query('select configValue from apiConfig where fieldName = \'isOverIDC\'')
-    .then(([rows]) => Promise.resolve(rows[0]))
+    .then(([rows]) => Promise.resolve(rows[0].configValue))
+    .catch(result => Promise.reject(result));
+};
+
+exports.fetchProxyServerList = () => {
+  return pool.query('select * from proxyServer')
+    .then(([rows]) => Promise.resolve(rows))
+    .catch(result => Promise.reject(result));
+};
+
+exports.fetchServerList = () => {
+  return pool.query('select * from feServer')
+    .then(([rows]) => Promise.resolve(rows))
     .catch(result => Promise.reject(result));
 };
 

@@ -15,41 +15,46 @@ const rootPath = require('../config/config').rootPath;
 exports = module.exports = {};
 
 exports.init = (callback1) => {
+  database.fetchAll()
+    .then(rows => {
+      database.fetchProxyServerList()
+        .then(res => {
+          var mngrs = [];
 
-  /*fs.readFile(path.normalize('./sample_data/sample.json'), 'utf-8', (err, data) => {
-    if (err) {
-      console.log('error reading file ' + console.log(err));
-      server.close();
-    } else {
-      console.log('successfully loaded dbtest! good to go~');
-      dbtest.serverInit(JSON.parse(data));
-      serverList.initServerList((JSON.parse(data)).servers);
+          res.forEach((proxyServer) => {
+            var servers = rows.filter((row) =>
+              row.proxyServerName === proxyServer.proxyServerName
+            );
 
-      var mngrs = [];
-      database.fetchAll()
-        .then(servers => {
-          servers.forEach(server => {
-            //var test = require('../tests/mngrtest')(server);
-            var test = new Mngr(server);
-            //console.log('pushing ' + test.getName());
-            mngrs.push(test);
+            mngrs.push(new Mngr(servers));
           });
 
-          serverStatus.initServerStatus(dbtest, mngrs);
+          serverStatus.initServerStatus(null, mngrs);
         })
-        .catch(res => console.log(JSON.stringify(res)));
-    }
-  });*/
-  fs.readFile(path.join(rootPath, 'sample_data/sample.json'), 'utf-8', (err, data) => {
-    if (err) {
+        .catch(err => {
+          return Promise.reject(err);
+        });
+    })
+    .catch(err => {
       console.log(err);
-    } else {
-      callback1(null, JSON.parse(data));
-    }
-  });
+    });
+
+  var proxyServers = null;
+  var servers = null;
+
+  database.fetchProxyServerList()
+    .then(res => {
+      proxyServers = res;
+      return database.fetchServerList();
+    })
+    .then(res => {
+      servers = res;
+      serverList.initServerList(proxyServers, servers);
+    })
+    .catch(res => {
+      console.log(res);
+    });
 };
-
-
 
 function getUrl() {
   //return 'mongodb://localhost:27017/proxyAPI';

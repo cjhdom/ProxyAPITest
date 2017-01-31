@@ -61,7 +61,7 @@ exports.getServerWeightAll = (callback) => {
  * @param serverName
  * @param callback
  */
-exports.setServerWeight = (serverName,  callback) => {
+exports.setServerWeight = (serverName,  serviceName, callback) => {
   async.auto({
     isMultiProxy: (callbackAsync) => {
       db.getMultiProxy()
@@ -86,7 +86,7 @@ exports.setServerWeight = (serverName,  callback) => {
             if (!results.isMultiProxy && proxyIDC !== serverIDC) {
               return callbackEach();
             } else {
-              mngr.getWeight(serverName)
+              mngr.getWeight(serverName, serviceName)
                 .then(server => {
                   result.push(server);
                   return callbackEach();
@@ -160,11 +160,8 @@ exports.setServerWeight = (serverName,  callback) => {
             if (!results.isMultiProxy && proxyIDC !== serverIDC) {
               return callbackEach();
             } else {
-              mngr.setWeight([serverName], results.weight)
-                .then(server => {
-                  //result.push(server);
-                  return callbackEach();
-                })
+              mngr.setWeight(serverName, serviceName, results.weight)
+                .then(server => callbackEach())
                 .catch(response => callbackEach(err));
             }
           }, (err) => {
@@ -268,7 +265,7 @@ exports.setMultiProxy = (onOff, callback) => {
               var serverNameList = targetServers.map(server => server.name);
               serverNameList = _.difference(serverNameList, results.skipServers);
 
-              db.updateServersInProxies(mngr.name, serverNameList, weight)
+              db.updateAllServices(mngr.name, serverNameList, weight)
                 .then(() => callbackEach())
                 .catch((res) => callbackEach(res));
             }, (err) => {
@@ -344,7 +341,7 @@ exports.setSingleServerWeight = (prxName, serverName, weight, callback) => {
       if (isMultiProxy) {
 
       } else {
-        db.updateServersInProxies(prxName, serverName, weight)
+        db.updateAllServices(prxName, serverName, weight)
           .then(response => callback(null, response))
           .catch(response => callback(response));
       }
@@ -406,7 +403,7 @@ exports.getServerWeight = (prxName, serverName, callback) => {
 
       //DB와 실제 값이 다르면 실제 값을 리턴해주고 DB 값을 실제값으로 업데이트 해준다
       if (dbWeight !== mngrWeight) {
-        db.updateServersInProxies(prxName, serverName. weight)
+        db.updateAllServices(prxName, serverName. weight)
           .then(() => false)
           .catch(() => false);
       }

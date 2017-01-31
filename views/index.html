@@ -38,29 +38,10 @@
 </form>
 
 <script>
-  var test = ['hi', 'my', 'name', 'is', 'jihwchoi'];
-
-    $.ajax({
-      url: 'http://52.231.38.182:8998/setWeightList',
-      method: 'put',
-      data: {
-        servers: test
-      },
-      dataType: 'json'
-    })
-      .then(function (response) {
-        console.log(JSON.stringify(response));
-      })
-      .catch(function (response) {
-        console.log('err ' + JSON.stringify(response));
-      });
-
-
-
-
   var isAjax = false;
   var isMultiProxy = null;
   var serverList = <%- servers %>;
+  var proxyServerList = <%- proxyServers %>;
 
   function setWeight(serverName) {
     $.ajax({
@@ -141,6 +122,7 @@
         method: 'GET'
       })
       .then(function (response) {
+        console.log('isMultiProxy ' + response);
         isMultiProxy = response;
         if (isMultiProxy) {
           $("#btnOverIDC").attr('class', 'btn btn-success');
@@ -165,6 +147,7 @@
         onOff = true;
         $("#btnOverIDC").attr('class', 'btn btn-success');
       }
+      
       $.ajax({
           url: 'http://localhost:8989/multiproxy/',
           method: 'PUT',

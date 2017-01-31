@@ -13,8 +13,15 @@ router.get('/', function(req, res, next) {
     if (err) {
       next(err);
     } else {
-      res.render('index2.html', {
-        servers: JSON.stringify(result.map((server) => server.name))
+      serverList.getProxyServerList((err2, result2) => {
+        if (err2) {
+          next(err);
+        } else {
+          res.render('index.html', {
+            servers: JSON.stringify(result.map((server) => server.name)),
+            proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name))
+          });
+        }
       });
     }
   });
@@ -25,8 +32,15 @@ router.get('/2', function(req, res, next) {
     if (err) {
       next(err);
     } else {
-      res.render('index.html', {
-        servers: JSON.stringify(result.map((server) => server.name))
+      serverList.getProxyServerList((err2, result2) => {
+        if (err2) {
+          next(err);
+        } else {
+          res.render('index2.html', {
+            servers: JSON.stringify(result.map((server) => server.name)),
+            proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name))
+          });
+        }
       });
     }
   });

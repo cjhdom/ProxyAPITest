@@ -9,18 +9,18 @@ module.exports = exports = {};
 var servers = null;
 var proxyServers = null;
 
-exports.initServerList = (mngrsList) => {
-  servers = mngrsList[0].servers.map((server) => {
+exports.initServerList = (prxSvrs, Svrs) => {
+  servers = Svrs.map(svr => {
     return {
-      name: server.name,
-        IDC: server.IDC
+      IDC: svr.serverIDC,
+      name: svr.serverName
     };
   });
 
-  proxyServers = mngrsList.map((mngr) => {
+  proxyServers = prxSvrs.map(prxSvr => {
     return {
-      name: mngr.name,
-      IDC: mngr.IDC
+      IDC: prxSvr.proxyServerIDC,
+      name: prxSvr.proxyServerName
     };
   });
 };

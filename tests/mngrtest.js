@@ -6,18 +6,22 @@ var Promise = require('bluebird');
 var async = require('async');
 
 function MngrTest(data) {
-  this.serverList = data.servers;
-  this.name = data.name;
-  this.IDC = data.IDC;
+  this.serverList = data;
+  this.name = data[0].proxyServerName;
+  this.IDC = data[0].proxyServerIDC;
 }
 
 MngrTest.prototype.getName = function () {
   return this.name;
 };
 
-MngrTest.prototype.getWeight = function (serverName) {
+MngrTest.prototype.getWeight = function (serverName, serviceName) {
   return new Promise((resolve, reject) => {
-    var server = _.find(this.serverList, { name: serverName });
+    var server = _.find(this.serverList, {
+      serverName: serverName,
+      serviceName: serviceName
+    });
+
     if (typeof server != 'undefined') {
       return resolve(server);
     } else {
@@ -36,11 +40,10 @@ MngrTest.prototype.getWeightAll = function () {
   });
 };
 
-MngrTest.prototype.setWeight = function (targetServerList, weight) {
-  console.log(' moi ' + JSON.stringify(targetServerList));
+MngrTest.prototype.setWeightAll = function (targetServerList, weight) {
   return new Promise((resolve, reject) => {
     async.each(targetServerList, (targetServer, callbackEach) => {
-      var serverIdx = this.serverList.findIndex(server => server.name === targetServer);
+      var serverIdx = this.serverList.findIndex(server => server.serverName === targetServer);
 
       if (serverIdx === -1) {
         callbackEach(new Error('no such server'));
@@ -59,6 +62,20 @@ MngrTest.prototype.setWeight = function (targetServerList, weight) {
   });
 };
 
+MngrTest.prototype.setWeight = function (serverName, serviceName, weight) {
+  return new Promise((resolve, reject) => {
+    var serverIdx = this.serverList.findIndex(server => server.name === serverName &&
+      server.serviceName === serviceName);
+
+    if (serverIdx === -1) {
+      return reject(new Error('no such server'));
+    } else {
+      console.log('in mngr set ' + serverName + ' and ' + serviceName + ' to ' + weight);
+      this.serverList[serverIdx].weight = weight;
+      return resolve();
+    }
+  });
+};
 
 module.exports = exports = MngrTest;
 
