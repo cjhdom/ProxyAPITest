@@ -2,21 +2,29 @@
  * Created by piru on 2017. 1. 20..
  */
 var mysql = require('mysql2');
+var Promise = require('bluebird');
 
-const config = require('../services/config');
+const config = require('../config/config');
 
-var connection = mysql.createConnection(getConnectionOption(config.env));
+//var connection = mysql.createConnection(getConnectionOption(config.env));
 
-
-
-
-function getConnectionOption(env) {
+exports = module.exports = function getConnectionOption(config.env) {
   switch (env) {
     case 'home': return {
-      host: '52.231.38.182:3306',
+      Promise: Promise,
+      host: '52.231.38.182',
+      port: '3306',
       user: 'root',
       password: 'ebayescrow',
       database: 'proxyAPI'
-    }
+    };
+    case 'local': return {
+      Promise: Promise,
+      host: '192.168.56.102',
+      port: '3306',
+      user: 'root',
+      password: 'piru',
+      database: 'proxyAPI'
+    };
   }
-}
+};

@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
         } else {
           res.render('index.html', {
             servers: JSON.stringify(result.map((server) => server.name)),
-            proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name))
+            proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name)),
           });
         }
       });

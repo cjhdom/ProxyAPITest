@@ -14,6 +14,8 @@
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
+  <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+
 
 </head>
 <body>
@@ -61,7 +63,6 @@
   }
 
   function reloadTable() {
-    console.log('??');
     $.ajax({
         url: 'http://localhost:8989/weight'
       })
@@ -74,11 +75,17 @@
           var table = [];
 
           //테이블 헤더 생성
-          data.forEach(function (proxyServer, outerIdx) {
+          proxyServerList.forEach(function (proxyServer, outerIdx) {
             $("#tableHeading").append($("<th></th>").html(proxyServer.name));
             table[outerIdx] = [];
-            proxyServer.servers.forEach(function (server) {
-              table[outerIdx].push(server.name + ':' + server.weight);
+
+            serverList = _.chain(serverList)
+              .sortBy(['proxyServerNO', 'serverNO', 'serviceNO'])
+              .filter({ proxyServerName: proxyServer.name })
+              .value();
+
+            serverList.forEach(function (server) {
+              table[outerIdx].push(server.serverName + ',' + server.serviceName + ':' + server.weight);
             });
           });
 

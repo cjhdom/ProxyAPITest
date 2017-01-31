@@ -1,18 +1,14 @@
 /**
  * Created by jihwchoi on 2017-01-04.
  */
+
 var mysql = require('mysql2/promise');
 var Promise = require('bluebird');
 var async = require('async');
 var toBoolean = require('to-boolean');
-var pool = mysql.createPool({
-  Promise: Promise,
-  host: '192.168.56.102',
-  port: '3306',
-  user: 'root',
-  password: 'piru',
-  database: 'proxyAPI'
-});
+var pool = mysql.createPool(getConnectionOption(require('../config/config').env));
+
+
 
 module.exports = exports = {};
 
@@ -105,3 +101,24 @@ exports.resetDb = (callback) => {
     return callback(null, result);
   })
 };
+
+function getConnectionOption(env) {
+  switch (env) {
+    case 'home': return {
+      Promise: Promise,
+      host: '52.231.38.182',
+      port: '3306',
+      user: 'root',
+      password: 'ebayescrow',
+      database: 'proxyAPI'
+    };
+    case 'local': return {
+      Promise: Promise,
+      host: '192.168.56.102',
+      port: '3306',
+      user: 'root',
+      password: 'piru',
+      database: 'proxyAPI'
+    };
+  }
+}

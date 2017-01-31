@@ -19,6 +19,7 @@ exports.init = (callback1) => {
     .then(rows => {
       database.fetchProxyServerList()
         .then(res => {
+          console.log(JSON.stringify(res));
           var mngrs = [];
 
           res.forEach((proxyServer) => {
@@ -57,7 +58,6 @@ exports.init = (callback1) => {
 };
 
 function getUrl() {
-  //return 'mongodb://localhost:27017/proxyAPI';
   const env = process.env.NOVA_ENV;
   switch (env) {
     case 'local':
@@ -67,7 +67,7 @@ function getUrl() {
     case 'real':
       return 'mongodb://localhost:27017/proxyAPI';
     case 'home':
-      return 'mongodb://52.231.38.182:27017/proxyAPI';
+      return '52.231.38.182:3306';
     default:
       return '';
   }
