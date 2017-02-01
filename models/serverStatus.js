@@ -40,7 +40,7 @@ exports.getServerWeightAll = (callback) => {
         if (err) {
           callbackAuto(err);
         } else {
-          callbackAuto(null, result);
+          callbackAuto(null, _.flatten(result));
         }
       });
     }

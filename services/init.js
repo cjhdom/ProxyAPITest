@@ -19,7 +19,6 @@ exports.init = (callback1) => {
     .then(rows => {
       database.fetchProxyServerList()
         .then(res => {
-          console.log(JSON.stringify(res));
           var mngrs = [];
 
           res.forEach((proxyServer) => {

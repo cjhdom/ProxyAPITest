@@ -68,7 +68,7 @@
       })
       .then(function (data) {
         if (data) {
-          console.log(JSON.stringify(data));
+          //console.log(JSON.stringify(data));
           // 테이블 리셋
           $("#tableHeading").html('<th>control</th>');
           $("#tableBody").html('');
@@ -76,12 +76,15 @@
 
           //테이블 헤더 생성
           proxyServerList.forEach(function (proxyServer, outerIdx) {
-            $("#tableHeading").append($("<th></th>").html(proxyServer.name));
+            $("#tableHeading").append($("<th></th>").html(proxyServer));
             table[outerIdx] = [];
 
-            serverList = _.chain(serverList)
+            serverList = _.chain(data)
               .sortBy(['proxyServerNO', 'serverNO', 'serviceNO'])
-              .filter({ proxyServerName: proxyServer.name })
+              .filter(function (row) {
+                //console.log(row);
+                return row.proxyServerName === proxyServer;
+              })
               .value();
 
             serverList.forEach(function (server) {
@@ -94,9 +97,9 @@
             var row = $("<tr></tr>");
 
             // 제어 버튼 생성 시작
-            var button = $("<button>" + serverList[j] + "</button>");
+            var button = $("<button>" + serverList[j].serverName + ',' + serverList[j].serviceName + "</button>");
             button.attr('class', 'btn btn-default btn-xs');
-            button.attr('name', serverList[j]);
+            button.attr('name', serverList[j].serverName);
 
             button.click(function () {
               setWeight(this.name);
