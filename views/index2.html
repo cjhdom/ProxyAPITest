@@ -14,6 +14,7 @@
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
+  <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
 
 </head>
 <body>
@@ -41,13 +42,15 @@
   var isAjax = false;
   var isMultiProxy = null;
   var serverList = <%- servers %>;
+  var proxyServerList = <$- proxyServers %>;
 
-  function setWeight(serverName) {
+  function setWeight(serverName, serviceName) {
     $.ajax({
         url: 'http://localhost:8989/weight',
         method: 'put',
         data: {
-          serverName: serverName
+          serverName: serverName,
+          serviceName: serviceName
         },
         dataType: 'json'
       })
@@ -73,9 +76,19 @@
           $("#tableHeading").append($("<th></th>").html('목동'));
           $("#tableHeading").append($("<th></th>").html('논현'));
           //테이블 헤더 생성
-          data.forEach(function (proxyServer, outerIdx) {
+
+          proxyServerList.forEach(function (proxyServer, outerIdx) {
             table[outerIdx] = [];
-            proxyServer.servers.forEach(function (server) {
+
+            var servers = _.chain(data)
+              .sortBy(['proxyServerNO', 'serverNO', 'serviceNO'])
+              .filter(function (row) {
+                //console.log(row);
+                return row.proxyServerName === proxyServer;
+              })
+              .value();
+
+            servers.forEach(function (server) {
               table[outerIdx].push(server.weight);
             });
           });
@@ -86,11 +99,17 @@
 
             // 제어 버튼 생성 시작
             var button = $("<button>" + serverList[j] + "</button>");
-            button.attr('class', 'btn btn-default ');
-            button.attr('name', serverList[j]);
+            var nameValue = {
+              serverName: serverList[j].serverName,
+              serviceName: serverList[j].serviceName
+            };
+
+            button.attr('class', 'btn btn-default');
+            button.attr('name', JSON.stringify(nameValue));
 
             button.click(function () {
-              setWeight(this.name);
+              var parsedName = JSON.parse(this.name);
+              setWeight(parsedName.serverName, parsedName.serviceName);
             });
             // 제어 버튼 생성 종료
 
