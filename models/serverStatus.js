@@ -86,22 +86,26 @@ exports.setServerWeight = (serverName,  serviceName, callback) => {
             var proxyIDC = mngr.IDC;
             var serverIDC = res.IDC;
 
+            console.log('prxIDC ' + proxyIDC + ', ' + 'serverIDC ' + serverIDC);
+
             if (!results.isMultiProxy && proxyIDC !== serverIDC) {
               return callbackEach();
             } else {
               mngr.getWeight(serverName, serviceName)
                 .then(server => {
                   result.push(server);
-                  return callbackEach();
                 })
-                .catch(response => callbackEach(err));
+                .catch(response => callbackEach(err))
+                .finally(() => callbackEach())
             }
           }
         });
       }, (err) => {
         if (err) {
+          console.log(err);
           return callbackAsync(err);
         } else {
+          console.log(JSON.stringify(result));
           return callbackAsync(null, result);
         }
       });
@@ -140,7 +144,7 @@ exports.setServerWeight = (serverName,  serviceName, callback) => {
                 }
               });
 
-              db.updateServerinProxies(targetProxyServerList, serverName, results.weight)
+              db.updateSingleService(targetProxyServerList, serverName, serviceName, results.weight)
                 .then(response => callbackAsync(null, response))
                 .catch(response => callbackAsync(response));
             }
@@ -226,21 +230,19 @@ exports.setMultiProxy = (onOff, callback) => {
               return callbackAsync();
             }
 
-            var allServersList = [];
-            var result = [];
-
             // 프록시 서버의 서버 리스트들은 2차원 배열이다
             // 요걸 1차원 배열로 flatten
-            results.getMngrs.forEach(prxServer =>
-              allServersList = allServersList.concat(prxServer)
-            );
+            var allServersList = _.flatten(results.getMngrs);
+            var result = [];
+
+            console.log('allServersList ' + JSON.stringify(allServersList));
 
             serverList.getServersList((err, res) => {
               if (err) {
                 callbackAsync(err);
               } else {
                 res.forEach(server => {
-                  var serversToCheck = _.filter(allServersList, {name: server.name});
+                  var serversToCheck = _.filter(allServersList, {serverName: server.name});
                   var getWeight = serversToCheck.every(server =>
                     server.weight === 0
                   );
@@ -262,11 +264,14 @@ exports.setMultiProxy = (onOff, callback) => {
               var proxyIDC = mngr.IDC;
               var weight = onOff ? 1 : 0;
               var targetServers = mngr.serverList.filter(server => {
-                return server.IDC !== proxyIDC;
+                return server.serverIDC !== proxyIDC;
               });
 
-              var serverNameList = targetServers.map(server => server.name);
+              var serverNameList = _.uniq(targetServers.map(server => server.serverName));
               serverNameList = _.difference(serverNameList, results.skipServers);
+
+              console.log('skip servers ' + JSON.stringify(results.skipServers));
+              console.log('serverNameList ' + JSON.stringify(serverNameList));
 
               db.updateAllServices(mngr.name, serverNameList, weight)
                 .then(() => callbackEach())
@@ -284,13 +289,13 @@ exports.setMultiProxy = (onOff, callback) => {
               var proxyIDC = mngr.IDC;
               var weight = onOff ? 1 : 0;
               var targetIDCServers = mngr.serverList.filter(server => {
-                return server.IDC !== proxyIDC;
+                return server.serverIDC !== proxyIDC;
               });
 
-              var serverNameList = targetIDCServers.map(server => server.name);
+              var serverNameList = _.uniq(targetIDCServers.map(server => server.serverName));
               serverNameList = _.difference(serverNameList, results.skipServers);
 
-              mngr.setWeight(serverNameList, weight)
+              mngr.setWeightAll(serverNameList, weight)
                 .then(server => callbackEach())
                 .catch(response => callbackEach(response));
             }, (err) => {

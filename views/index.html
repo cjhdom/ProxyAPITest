@@ -45,12 +45,14 @@
   var serverList = <%- servers %>;
   var proxyServerList = <%- proxyServers %>;
 
-  function setWeight(serverName) {
+  function setWeight(serverName, serviceName) {
+    console.log(serviceName + ' clicked');
     $.ajax({
       url: 'http://localhost:8989/weight',
       method: 'put',
       data: {
-        serverName: serverName
+        serverName: serverName,
+        serviceName: serviceName
       },
       dataType: 'json'
     })
@@ -98,11 +100,17 @@
 
             // 제어 버튼 생성 시작
             var button = $("<button>" + serverList[j].serverName + ',' + serverList[j].serviceName + "</button>");
+            var nameValue = {
+              serverName: serverList[j].serverName,
+              serviceName: serverList[j].serviceName
+            };
+
             button.attr('class', 'btn btn-default btn-xs');
-            button.attr('name', serverList[j].serverName);
+            button.attr('name', JSON.stringify(nameValue));
 
             button.click(function () {
-              setWeight(this.name);
+              var parsedName = JSON.parse(this.name);
+              setWeight(parsedName.serverName, parsedName.serviceName);
             });
             // 제어 버튼 생성 종료
 

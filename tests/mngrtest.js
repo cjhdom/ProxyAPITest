@@ -25,6 +25,7 @@ MngrTest.prototype.getWeight = function (serverName, serviceName) {
     if (typeof server != 'undefined') {
       return resolve(server);
     } else {
+      console.log('rejected!');
       return reject({code: '999', message: 'couldn\'t find the requested server ' + serverName});
     }
   });
@@ -42,19 +43,23 @@ MngrTest.prototype.getWeightAll = function () {
 
 MngrTest.prototype.setWeightAll = function (targetServerList, weight) {
   return new Promise((resolve, reject) => {
+    console.log(JSON.stringify(targetServerList));
     async.each(targetServerList, (targetServer, callbackEach) => {
       var serverIdx = this.serverList.findIndex(server => server.serverName === targetServer);
-
       if (serverIdx === -1) {
         callbackEach(new Error('no such server'));
       } else {
-        console.log('in mngr set ' + targetServer + ' to ' + weight);
-        this.serverList[serverIdx].weight = weight;
+        this.serverList.forEach(server => {
+          if (server.serverName === targetServer) {
+            server.weight = weight;
+          }
+        });
+
         callbackEach();
       }
     }, (err) => {
       if (err) {
-        return reject(new Error('error in setWeight mngrtest'));
+        return reject(err);
       } else {
         return resolve({result: '000'});
       }
@@ -64,10 +69,11 @@ MngrTest.prototype.setWeightAll = function (targetServerList, weight) {
 
 MngrTest.prototype.setWeight = function (serverName, serviceName, weight) {
   return new Promise((resolve, reject) => {
-    var serverIdx = this.serverList.findIndex(server => server.name === serverName &&
+    var serverIdx = this.serverList.findIndex(server => server.serverName === serverName &&
       server.serviceName === serviceName);
 
     if (serverIdx === -1) {
+      console.log(serverName + ',' + serviceName);
       return reject(new Error('no such server'));
     } else {
       console.log('in mngr set ' + serverName + ' and ' + serviceName + ' to ' + weight);

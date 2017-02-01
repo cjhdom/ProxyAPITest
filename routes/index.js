@@ -128,6 +128,7 @@ router.get('/multiproxy', (req, res, next) => {
     if (err) {
       next(err);
     } else {
+      console.log(response);
       res.json(response);
     }
   });
@@ -154,6 +155,7 @@ router.get('/reset', (req, res, next) => {
     if (err) {
       console.log('error');
       console.log(err);
+      require('../services/init').init();
       res.json(err);
     } else {
       console.log('success');

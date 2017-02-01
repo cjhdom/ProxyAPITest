@@ -43,10 +43,10 @@ exports.updateAllServices = (prxNameList, serverNameList, weight) => {
     .catch(result => Promise.reject(result));
 };
 
-exports.updateSingleService = (prxNameList, serverNameList, serviceName, weight) => {
+exports.updateSingleService = (prxNameList, serverName, serviceName, weight) => {
   return pool.query('update weight set weight = ? where proxyServerName in (?) AND ' +
-    'serverName = (?) AND serviceName = ?', [
-    weight, prxNameList, serverNameList, serviceName
+    'serverName = ? AND serviceName = ?', [
+    weight, prxNameList, serverName, serviceName
   ]).then(() => Promise.resolve({result: '000'}))
     .catch(result => Promise.reject(result));
 };
@@ -72,7 +72,7 @@ exports.setMultiProxy = (onOff) => {
 
 exports.getMultiProxy = () => {
   return pool.query('select configValue from apiConfig where fieldName = \'isOverIDC\'')
-    .then(([rows]) => Promise.resolve(rows[0].configValue))
+    .then(([rows]) => Promise.resolve(toBoolean(rows[0].configValue)))
     .catch(result => Promise.reject(result));
 };
 
@@ -93,9 +93,9 @@ exports.fetchServerList = () => {
 //////////////////////////////////////////////////////////////////////////////////////
 exports.resetDb = (callback) => {
   Promise.all([
-    pool.query('update weight set weight = 0').reflect(),
-    pool.query('update apiConfig set configValue = \'false\' where fieldName = \'isOverIDC\'').reflect(),
-    pool.query('update weight set weigh1t = 1 where proxyServerIDC = serverIDC').reflect()
+    pool.query('update weight set weight = 0'),
+    pool.query('update apiConfig set configValue = \'false\' where fieldName = \'isOverIDC\''),
+    pool.query('update weight set weight = 1 where proxyServerIDC = serverIDC')
   ]).then(result => {
     console.log(JSON.stringify(result));
     return callback(null, result);

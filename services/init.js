@@ -14,7 +14,7 @@ const rootPath = require('../config/config').rootPath;
 
 exports = module.exports = {};
 
-exports.init = (callback1) => {
+exports.init = () => {
   database.fetchAll()
     .then(rows => {
       database.fetchProxyServerList()
