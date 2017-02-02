@@ -42,7 +42,7 @@
   var isAjax = false;
   var isMultiProxy = null;
   var serverList = <%- servers %>;
-  var proxyServerList = <$- proxyServers %>;
+  var proxyServerList = <%- proxyServers %>;
 
   function setWeight(serverName, serviceName) {
     $.ajax({
@@ -68,7 +68,7 @@
       })
       .then(function (data) {
         if (data) {
-// 테이블 리셋
+          // 테이블 리셋
           $("#tableHeading").html('<th>control</th>');
           $("#tableBody").html('');
           var table = [];
@@ -80,16 +80,15 @@
           proxyServerList.forEach(function (proxyServer, outerIdx) {
             table[outerIdx] = [];
 
-            var servers = _.chain(data)
+            serverList = _.chain(data)
               .sortBy(['proxyServerNO', 'serverNO', 'serviceNO'])
               .filter(function (row) {
-                //console.log(row);
                 return row.proxyServerName === proxyServer;
               })
               .value();
 
-            servers.forEach(function (server) {
-              table[outerIdx].push(server.weight);
+            serverList.forEach(function (server) {
+              table[outerIdx].push(server.serverName + ',' + server.serviceName + ':' + server.weight);
             });
           });
 
@@ -104,7 +103,7 @@
               serviceName: serverList[j].serviceName
             };
 
-            button.attr('class', 'btn btn-default');
+            button.attr('class', 'btn btn-default btn-xs');
             button.attr('name', JSON.stringify(nameValue));
 
             button.click(function () {
@@ -118,21 +117,21 @@
 
             if (table[0][j] === table[1][j] && table[1][j] === table[2][j] && table[0][j] === 1) {
               var statBtn = $("<button>" + table[0][j] + "</button>");
-              statBtn.attr('class', 'btn btn-success ');
+              statBtn.attr('class', 'btn btn-success btn-xs');
               statBtn.attr('name', serverList[j]);
               var cell = $("<td></td>");
               cell.html(statBtn);
               row.append(cell);
             } else if (table[0][j] === table[1][j] && table[1][j] === table[2][j] && table[0][j] === 0) {
               var statBtn = $("<button>" + table[0][j] + "</button>");
-              statBtn.attr('class', 'btn btn-danger ');
+              statBtn.attr('class', 'btn btn-danger btn-xs');
               statBtn.attr('name', serverList[j]);
               var cell = $("<td></td>");
               cell.html(statBtn);
               row.append(cell);
             } else {
               var statBtn = $("<button>" + table[0][j] + "</button>");
-              statBtn.attr('class', 'btn btn-warning ');
+              statBtn.attr('class', 'btn btn-warning btn-xs');
               statBtn.attr('name', serverList[j]);
               var cell = $("<td></td>");
               cell.html(statBtn);
@@ -141,21 +140,21 @@
 
             if (table[3][j] === table[4][j] && table[4][j] === table[5][j] && table[5][j] === 1) {
               var statBtn = $("<button>" + table[3][j] + "</button>");
-              statBtn.attr('class', 'btn btn-success ');
+              statBtn.attr('class', 'btn btn-success btn-xs');
               statBtn.attr('name', serverList[j]);
               var cell = $("<td></td>");
               cell.html(statBtn);
               row.append(cell);
             } else if (table[3][j] === table[4][j] && table[4][j] === table[5][j] && table[5][j] === 0) {
               var statBtn = $("<button>" + table[3][j] + "</button>");
-              statBtn.attr('class', 'btn btn-danger ');
+              statBtn.attr('class', 'btn btn-danger btn-xs');
               statBtn.attr('name', serverList[j]);
               var cell = $("<td></td>");
               cell.html(statBtn);
               row.append(cell);
             } else {
               var statBtn = $("<button>" + table[3][j] + "</button>");
-              statBtn.attr('class', 'btn btn-warning ');
+              statBtn.attr('class', 'btn btn-warning btn-xs');
               statBtn.attr('name', serverList[j]);
               var cell = $("<td></td>");
               cell.html(statBtn);
