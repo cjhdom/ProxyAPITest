@@ -81,31 +81,19 @@
             $("#tableHeading").append($("<th></th>").html(proxyServer));
             table[outerIdx] = [];
 
-            var temp = _.chain(data)
+            serverList = _.chain(data)
               .sortBy(['proxyServerNO', 'serverNO', 'serviceNO'])
               .filter(function (row) {
-                //console.log(row);
                 return row.proxyServerName === proxyServer;
               })
               .value();
 
-            var realTemp = _.chain(temp)
-              .map(function (temp) {
-                return temp.serverName;
-              })
-              .uniq()
-              .value();
-
-            console.log(realTemp);
-
-            temp.forEach(function (server) {
+            serverList.forEach(function (server) {
               table[outerIdx].push(server.serverName + ',' + server.serviceName + ':' + server.weight);
             });
           });
 
           // 테이블 정보 생성
-          // @todo: 와... 이거 72번 반복 해야하는데 반복 숫자를 잘못생각했네..;;^^*
-          console.log(serverList.length);
           for (var j = 0; j < serverList.length; j++) {
             var row = $("<tr></tr>");
 

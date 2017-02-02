@@ -46,12 +46,6 @@ router.get('/2', function(req, res, next) {
   });
 });
 
-router.get('/3', function(req, res, next) {
-  res.render('index.html', {
-    servers: []
-  });
-});
-
 /////////////////////////////////////////////////////////////
 /*                   weight control                        */
 /////////////////////////////////////////////////////////////
@@ -153,13 +147,9 @@ router.get('/reset', (req, res, next) => {
   var db = require('../services/database');
   db.resetDb((err, result) => {
     if (err) {
-      console.log('error');
-      console.log(err);
-      require('../services/init').init();
-      res.json(err);
+      next(err);
     } else {
-      console.log('success');
-      console.log(result);
+      require('../services/init').init();
       res.json(result);
     }
   });
