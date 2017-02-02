@@ -43,6 +43,20 @@ exports.updateAllServices = (prxNameList, serverNameList, weight) => {
     .catch(result => Promise.reject(result));
 };
 
+exports.updateByNotInWeightNO = (prxName, weightNOList, weight) => {
+  if (weightNOList && weightNOList.length > 0) {
+    return pool.query('update weight set weight = ? where proxyServerName = ? AND weightNO not in (?)', [
+      weight, prxName, weightNOList
+    ]).then(() => Promise.resolve({result: '000'}))
+      .catch(result => Promise.reject(result));
+  } else {
+    return pool.query('update weight set weight = ? where proxyServerName = ?', [
+      weight, prxName
+    ]).then(() => Promise.resolve({result: '000'}))
+      .catch(result => Promise.reject(result));
+  }
+};
+
 exports.updateSingleService = (prxNameList, serverName, serviceName, weight) => {
   return pool.query('update weight set weight = ? where proxyServerName in (?) AND ' +
     'serverName = ? AND serviceName = ?', [
@@ -57,7 +71,6 @@ exports.updateSingleService = (prxNameList, serverName, serviceName, weight) => 
  */
 exports.setMultiProxy = (onOff) => {
   return exports.getMultiProxy().then(result => {
-    console.log(JSON.stringify(result));
     if (result && toBoolean(result) === onOff) {
       return Promise.resolve({
         doNothing: true
@@ -88,6 +101,12 @@ exports.fetchServerList = () => {
     .catch(result => Promise.reject(result));
 };
 
+exports.fetchServiceList = () => {
+  return pool.query('select * from service')
+    .then(([rows]) => Promise.resolve(rows))
+    .catch(result => Promise.reject(result));
+};
+
 //////////////////////////////////////////////////////////////////////////////////////
 ///////////////////// HELPERS ////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +116,6 @@ exports.resetDb = (callback) => {
     pool.query('update apiConfig set configValue = \'false\' where fieldName = \'isOverIDC\''),
     pool.query('update weight set weight = 1 where proxyServerIDC = serverIDC')
   ]).then(result => {
-    console.log(JSON.stringify(result));
     return callback(null, result);
   })
 };

@@ -67,6 +67,7 @@ router.get('/weight', (req, res, next) => {
  * 모든 프록시의 특정 서버의 서비스 제어
  */
 router.put('/weight', (req, res, next) => {
+  console.log('got weight!');
   const serverName = req.body.serverName;
   const serviceName = req.body.serviceName;
 
@@ -122,7 +123,6 @@ router.get('/multiproxy', (req, res, next) => {
     if (err) {
       next(err);
     } else {
-      console.log(response);
       res.json(response);
     }
   });

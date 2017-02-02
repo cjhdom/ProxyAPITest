@@ -8,9 +8,10 @@ module.exports = exports = {};
 
 var servers = null;
 var proxyServers = null;
+var services = null;
 
-exports.initServerList = (prxSvrs, Svrs) => {
-  servers = Svrs.map(svr => {
+exports.initServerList = (prxSvrs, svrs, svcs) => {
+  servers = svrs.map(svr => {
     return {
       IDC: svr.serverIDC,
       name: svr.serverName
@@ -23,6 +24,8 @@ exports.initServerList = (prxSvrs, Svrs) => {
       name: prxSvr.proxyServerName
     };
   });
+
+  services = svcs;
 };
 
 exports.getServersList = (callback) => {
@@ -38,6 +41,14 @@ exports.getProxyServerList = (callback) => {
     callback(new Error('proxy server list not initialized!"'));
   } else {
     callback(null, proxyServers);
+  }
+};
+
+exports.getServiceList = (callback) => {
+  if (!services || services.length === 0) {
+    callback(new Error('services list not initialized!"'));
+  } else {
+    callback(null, services);
   }
 };
 

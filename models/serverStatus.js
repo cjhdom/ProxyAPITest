@@ -86,8 +86,6 @@ exports.setServerWeight = (serverName,  serviceName, callback) => {
             var proxyIDC = mngr.IDC;
             var serverIDC = res.IDC;
 
-            console.log('prxIDC ' + proxyIDC + ', ' + 'serverIDC ' + serverIDC);
-
             if (!results.isMultiProxy && proxyIDC !== serverIDC) {
               return callbackEach();
             } else {
@@ -102,10 +100,8 @@ exports.setServerWeight = (serverName,  serviceName, callback) => {
         });
       }, (err) => {
         if (err) {
-          console.log(err);
           return callbackAsync(err);
         } else {
-          console.log(JSON.stringify(result));
           return callbackAsync(null, result);
         }
       });
@@ -212,9 +208,9 @@ exports.setMultiProxy = (onOff, callback) => {
               mngr.getWeightAll()
                 .then(response => {
                   result.push(response);
-                  callbackEach();
                 })
-                .catch(response => callbackEach(response));
+                .catch(response => callbackEach(response))
+                .finally(callbackEach());
             }, (err) => {
               if (err) {
                 return callbackAsync(err);
@@ -235,26 +231,36 @@ exports.setMultiProxy = (onOff, callback) => {
             var allServersList = _.flatten(results.getMngrs);
             var result = [];
 
-            console.log('allServersList ' + JSON.stringify(allServersList));
-
             serverList.getServersList((err, res) => {
               if (err) {
-                callbackAsync(err);
+                return callbackAsync(err);
               } else {
-                res.forEach(server => {
-                  var serversToCheck = _.filter(allServersList, {serverName: server.name});
-                  var getWeight = serversToCheck.every(server =>
-                    server.weight === 0
-                  );
+                serverList.getServiceList((svcErr, svcRes) => {
+                  if (svcErr) {
+                    return callbackAsync(svcErr);
+                  } else {
+                    svcRes.forEach(service => {
+                      res.forEach(server => {
+                        var serversToCheck = _.filter(allServersList, {
+                          serverName: server.name,
+                          serviceName: service.serviceName
+                        });
 
-                  if (getWeight) {
-                    result.push(server.name);
+                        var getWeight = serversToCheck.every(server =>
+                          server.weight === 0
+                        );
+
+                        if (getWeight) {
+                          result = _.concat(result, serversToCheck);
+                        }
+                      });
+                    });
+
+                    return callbackAsync(null, result);
                   }
                 });
               }
             });
-
-            callbackAsync(null, result);
           }],
           setDb: ['getMngrs', 'skipServers', (results, callbackAuto) => {
             /*
@@ -263,19 +269,18 @@ exports.setMultiProxy = (onOff, callback) => {
             async.each(mngrs, (mngr, callbackEach) => {
               var proxyIDC = mngr.IDC;
               var weight = onOff ? 1 : 0;
-              var targetServers = mngr.serverList.filter(server => {
-                return server.serverIDC !== proxyIDC;
-              });
+              var weightNoList = _.chain(mngr.serverList)
+                .filter(server => server.serverIDC !== mngr.IDC)
+                .difference(results.skipServers)
+                .map(server => server.weightNO)
+                .value();
 
-              var serverNameList = _.uniq(targetServers.map(server => server.serverName));
-              serverNameList = _.difference(serverNameList, results.skipServers);
+              console.log('weightNoList ' + JSON.stringify(weightNoList));
 
-              console.log('skip servers ' + JSON.stringify(results.skipServers));
-              console.log('serverNameList ' + JSON.stringify(serverNameList));
-
-              db.updateAllServices(mngr.name, serverNameList, weight)
-                .then(() => callbackEach())
-                .catch((res) => callbackEach(res));
+              db.updateByNotInWeightNO(mngr.name, weightNoList, weight)
+                .then(() => false)
+                .catch((res) => callbackEach(res))
+                .finally(callbackEach());
             }, (err) => {
               if (err) {
                 callbackAuto(err);
@@ -286,16 +291,13 @@ exports.setMultiProxy = (onOff, callback) => {
           }],
           setMngr: ['skipServers', 'getMngrs', (results, callbackAuto) => {
             async.each(mngrs, (mngr, callbackEach) => {
-              var proxyIDC = mngr.IDC;
               var weight = onOff ? 1 : 0;
-              var targetIDCServers = mngr.serverList.filter(server => {
-                return server.serverIDC !== proxyIDC;
-              });
+              var serverList = _.chain(mngr.serverList)
+                .filter(server => server.serverIDC !== mngr.IDC)
+                .difference(results.skipServers)
+                .value();
 
-              var serverNameList = _.uniq(targetIDCServers.map(server => server.serverName));
-              serverNameList = _.difference(serverNameList, results.skipServers);
-
-              mngr.setWeightAll(serverNameList, weight)
+              mngr.setWeightAll(serverList, weight)
                 .then(server => callbackEach())
                 .catch(response => callbackEach(response));
             }, (err) => {
