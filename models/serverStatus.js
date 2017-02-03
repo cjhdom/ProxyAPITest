@@ -255,6 +255,8 @@ exports.setMultiProxy = (onOff, callback) => {
                         }
                       });
                     });
+                    console.log('skip result');
+                    console.log(JSON.stringify(result));
 
                     return callbackAsync(null, result);
                   }
