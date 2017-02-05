@@ -23,11 +23,13 @@ exports.initServerStatus = (dbconn, mngrsList) => {
 exports.getServerWeightAll = (callback) => {
   async.auto({
     dbWeight: (callbackAuto) => {
+      console.log('dbweight start');
       db.fetchAll()
         .then(response => callbackAuto(null, response))
         .catch(response => callbackAuto(response));
     },
     mngrWeight: (callbackAuto) => {
+      console.log('mngrWeight start');
       var result = [];
       async.each(mngrs, (mngr, cbEach) => {
         return mngr.getWeightAll()
@@ -92,9 +94,9 @@ exports.setServerWeight = (serverName,  serviceName, callback) => {
               mngr.getWeight(serverName, serviceName)
                 .then(server => {
                   result.push(server);
+                  callbackEach();
                 })
-                .catch(response => callbackEach(err))
-                .finally(() => callbackEach())
+                .catch(response => callbackEach(err));
             }
           }
         });
@@ -208,9 +210,9 @@ exports.setMultiProxy = (onOff, callback) => {
               mngr.getWeightAll()
                 .then(response => {
                   result.push(response);
+                  return callbackEach();
                 })
-                .catch(response => callbackEach(response))
-                .finally(callbackEach());
+                .catch(response => callbackEach(response));
             }, (err) => {
               if (err) {
                 return callbackAsync(err);
@@ -230,6 +232,8 @@ exports.setMultiProxy = (onOff, callback) => {
             // 요걸 1차원 배열로 flatten
             var allServersList = _.flatten(results.getMngrs);
             var result = [];
+            console.log(JSON.stringify(results.getMngrs));
+            console.log(JSON.stringify(allServersList));
 
             serverList.getServersList((err, res) => {
               if (err) {
@@ -276,8 +280,6 @@ exports.setMultiProxy = (onOff, callback) => {
                 .difference(results.skipServers)
                 .map(server => server.weightNO)
                 .value();
-
-              console.log('weightNoList ' + JSON.stringify(weightNoList));
 
               db.updateByNotInWeightNO(mngr.name, weightNoList, weight)
                 .then(() => false)

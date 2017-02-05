@@ -88,7 +88,7 @@
               .value();
 
             serverList.forEach(function (server) {
-              table[outerIdx].push(server.serverName + ',' + server.serviceName + ':' + server.weight);
+              table[outerIdx].push(server.weight);
             });
           });
 
@@ -97,7 +97,7 @@
             var row = $("<tr></tr>");
 
             // 제어 버튼 생성 시작
-            var button = $("<button>" + serverList[j] + "</button>");
+            var button = $("<button>" + serverList[j].serverName + ',' + serverList[j].serviceName + "</button>");
             var nameValue = {
               serverName: serverList[j].serverName,
               serviceName: serverList[j].serviceName

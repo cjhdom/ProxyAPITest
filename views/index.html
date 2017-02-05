@@ -20,7 +20,7 @@
 </head>
 <body>
 <div class="container">
-  <table class="table" id="serverTable">
+  <table class="table table-striped" id="serverTable">
     <thead>
     <tr id="tableHeading">
 
@@ -90,7 +90,7 @@
               .value();
 
             serverList.forEach(function (server) {
-              table[outerIdx].push(server.serverName + ',' + server.serviceName + ':' + server.weight);
+              table[outerIdx].push(server.weight);
             });
           });
 
