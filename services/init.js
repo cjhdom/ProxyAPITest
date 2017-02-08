@@ -26,7 +26,7 @@ exports.init = () => {
               row.proxyServerName === proxyServer.proxyServerName
             );
 
-            mngrs.push(new Mngr(servers));
+            mngrs.push(new Mngr(servers, proxyServer.ip));
           });
 
           serverStatus.initServerStatus(null, mngrs);

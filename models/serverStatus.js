@@ -16,6 +16,13 @@ exports.initServerStatus = (dbconn, mngrsList) => {
   mngrs = mngrsList;
 };
 
+exports.getDbWeightAll = (callback) => {
+  db.fetchAll()
+    .then(response => callback(null, response))
+    .catch(response => callback(response));
+};
+
+
 /**
  * 모든 서버의 weight를 가져오는 것
  * @param callback
@@ -23,13 +30,11 @@ exports.initServerStatus = (dbconn, mngrsList) => {
 exports.getServerWeightAll = (callback) => {
   async.auto({
     dbWeight: (callbackAuto) => {
-      console.log('dbweight start');
       db.fetchAll()
         .then(response => callbackAuto(null, response))
         .catch(response => callbackAuto(response));
     },
     mngrWeight: (callbackAuto) => {
-      console.log('mngrWeight start');
       var result = [];
       async.each(mngrs, (mngr, cbEach) => {
         return mngr.getWeightAll()
@@ -143,7 +148,9 @@ exports.setServerWeight = (serverName,  serviceName, callback) => {
               });
 
               db.updateSingleService(targetProxyServerList, serverName, serviceName, results.weight)
-                .then(response => callbackAsync(null, response))
+                .then(response => {
+                  return callbackAsync(null, response);
+                })
                 .catch(response => callbackAsync(response));
             }
           });
@@ -225,15 +232,13 @@ exports.setMultiProxy = (onOff, callback) => {
             // 멀티 프록시를 끌 땐 건너뛸 서버가 없다
             // @todo: 끌 땐 이미 꺼진 서버는 request 안날리도록 해보자
             if (!onOff) {
-              return callbackAsync();
+              return callbackAsync(null, []);
             }
 
             // 프록시 서버의 서버 리스트들은 2차원 배열이다
             // 요걸 1차원 배열로 flatten
             var allServersList = _.flatten(results.getMngrs);
             var result = [];
-            console.log(JSON.stringify(results.getMngrs));
-            console.log(JSON.stringify(allServersList));
 
             serverList.getServersList((err, res) => {
               if (err) {
@@ -259,8 +264,6 @@ exports.setMultiProxy = (onOff, callback) => {
                         }
                       });
                     });
-                    console.log('skip result');
-                    console.log(JSON.stringify(result));
 
                     return callbackAsync(null, result);
                   }
@@ -273,18 +276,23 @@ exports.setMultiProxy = (onOff, callback) => {
              @todo: why added getMngrs? to not call unnecessary servers change logic!
              */
             async.each(mngrs, (mngr, callbackEach) => {
-              var proxyIDC = mngr.IDC;
               var weight = onOff ? 1 : 0;
-              var weightNoList = _.chain(mngr.serverList)
-                .filter(server => server.serverIDC !== mngr.IDC)
-                .difference(results.skipServers)
-                .map(server => server.weightNO)
-                .value();
 
-              db.updateByNotInWeightNO(mngr.name, weightNoList, weight)
-                .then(() => false)
-                .catch((res) => callbackEach(res))
-                .finally(callbackEach());
+              if (results.skipServers && results.skipServers.length > 0) {
+                var weightNoList = results.skipServers.map(skipServer => skipServer.weightNO);
+
+                db.updateByNotInWeightNO(mngr.name, weightNoList, weight)
+                  .then(() => {
+                    return callbackEach();
+                  })
+                  .catch((res) => callbackEach(res))
+              } else {
+                db.updateAllProxy(mngr.name, mngr.IDC, weight)
+                  .then(() => {
+                    return callbackEach();
+                  })
+                  .catch((res) => callbackEach(res))
+              }
             }, (err) => {
               if (err) {
                 callbackAuto(err);

@@ -4,19 +4,20 @@
 var _ = require('lodash');
 var Promise = require('bluebird');
 var async = require('async');
+var request = require('request');
 
-function MngrTest(data, ip) {
+function FeManager(data, ip) {
   this.serverList = data;
   this.name = data[0].proxyServerName;
   this.IDC = data[0].proxyServerIDC;
   this.ip = ip;
 }
 
-MngrTest.prototype.getName = function () {
+FeManager.prototype.getName = function () {
   return this.name;
 };
 
-MngrTest.prototype.getWeight = function (serverName, serviceName) {
+FeManager.prototype.getWeight = function (serverName, serviceName) {
   return new Promise((resolve, reject) => {
     var server = _.find(this.serverList, {
       serverName: serverName,
@@ -31,7 +32,7 @@ MngrTest.prototype.getWeight = function (serverName, serviceName) {
   });
 };
 
-MngrTest.prototype.getWeightAll = function () {
+FeManager.prototype.getWeightAll = function () {
   return new Promise((resolve, reject) => {
     if (this.serverList && this.serverList.length > 0) {
       return resolve(this.serverList);
@@ -41,11 +42,11 @@ MngrTest.prototype.getWeightAll = function () {
   });
 };
 
-MngrTest.prototype.setWeightAll = function (targetServerList, weight) {
+FeManager.prototype.setWeightAll = function (targetServerList, weight) {
   return new Promise((resolve, reject) => {
     async.each(targetServerList, (targetServer, callbackEach) => {
       var serverIdx = this.serverList.findIndex(server => server.serverName === targetServer.serverName &&
-        server.serviceName === targetServer.serviceName);
+      server.serviceName === targetServer.serviceName);
       if (serverIdx === -1) {
         callbackEach(new Error('no such server'));
       } else {
@@ -62,10 +63,10 @@ MngrTest.prototype.setWeightAll = function (targetServerList, weight) {
   });
 };
 
-MngrTest.prototype.setWeight = function (serverName, serviceName, weight) {
+FeManager.prototype.setWeight = function (serverName, serviceName, weight) {
   return new Promise((resolve, reject) => {
     var serverIdx = this.serverList.findIndex(server => server.serverName === serverName &&
-      server.serviceName === serviceName);
+    server.serviceName === serviceName);
 
     if (serverIdx === -1) {
       return reject(new Error('no such server'));
@@ -76,7 +77,7 @@ MngrTest.prototype.setWeight = function (serverName, serviceName, weight) {
   });
 };
 
-module.exports = exports = MngrTest;
+module.exports = exports = FeManager;
 
 
 

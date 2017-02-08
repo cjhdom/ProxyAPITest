@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" crossorigin="anonymous">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+
+
+</head>
+<body>
+<div class="container">
+  <table class="table table-striped" id="serverTable">
+    <thead>
+    <tr id="tableHeading">
+
+    </tr>
+    </thead>
+    <tbody id="tableBody">
+
+    </tbody>
+  </table>
+
+  <button type="button" class="btn btn-primary" id="btnOverIDC">Over IDC toggle</button>
+  <button type="button" class="btn btn-default" id="btnReset">reset</button>
+</div>
+
+<form>
+  <input type="hidden" id="isOverIDC" value="true">
+</form>
+
+<script>
+  var isAjax = false;
+  var isMultiProxy = null;
+  var serverList = <%- servers %>;
+  var proxyServerList = <%- proxyServers %>;
+
+  function setWeight(serverName, serviceName) {
+    console.log(serviceName + ' clicked');
+    $.ajax({
+      url: 'http://localhost:8989/weight',
+      method: 'put',
+      data: {
+        serverName: serverName,
+        serviceName: serviceName
+      },
+      dataType: 'json'
+    })
+      .then(function (response) {
+        console.log('finished!');
+        reloadTable();
+      })
+      .fail(function (response) {
+        console.log('set weight failed ' + JSON.stringify(response));
+      });
+  }
+
+  function reloadTable() {
+    $.ajax({
+        url: 'http://localhost:8989/dbweight'
+      })
+      .then(function (data) {
+        if (data) {
+          //console.log(JSON.stringify(data));
+          // 테이블 리셋
+          $("#tableHeading").html('<th>control</th>');
+          $("#tableBody").html('');
+          var table = [];
+
+          //테이블 헤더 생성
+          proxyServerList.forEach(function (proxyServer, outerIdx) {
+            $("#tableHeading").append($("<th></th>").html(proxyServer));
+            table[outerIdx] = [];
+
+            serverList = _.chain(data)
+              .sortBy(['proxyServerNO', 'serverNO', 'serviceNO'])
+              .filter(function (row) {
+                return row.proxyServerName === proxyServer;
+              })
+              .value();
+
+            serverList.forEach(function (server) {
+              table[outerIdx].push(server.weight);
+            });
+          });
+
+          // 테이블 정보 생성
+          for (var j = 0; j < serverList.length; j++) {
+            var row = $("<tr></tr>");
+
+            // 제어 버튼 생성 시작
+            var button = $("<button>" + serverList[j].serverName + ',' + serverList[j].serviceName + "</button>");
+            var nameValue = {
+              serverName: serverList[j].serverName,
+              serviceName: serverList[j].serviceName
+            };
+
+            button.attr('class', 'btn btn-default btn-xs');
+            button.attr('name', JSON.stringify(nameValue));
+
+            button.click(function () {
+              console.log(this.name);
+              var parsedName = JSON.parse(this.name);
+              setWeight(parsedName.serverName, parsedName.serviceName);
+            });
+            // 제어 버튼 생성 종료
+
+            var controlCell = $('<th></th>').append(button);
+            row.append(controlCell);
+
+            for (var i = 0; i < table.length; i++) {
+              var cell = $("<td></td>");
+              cell.html(table[i][j]);
+              row.append(cell);
+            }
+            $("#tableBody").append(row);
+          }
+        }
+      })
+      .fail(function (response) {
+        console.log(response);
+      });
+  }
+</script>
+
+<script>
+  $(function () {
+    /**
+     * Over IDC 모드 인지 조회
+     */
+    $.ajax({
+        url: 'http://localhost:8989/multiproxy',
+        method: 'GET'
+      })
+      .then(function (response) {
+        console.log('isMultiProxy ' + response);
+        isMultiProxy = response;
+        if (isMultiProxy) {
+          $("#btnOverIDC").attr('class', 'btn btn-success');
+        } else {
+          $("#btnOverIDC").attr('class', 'btn btn-danger');
+        }
+        reloadTable();
+      })
+      .fail(function (response) {
+        console.log(JSON.stringify(response));
+      });
+
+    /**
+     * OverIDC toggle 버튼 클릭 이벤트
+     */
+    $("#btnOverIDC").click(function () {
+      var onOff = null;
+      if (isMultiProxy) {
+        onOff = false;
+        $("#btnOverIDC").attr('class', 'btn btn-danger');
+      } else {
+        onOff = true;
+        $("#btnOverIDC").attr('class', 'btn btn-success');
+      }
+
+      $.ajax({
+          url: 'http://localhost:8989/multiproxy/',
+          method: 'PUT',
+          data: {
+            onOff: onOff
+          },
+          dataType: 'json'
+        })
+        .done(function (response) {
+          isMultiProxy = onOff;
+          $("#overIDC").html('' + onOff);
+        })
+        .fail(function (response) {
+          console.log(response);
+        })
+        .always(function () {
+          reloadTable();
+        });
+    });
+
+    $("#btnReset").click(function () {
+      isMultiProxy = false;
+      $("#btnOverIDC").attr('class', 'btn btn-danger');
+      $.ajax({
+          url: 'http://localhost:8989/reset',
+          method: 'GET',
+          dataType: 'json'
+        })
+        .done(function (response) {
+          reloadTable();
+        })
+        .fail(function (response) {
+          console.log(response);
+        })
+        .always(function () {
+          reloadTable();
+        });
+    });
+  });
+</script>
+
+</body>
+</html>

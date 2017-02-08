@@ -44,17 +44,19 @@ exports.updateAllServices = (prxNameList, serverNameList, weight) => {
 };
 
 exports.updateByNotInWeightNO = (prxName, weightNOList, weight) => {
-  if (weightNOList && weightNOList.length > 0) {
-    return pool.query('update weight set weight = ? where proxyServerName = ? AND weightNO not in (?)', [
-      weight, prxName, weightNOList
-    ]).then(() => Promise.resolve({result: '000'}))
-      .catch(result => Promise.reject(result));
-  } else {
-    return pool.query('update weight set weight = ? where proxyServerName = ?', [
-      weight, prxName
-    ]).then(() => Promise.resolve({result: '000'}))
-      .catch(result => Promise.reject(result));
-  }
+  return pool.query('update weight set weight = ? where proxyServerName = ? AND weightNO not in (?)', [
+    weight, prxName, weightNOList
+  ]).then(() => Promise.resolve({result: '000'}))
+    .catch(result => Promise.reject(result));
+};
+
+exports.updateAllProxy = (prxName, IDC, weight) => {
+  return pool.query('update weight set weight = ? where proxyServerName = ? AND serverIDC != ?', [
+    weight, prxName, IDC
+  ]).then((res) => {
+    return Promise.resolve(res);
+  })
+    .catch(result => Promise.reject(result));
 };
 
 exports.updateSingleService = (prxNameList, serverName, serviceName, weight) => {
