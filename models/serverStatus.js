@@ -71,7 +71,7 @@ exports.getServerWeightAll = (callback) => {
  * @param serverName
  * @param callback
  */
-exports.setServerWeight = (serverName,  serviceName, callback) => {
+exports.setServerWeight = (serverName, serviceName, callback) => {
   async.auto({
     isMultiProxy: (callbackAsync) => {
       db.getMultiProxy()
@@ -158,9 +158,6 @@ exports.setServerWeight = (serverName,  serviceName, callback) => {
       });
     }],
     setMngr: ['isMultiProxy', 'weight', (results, callbackAsync) => {
-      /**
-       * @todo 여기에 딱 필요한 mngr에게 만 setWeight 호출하도록!
-       */
       serverList.getServer(serverName, (err, res) => {
         if (err) {
           return callbackAsync(err);
@@ -244,30 +241,22 @@ exports.setMultiProxy = (onOff, callback) => {
               if (err) {
                 return callbackAsync(err);
               } else {
-                serverList.getServiceList((svcErr, svcRes) => {
-                  if (svcErr) {
-                    return callbackAsync(svcErr);
-                  } else {
-                    svcRes.forEach(service => {
-                      res.forEach(server => {
-                        var serversToCheck = _.filter(allServersList, {
-                          serverName: server.name,
-                          serviceName: service.serviceName
-                        });
+                res.forEach(server => {
+                  var serversToCheck = _.filter(allServersList, {
+                    serverName: server.serverName,
+                    serviceName: server.serviceName
+                  });
 
-                        var getWeight = serversToCheck.every(server =>
-                          server.weight === 0
-                        );
+                  var getWeight = serversToCheck.every(server =>
+                    server.weight === 0
+                  );
 
-                        if (getWeight) {
-                          result = _.concat(result, serversToCheck);
-                        }
-                      });
-                    });
-
-                    return callbackAsync(null, result);
+                  if (getWeight) {
+                    result = _.concat(result, serversToCheck);
                   }
                 });
+
+                return callbackAsync(null, result);
               }
             });
           }],
@@ -425,7 +414,7 @@ exports.getServerWeight = (prxName, serverName, callback) => {
 
       //DB와 실제 값이 다르면 실제 값을 리턴해주고 DB 값을 실제값으로 업데이트 해준다
       if (dbWeight !== mngrWeight) {
-        db.updateAllServices(prxName, serverName. weight)
+        db.updateAllServices(prxName, serverName.weight)
           .then(() => false)
           .catch(() => false);
       }

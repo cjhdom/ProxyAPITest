@@ -3,12 +3,13 @@
  */
 var mysql = require('mysql2');
 var Promise = require('bluebird');
+var path = require('path');
 
 const config = require('../config/config');
 
 //var connection = mysql.createConnection(getConnectionOption(config.env));
 
-exports = module.exports = function getConnectionOption(config.env) {
+exports = module.exports = function (env) {
   switch (env) {
     case 'home': return {
       Promise: Promise,
@@ -26,5 +27,9 @@ exports = module.exports = function getConnectionOption(config.env) {
       password: 'piru',
       database: 'proxyAPI'
     };
+    case 'real':
+      var realConf = require('../config/config-real');
+      realConf.Promise = Promise;
+      return realConf;
   }
 };

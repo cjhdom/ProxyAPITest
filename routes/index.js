@@ -18,7 +18,7 @@ router.get('/', function(req, res, next) {
           next(err);
         } else {
           res.render('index.html', {
-            servers: JSON.stringify(result.map((server) => server.name)),
+            servers: JSON.stringify(result.map((server) => server.serverName)),
             proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name))
           });
         }
@@ -37,7 +37,7 @@ router.get('/3', function(req, res, next) {
           next(err);
         } else {
           res.render('index3.html', {
-            servers: JSON.stringify(result.map((server) => server.name)),
+            servers: JSON.stringify(result.map((server) => server.serverName)),
             proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name))
           });
         }
@@ -56,7 +56,7 @@ router.get('/2', function(req, res, next) {
           next(err);
         } else {
           res.render('index2.html', {
-            servers: JSON.stringify(result.map((server) => server.name)),
+            servers: JSON.stringify(result.map((server) => server.serverName)),
             proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name))
           });
         }
@@ -96,18 +96,18 @@ router.get('/dbweight', (req, res, next) => {
  * 모든 프록시의 특정 서버의 서비스 제어
  */
 router.put('/weight', (req, res, next) => {
-  /*const serverName = req.body.serverName;
+  const serverName = req.body.serverName;
   const serviceName = req.body.serviceName;
 
-  console.log('got weight!');*/
-  res.send('hi');
-  /*serverStatus.setServerWeight(serverName, serviceName, (err, response) => {
+  console.log('put weight');
+
+  serverStatus.setServerWeight(serverName, serviceName, (err, response) => {
     if (err) {
       next(err);
     } else {
       res.json(response);
     }
-  });*/
+  });
 });
 
 /**

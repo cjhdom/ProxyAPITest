@@ -40,8 +40,6 @@ exports.init = () => {
     });
 
   var proxyServers = null;
-  var servers = null;
-  var services = null;
 
   database.fetchProxyServerList()
     .then(res => {
@@ -49,12 +47,7 @@ exports.init = () => {
       return database.fetchServerList();
     })
     .then(res => {
-      servers = res;
-      return database.fetchServiceList();
-    })
-    .then(res => {
-      services = res;
-      serverList.initServerList(proxyServers, servers, services);
+      serverList.initServerList(proxyServers, res);
     })
     .catch(res => {
       console.log(res);

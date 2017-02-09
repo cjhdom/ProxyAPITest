@@ -5,6 +5,7 @@ var _ = require('lodash');
 var Promise = require('bluebird');
 var async = require('async');
 var request = require('request');
+var serverList = require('../models/serverList');
 
 function FeManager(data, ip) {
   this.serverList = data;
@@ -25,7 +26,24 @@ FeManager.prototype.getWeight = function (serverName, serviceName) {
     });
 
     if (typeof server != 'undefined') {
-      return resolve(server);
+      var url = this.ip + '/haproxy/getWeight?backend=' + serviceName.toLowerCase() +
+        '&server=' + serverName.toLowerCase();
+
+      request({
+        uri: url,
+        method: 'get'
+      }, (err, response, body) => {
+        if (err) {
+          return reject({
+            err,
+            url,
+            name: this.name
+          });
+        } else {
+          server.weight = body.current;
+          return resolve(server);
+        }
+      });
     } else {
       return reject({code: '999', message: 'couldn\'t find the requested server ' + serverName});
     }
@@ -34,8 +52,17 @@ FeManager.prototype.getWeight = function (serverName, serviceName) {
 
 FeManager.prototype.getWeightAll = function () {
   return new Promise((resolve, reject) => {
+    serverList.getService
     if (this.serverList && this.serverList.length > 0) {
-      return resolve(this.serverList);
+      async.each(this.serverList, (server, callbackEach) => {
+
+      }, (err) => {
+        if (err) {
+
+        } else {
+
+        }
+      });
     } else {
       return reject({message: 'no server'});
     }

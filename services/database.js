@@ -8,8 +8,6 @@ var async = require('async');
 var toBoolean = require('to-boolean');
 var pool = mysql.createPool(getConnectionOption(require('../config/config').env));
 
-
-
 module.exports = exports = {};
 
 exports.fetch = (prxName, serverName, serviceName) => {
@@ -124,21 +122,27 @@ exports.resetDb = (callback) => {
 
 function getConnectionOption(env) {
   switch (env) {
-    case 'home': return {
-      Promise: Promise,
-      host: '52.231.38.182',
-      port: '3306',
-      user: 'root',
-      password: 'ebayescrow',
-      database: 'proxyAPI'
-    };
-    case 'local': return {
-      Promise: Promise,
-      host: '192.168.56.102',
-      port: '3306',
-      user: 'root',
-      password: 'piru',
-      database: 'proxyAPI'
-    };
+    case 'home':
+      return {
+        Promise: Promise,
+        host: '52.231.38.182',
+        port: '3306',
+        user: 'root',
+        password: 'ebayescrow',
+        database: 'proxyAPI'
+      };
+    case 'local':
+      return {
+        Promise: Promise,
+        host: '192.168.56.102',
+        port: '3306',
+        user: 'root',
+        password: 'piru',
+        database: 'proxyAPI'
+      };
+    case 'real':
+      var realConf = require('../config/config-real');
+      realConf.Promise = Promise;
+      return realConf;
   }
 }
