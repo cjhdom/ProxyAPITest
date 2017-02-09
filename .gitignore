@@ -81,4 +81,4 @@ fabric.properties
 
 .idea
 
-config/real.conf
+config/config-real.js
