@@ -80,3 +80,5 @@ crashlytics-build.properties
 fabric.properties
 
 .idea
+
+config/real.conf
