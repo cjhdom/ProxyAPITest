@@ -42,7 +42,7 @@ exports.getServerWeightAll = (callback) => {
             result.push(response);
             return cbEach();
           })
-          .catch(response => cbEach(new Error('error in getServerWeightAll in mngrWeight ' + response)));
+          .catch(response => cbEach(new Error('error in getServerWeightAll in mngrWeight ' + JSON.stringify(response))));
       }, (err) => {
         if (err) {
           callbackAuto(err);
@@ -114,6 +114,7 @@ exports.setServerWeight = (serverName, serviceName, callback) => {
       });
     }],
     weight: ['getMngrs', (results, callbackAsync) => {
+      console.log(JSON.stringify(results.getMngrs));
       var getWeight = results.getMngrs.every((server, index, array) =>
         index === 0 || server.weight === array[index - 1].weight
       );

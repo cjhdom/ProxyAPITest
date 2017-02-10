@@ -48,26 +48,26 @@
   function setWeight(serverName, serviceName) {
     console.log(serviceName + ' clicked');
     $.ajax({
-      url: 'http://172.30.161.173:8989/weight',
-      method: 'put',
+      url: 'http://localhost:8989/weight',
+      method: 'PATCH',
       data: {
         serverName: serverName,
         serviceName: serviceName
       },
-      dataType: 'json'
-    })
-      .then(function (response) {
+      dataType: 'json',
+      success: function (response) {
         console.log('finished!');
         reloadTable();
-      })
-      .fail(function (response) {
+      },
+      error: function (response) {
         console.log('set weight failed ' + JSON.stringify(response));
-      });
+      }
+    });
   }
 
   function reloadTable() {
     $.ajax({
-        url: 'http://172.30.161.173:8989/weight'
+        url: 'http://localhost:8989/weight'
       })
       .then(function (data) {
         if (data) {
@@ -108,7 +108,7 @@
             button.attr('class', 'btn btn-default btn-xs');
             button.attr('name', JSON.stringify(nameValue));
 
-            button.click(function () {
+            button.on('click', function () {
               console.log(this.name);
               var parsedName = JSON.parse(this.name);
               setWeight(parsedName.serverName, parsedName.serviceName);
@@ -139,7 +139,7 @@
      * Over IDC 모드 인지 조회
      */
     $.ajax({
-        url: 'http://172.30.161.173:8989/multiproxy',
+        url: 'http://localhost:8989/multiproxy',
         method: 'GET'
       })
       .then(function (response) {
@@ -170,8 +170,8 @@
       }
 
       $.ajax({
-          url: 'http://172.30.161.173:8989/multiproxy/',
-          method: 'PUT',
+          url: 'http://localhost:8989/multiproxy/',
+          method: 'POST',
           data: {
             onOff: onOff
           },
@@ -193,7 +193,7 @@
       isMultiProxy = false;
       $("#btnOverIDC").attr('class', 'btn btn-danger');
       $.ajax({
-          url: 'http://172.30.161.173:8989/reset',
+          url: 'http://localhost:8989/reset',
           method: 'GET',
           dataType: 'json'
         })

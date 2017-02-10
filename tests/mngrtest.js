@@ -44,12 +44,16 @@ MngrTest.prototype.getWeightAll = function () {
 MngrTest.prototype.setWeightAll = function (targetServerList, weight) {
   return new Promise((resolve, reject) => {
     async.each(targetServerList, (targetServer, callbackEach) => {
-      var serverIdx = this.serverList.findIndex(server => server.serverName === targetServer.serverName &&
-        server.serviceName === targetServer.serviceName);
-      if (serverIdx === -1) {
+      var server = _.find(this.serverList, {
+        serverName: targetServer.serverName,
+        serviceName: targetServer.serviceName
+      });
+      /*var serverIdx = this.serverList.findIndex(server => server.serverName === targetServer.serverName &&
+        server.serviceName === targetServer.serviceName);*/
+      if (typeof server === 'undefined') {
         callbackEach(new Error('no such server'));
       } else {
-        this.serverList[serverIdx].weight = weight;
+        targetServer.weight = weight;
         callbackEach();
       }
     }, (err) => {

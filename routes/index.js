@@ -95,11 +95,9 @@ router.get('/dbweight', (req, res, next) => {
 /**
  * 모든 프록시의 특정 서버의 서비스 제어
  */
-router.put('/weight', (req, res, next) => {
+router.patch('/weight', (req, res, next) => {
   const serverName = req.body.serverName;
   const serviceName = req.body.serviceName;
-
-  console.log('put weight');
 
   serverStatus.setServerWeight(serverName, serviceName, (err, response) => {
     if (err) {
@@ -130,7 +128,7 @@ router.get('weight/:prxName/:serverName/', (req, res, next) => {
   });
 });
 
-router.put('/weight/:weight/:prxName/:serverName', (req, res, next) => {
+router.post('/weight/:weight/:prxName/:serverName', (req, res, next) => {
   const prxName = req.params.prxName;
   const serverName = req.params.serverName;
   const weight = Number(req.params.weight);
@@ -158,7 +156,7 @@ router.get('/multiproxy', (req, res, next) => {
   });
 });
 
-router.put('/multiproxy', (req, res, next) => {
+router.post('/multiproxy', (req, res, next) => {
   const onOff = toBoolean(req.body.onOff);
 
   serverStatus.setMultiProxy(onOff, (err, response) => {

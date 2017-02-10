@@ -5,6 +5,7 @@ var dbtest = require('../tests/dbtest');
 var fs = require('fs');
 
 var Mngr = require('../tests/mngrtest');
+//var Mngr = require('../services/femanager');
 var serverStatus = require('../models/serverStatus');
 var serverList = require('../models/serverList');
 var database = require('../services/database');

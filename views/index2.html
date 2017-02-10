@@ -47,7 +47,7 @@
   function setWeight(serverName, serviceName) {
     $.ajax({
         url: 'http://localhost:8989/weight',
-        method: 'put',
+        method: 'POST',
         data: {
           serverName: serverName,
           serviceName: serviceName
@@ -207,7 +207,7 @@
       }
       $.ajax({
           url: 'http://localhost:8989/multiproxy/',
-          method: 'PUT',
+          method: 'POST',
           data: {
             onOff: onOff
           },

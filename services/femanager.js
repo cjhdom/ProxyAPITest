@@ -34,13 +34,15 @@ FeManager.prototype.getWeight = function (serverName, serviceName) {
         method: 'get'
       }, (err, response, body) => {
         if (err) {
-          return reject({
+          return resolve(server);
+          /*return reject({
             err,
             url,
             name: this.name
-          });
+          });*/
         } else {
-          server.weight = body.current;
+          console.log(typeof body.current);
+          server.weight = Number(body.current);
           return resolve(server);
         }
       });
@@ -52,18 +54,38 @@ FeManager.prototype.getWeight = function (serverName, serviceName) {
 
 FeManager.prototype.getWeightAll = function () {
   return new Promise((resolve, reject) => {
-    serverList.getService
     if (this.serverList && this.serverList.length > 0) {
-      async.each(this.serverList, (server, callbackEach) => {
+      var url = 'http://' + this.ip + '/haproxy/stat';
 
-      }, (err) => {
+      request({
+        url: url,
+        method: 'get'
+      }, (err, response, body) => {
         if (err) {
-
+          return reject({
+            name: this.name,
+            err,
+            url
+          });
         } else {
+          var serversInProxy = JSON.parse(body);
+          serversInProxy.forEach(serverInProxy => {
+            var idx = _.findIndex(this.serverList, {
+              serverName: serverInProxy.svname,
+              serviceName: serverInProxy.pxname
+            });
 
+            if (idx !== -1) {
+              //console.log(serverInProxy.svname + ',' + serverInProxy.pxname + ',' + serverInProxy.weight + ',' + this.name);
+              this.serverList[idx].weight = serverInProxy.weight;
+            }
+          });
+
+          return resolve(this.serverList);
         }
       });
-    } else {
+    }
+    else {
       return reject({message: 'no server'});
     }
   });
@@ -93,7 +115,7 @@ FeManager.prototype.setWeightAll = function (targetServerList, weight) {
 FeManager.prototype.setWeight = function (serverName, serviceName, weight) {
   return new Promise((resolve, reject) => {
     var serverIdx = this.serverList.findIndex(server => server.serverName === serverName &&
-    server.serviceName === serviceName);
+      server.serviceName === serviceName);
 
     if (serverIdx === -1) {
       return reject(new Error('no such server'));
