@@ -12,6 +12,7 @@ var database = require('../services/database');
 
 const path = require('path');
 const rootPath = require('../config/config').rootPath;
+const env = require('../config/config').env;
 
 exports = module.exports = {};
 

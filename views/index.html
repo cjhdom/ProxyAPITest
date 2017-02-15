@@ -42,8 +42,8 @@
 <script>
   var isAjax = false;
   var isMultiProxy = null;
-  var serverList = <%- servers %>;
-  var proxyServerList = <%- proxyServers %>;
+  var serverList = <%-servers%>;
+  var proxyServerList = <%-proxyServers%>;
 
   function setWeight(serverName, serviceName) {
     console.log(serviceName + ' clicked');
@@ -51,6 +51,26 @@
       url: 'http://localhost:8989/weight',
       method: 'PATCH',
       data: {
+        serverName: serverName,
+        serviceName: serviceName
+      },
+      dataType: 'json',
+      success: function (response) {
+        console.log('finished!');
+        reloadTable();
+      },
+      error: function (response) {
+        console.log('set weight failed ' + JSON.stringify(response));
+      }
+    });
+  }
+
+  function setSingleWeight(proxyName, serverName, serviceName) {
+    $.ajax({
+      url: 'http://localhost:8989/weight/single',
+      method: 'PATCH',
+      data: {
+        prxName: proxyName,
         serverName: serverName,
         serviceName: serviceName
       },
@@ -90,7 +110,7 @@
               .value();
 
             serverList.forEach(function (server) {
-              table[outerIdx].push(server.weight);
+              table[outerIdx].push(server);
             });
           });
 
@@ -101,6 +121,7 @@
             // 제어 버튼 생성 시작
             var button = $("<button>" + serverList[j].serverName + ',' + serverList[j].serviceName + "</button>");
             var nameValue = {
+              prxName: serverList[j].proxyServerName,
               serverName: serverList[j].serverName,
               serviceName: serverList[j].serviceName
             };
@@ -109,7 +130,7 @@
             button.attr('name', JSON.stringify(nameValue));
 
             button.on('click', function () {
-              console.log(this.name);
+              console.log(this);
               var parsedName = JSON.parse(this.name);
               setWeight(parsedName.serverName, parsedName.serviceName);
             });
@@ -119,8 +140,18 @@
             row.append(controlCell);
 
             for (var i = 0; i < table.length; i++) {
-              var cell = $("<td></td>");
-              cell.html(table[i][j]);
+              var link = $("<p></p>");
+              link.html(table[i][j].weight);
+              link.attr('name', JSON.stringify(table[i][j]));
+              link.on('click', function () {
+                console.log(this.name);
+                var parsedName = JSON.parse(this.name);
+                if (confirm(parsedName.prxName + ',' + parsedName.serverName + ',' + parsedName.serviceName + '의 weight를 변경하시겠습니까?')) {
+                  setWeight(parsedName.serverName, parsedName.serviceName);
+                }
+              });
+
+              cell.append(link);
               row.append(cell);
             }
             $("#tableBody").append(row);
@@ -159,7 +190,7 @@
     /**
      * OverIDC toggle 버튼 클릭 이벤트
      */
-    $("#btnOverIDC").click(function () {
+    $("#btnOverIDC").on('click', function () {
       var onOff = null;
       if (isMultiProxy) {
         onOff = false;
@@ -189,7 +220,7 @@
         });
     });
 
-    $("#btnReset").click(function () {
+    $("#btnReset").on('click', function () {
       isMultiProxy = false;
       $("#btnOverIDC").attr('class', 'btn btn-danger');
       $.ajax({

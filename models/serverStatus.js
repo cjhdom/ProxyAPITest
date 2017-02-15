@@ -338,30 +338,17 @@ exports.setMultiProxy = (onOff, callback) => {
  * @param weight
  * @param callback
  */
-exports.setSingleServerWeight = (prxName, serverName, weight, callback) => {
+exports.setSingleServerWeight = (prxName, serverName, serviceName, weight, callback) => {
   async.auto({
-    isMultiProxy: (callback) => {
-      db.getMultiProxy()
-        .then(response => {
-          callback(null, response);
-        })
-        .catch(response => {
-          callback(response);
-        });
-    },
     setDb: ['isMultiProxy', (callback) => {
-      if (isMultiProxy) {
-
-      } else {
-        db.updateAllServices(prxName, serverName, weight)
-          .then(response => callback(null, response))
-          .catch(response => callback(response));
-      }
+      db.updateSingleService(prxName, serverName, serviceName, weight)
+        .then(response => callback(null, response))
+        .catch(response => callback(response));
     }],
     setMngr: ['isMultiProxy', (callback) => {
       mngrs.some(mngr => {
         if (mngr.getName() === prxName) {
-          mngr.setWeight(serverName, weight)
+          mngr.setWeight(serverName, serviceName, weight)
             .then(server => callback(null, server))
             .catch(response => callback(response));
           return true;

@@ -128,12 +128,13 @@ router.get('weight/:prxName/:serverName/', (req, res, next) => {
   });
 });
 
-router.post('/weight/:weight/:prxName/:serverName', (req, res, next) => {
-  const prxName = req.params.prxName;
-  const serverName = req.params.serverName;
-  const weight = Number(req.params.weight);
+router.patch('/weight/single', (req, res, next) => {
+  const prxName = req.body.prxName;
+  const serverName = req.body.serverName;
+  const serviceName = req.body.serviceName;
+  const weight = Number(req.body.weight);
 
-  serverStatus.setSingleServerWeight(prxName, serverName, weight, (err, response) => {
+  serverStatus.setSingleServerWeight(prxName, serverName, serviceName, weight, (err, response) => {
     if (err) {
       next(err);
     } else {
