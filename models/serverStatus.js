@@ -326,13 +326,8 @@ exports.setMultiProxy = (onOff, callback) => {
     });
 };
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 /**
  * 하나의 서버에 weight 조정
- * @todo 이거 진짜 쓸일이 있을까?
  * @param prxName
  * @param serverName
  * @param weight
@@ -372,17 +367,17 @@ exports.setSingleServerWeight = (prxName, serverName, serviceName, weight, callb
  * @param serverName
  * @param callback
  */
-exports.getServerWeight = (prxName, serverName, callback) => {
+exports.getServerWeight = (prxName, serverName, serviceName, callback) => {
   async.auto({
     dbWeight: (callback) => {
-      db.fetch(prxName, serverName)
+      db.fetch(prxName, serverName, serviceName)
         .then(response => callback(null, response))
         .catch(response => callback(response));
     },
     mngrWeight: (callback) => {
       mngrs.some(mngr => {
         if (mngr.getName() === prxName) {
-          mngr.getWeight(serverName)
+          mngr.getWeight(serverName, serviceName)
             .then(server => callback(null, server))
             .catch(response => callback(response));
           return true;
@@ -402,7 +397,7 @@ exports.getServerWeight = (prxName, serverName, callback) => {
 
       //DB와 실제 값이 다르면 실제 값을 리턴해주고 DB 값을 실제값으로 업데이트 해준다
       if (dbWeight !== mngrWeight) {
-        db.updateAllServices(prxName, serverName.weight)
+        db.updateSingleService(prxName, serverName, serviceName, mngrWeight)
           .then(() => false)
           .catch(() => false);
       }
@@ -411,3 +406,5 @@ exports.getServerWeight = (prxName, serverName, callback) => {
     }
   });
 };
+
+exports.buildStart = (proxyName, )

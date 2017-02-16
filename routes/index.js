@@ -111,11 +111,12 @@ router.patch('/weight', (req, res, next) => {
 /**
  * 특정 서버의 서비스 값 가져오기
  */
-router.get('weight/:prxName/:serverName/', (req, res, next) => {
-  const prxName = req.params.prxName;
-  const serverName = req.params.serverName;
+router.get('weight/single', (req, res, next) => {
+  const prxName = req.body.prxName;
+  const serverName = req.body.serverName;
+  const serviceName = req.body.serviceName;
 
-  serverStatus.getServerWeight(prxName, serverName, (err, response) => {
+  serverStatus.getServerWeight(prxName, serverName, serviceName, (err, response) => {
     if (err) {
       if (response) {
         res.json(response);
@@ -141,6 +142,12 @@ router.patch('/weight/single', (req, res, next) => {
       res.json(response);
     }
   });
+});
+
+router.get('/build/:action', (req, res, next) => {
+  const action = req.param.action;
+
+
 });
 
 /////////////////////////////////////////////////////////////
