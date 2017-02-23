@@ -26,23 +26,17 @@ FeManager.prototype.getWeight = function (serverName, serviceName) {
     });
 
     if (typeof server != 'undefined') {
-      var url = this.ip + '/haproxy/getWeight?backend=' + serviceName.toLowerCase() +
+      var url = 'http://' + this.ip + '/haproxy/getWeight?backend=' + serviceName.toLowerCase() +
         '&server=' + serverName.toLowerCase();
 
       request({
-        uri: url,
+        url: url,
         method: 'get'
       }, (err, response, body) => {
         if (err) {
           return resolve(server);
-          /*return reject({
-           err,
-           url,
-           name: this.name
-           });*/
         } else {
-          console.log(typeof body.current);
-          server.weight = Number(body.current);
+          server.weight = Number(JSON.parse(body).current);
           return resolve(server);
         }
       });
@@ -80,7 +74,6 @@ FeManager.prototype.getWeightAll = function () {
               this.serverList[idx].weight = serverInProxy.weight;
             }
           });
-
           return resolve(this.serverList);
         }
       });
@@ -115,23 +108,18 @@ FeManager.prototype.setWeight = function (serverName, serviceName, weight) {
     });
 
     if (typeof server != 'undefined') {
-      var url = this.ip + '/haproxy/setWeight?backend=' + serviceName.toLowerCase() +
+      var url = 'http://' + this.ip + '/haproxy/setWeight?backend=' + serviceName.toLowerCase() +
         '&server=' + serverName.toLowerCase() + '&weight=' + weight;
 
       request({
-        uri: url,
+        url: url,
         method: 'get'
       }, (err, response, body) => {
         if (err) {
           return resolve(server);
-          /*return reject({
-           err,
-           url,
-           name: this.name
-           });*/
         } else {
-          console.log(typeof body.current);
-          server.weight = Number(body.current);
+          server.weight = weight;
+          // server.weight = Number(body.current);
           return resolve(server);
         }
       });

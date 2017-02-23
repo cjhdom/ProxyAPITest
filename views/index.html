@@ -145,10 +145,10 @@
               singleButton.html(table[i][j].weight);
               singleButton.attr('id', JSON.stringify(table[i][j]));
               singleButton.on('click', function () {
-                console.log($(this).html());
+//                console.log($(this).html());
                 var parsedName = JSON.parse(this.id);
-                var weight = parsedName.weight === 1 ? 0 : 1;
-                if (confirm(parsedName.proxyServerName + ',' + parsedName.serverName + ',' + parsedName.serviceName + '의 weight를 변경하시겠습니까?')) {
+                var weight = $(this).html() == 1 ? 0 : 1;
+                if (confirm(parsedName.proxyServerName + ',' + parsedName.serverName + ',' + parsedName.serviceName + '의 weight를 변경하시겠습니까?' + weight)) {
                   setSingleWeight(parsedName.proxyServerName, parsedName.serverName, parsedName.serviceName, weight);
                 }
               });

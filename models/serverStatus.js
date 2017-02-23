@@ -114,9 +114,11 @@ exports.setServerWeight = (serverName, serviceName, callback) => {
       });
     }],
     weight: ['getMngrs', (results, callbackAsync) => {
-      console.log(JSON.stringify(results.getMngrs));
-      var getWeight = results.getMngrs.every((server, index, array) =>
-        index === 0 || server.weight === array[index - 1].weight
+      console.log('at 117 ' + JSON.stringify(results.getMngrs));
+      var getWeight = results.getMngrs.every(function (server, index, array) {
+          console.log(server.weight);
+          return index === 0 || server.weight === array[index - 1].weight;
+        }
       );
 
       if (getWeight) {
