@@ -445,7 +445,7 @@ exports.buildEnd = (proxyName, serverName, serviceName, callback) => {
   db.fetchSingleService(proxyName, serverName, serviceName)
     .then(res => {
       console.log(JSON.stringify(res));
-      if (!res[0].beforeBuild || res.beforeBuild[0] === 0) {
+      if (!res[0].beforeBuild || res[0].beforeBuild === 0) {
         return callback(null, {result: '000'});
       } else {
         exports.setSingleServerWeight(proxyName, serverName, serviceName, 1, callback);
