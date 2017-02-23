@@ -149,7 +149,7 @@ router.get('/build/start', (req, res, next) => {
   const serverName = req.query.serverName;
   const serviceName = req.query.serviceName;
 
-  serverStatus.setSingleServerWeight(proxyServerName, serverName, serviceName, 0, (err, response) => {
+  serverStatus.buildStart(proxyServerName, serverName, serviceName, (err, response) => {
     if (err) {
       if (response) {
         res.json(response);

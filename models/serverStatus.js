@@ -407,6 +407,40 @@ exports.getServerWeight = (prxName, serverName, serviceName, callback) => {
   });
 };
 
+/**
+ * 하나의 서버에 weight 조정
+ * @param prxName
+ * @param serverName
+ * @param weight
+ * @param callback
+ */
+exports.buildStart = (prxName, serverName, serviceName, callback) => {
+  async.auto({
+    setDb: (callback) => {
+      db.buildStart(prxName, serverName, serviceName, 0)
+        .then(response => callback(null, response))
+        .catch(response => callback(response));
+    },
+    setMngr: (callback) => {
+      mngrs.some(mngr => {
+        if (mngr.getName() === prxName) {
+          mngr.setWeight(serverName, serviceName, 0)
+            .then(server => callback(null, server))
+            .catch(response => callback(response));
+          return true;
+        }
+        return false;
+      });
+    }
+  }, (err, res) => {
+    if (err) {
+      return callback(err);
+    } else {
+      return callback(null, res);
+    }
+  });
+};
+
 exports.buildEnd = (proxyName, serverName, serviceName, callback) => {
   db.fetchSingleService(proxyName, serverName, serviceName)
     .then(res => {
