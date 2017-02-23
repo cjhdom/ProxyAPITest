@@ -157,6 +157,7 @@ router.get('/build/start', (req, res, next) => {
         next(err);
       }
     } else {
+      console.log(JSON.stringify(response));
       res.json(response);
     }
   });

@@ -72,14 +72,14 @@ exports.updateSingleService = (prxNameList, serverName, serviceName, weight) => 
     .catch(result => Promise.reject(result));
 };
 
-exports.buildStart = (prxName, serverName, serviceName, weight) => {
+exports.buildStart = (prxName, serverName, serviceName) => {
   return pool.query('update weight set beforeBuild = weight where proxyServerName = ? AND ' +
     'serverName = ? AND serviceName = ?', [
     weight, prxName, serverName, serviceName
-  ]).then(pool.query('update weight set weight = ? where proxyServerName = ? AND ' +
+  ]).then(pool.query('update weight set weight = 0 where proxyServerName = ? AND ' +
     'serverName = ? AND serviceName = ?', [
-    weight, prxName, serverName, serviceName
-  ])).then(() => Promise.resolve({result: '000'}))
+    prxName, serverName, serviceName
+  ])).then((res) => Promise.resolve(res))
     .catch(result => Promise.reject(result));
 };
 
