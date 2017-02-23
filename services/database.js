@@ -34,6 +34,13 @@ exports.fetchAll = () => {
     .catch(result => Promise.reject(result));
 };
 
+exports.fetchSingleService = (prxName, serverName, serviceName) => {
+  return pool.query('select * from weight where proxyServerName = ? and serverName = ? and serviceName = ?', [
+    prxName, serverName, serviceName
+  ]).then(([rows]) => Promise.resolve(rows))
+    .catch(result => Promise.reject(result));
+};
+
 exports.updateAllServices = (prxNameList, serverNameList, weight) => {
   return pool.query('update weight set weight = ? where proxyServerName in (?) AND serverName in (?)', [
     weight, prxNameList, serverNameList
@@ -61,6 +68,22 @@ exports.updateSingleService = (prxNameList, serverName, serviceName, weight) => 
   return pool.query('update weight set weight = ? where proxyServerName in (?) AND ' +
     'serverName = ? AND serviceName = ?', [
     weight, prxNameList, serverName, serviceName
+  ]).then(() => Promise.resolve({result: '000'}))
+    .catch(result => Promise.reject(result));
+};
+
+exports.buildStart = (prxName, serverName, serviceName, weight) => {
+  return pool.query('update weight set weight = ? and beforeBuild = weight where proxyServerName = ? AND ' +
+    'serverName = ? AND serviceName = ?', [
+    weight, prxName, serverName, serviceName
+  ]).then(() => Promise.resolve({result: '000'}))
+    .catch(result => Promise.reject(result));
+};
+
+exports.buildFinished = (prxName, serverName, serviceName) => {
+  return pool.query('update weight set weight = beforeBuild where proxyServerName in ? AND ' +
+    'serverName = ? AND serviceName = ?', [
+     prxName, serverName, serviceName
   ]).then(() => Promise.resolve({result: '000'}))
     .catch(result => Promise.reject(result));
 };

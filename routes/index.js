@@ -112,9 +112,9 @@ router.patch('/weight', (req, res, next) => {
  * 특정 서버의 서비스 값 가져오기
  */
 router.get('weight/single', (req, res, next) => {
-  const prxName = req.body.prxName;
-  const serverName = req.body.serverName;
-  const serviceName = req.body.serviceName;
+  const prxName = req.query.prxName;
+  const serverName = req.query.serverName;
+  const serviceName = req.query.serviceName;
 
   serverStatus.getServerWeight(prxName, serverName, serviceName, (err, response) => {
     if (err) {
@@ -144,10 +144,40 @@ router.patch('/weight/single', (req, res, next) => {
   });
 });
 
-router.get('/build/:action', (req, res, next) => {
-  const action = req.param.action;
+router.get('/build/start', (req, res, next) => {
+  const proxyServerName = req.query.proxyServerName;
+  const serverName = req.query.serverName;
+  const serviceName = req.query.serviceName;
 
+  serverStatus.setSingleServerWeight(proxyServerName, serverName, serviceName, 0, (err, response) => {
+    if (err) {
+      if (response) {
+        res.json(response);
+      } else {
+        next(err);
+      }
+    } else {
+      res.json(response);
+    }
+  });
+});
 
+router.get('/build/end', (req, res, next) => {
+  const proxyServerName = req.query.proxyServerName;
+  const serverName = req.query.serverName;
+  const serviceName = req.query.serviceName;
+
+  serverStatus.buildEnd(proxyServerName, serverName, serviceName, (err, response) => {
+    if (err) {
+      if (response) {
+        res.json(response);
+      } else {
+        next(err);
+      }
+    } else {
+      res.json(response);
+    }
+  });
 });
 
 /////////////////////////////////////////////////////////////
