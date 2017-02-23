@@ -46,7 +46,7 @@
 
   function setWeight(serverName, serviceName) {
     $.ajax({
-        url: 'http://172.30.161.173:8989/weight',
+        url: 'http://localhost:8989/weight',
         method: 'POST',
         data: {
           serverName: serverName,
@@ -64,7 +64,7 @@
 
   function reloadTable() {
     $.ajax({
-        url: 'http://172.30.161.173:8989/weight'
+        url: 'http://localhost:8989/weight'
       })
       .then(function (data) {
         if (data) {
@@ -177,7 +177,7 @@
      * Over IDC 모드 인지 조회
      */
     $.ajax({
-        url: 'http://172.30.161.173:8989/multiproxy',
+        url: 'http://localhost:8989/multiproxy',
         method: 'GET'
       })
       .then(function (response) {
@@ -206,7 +206,7 @@
         $("#btnOverIDC").attr('class', 'btn btn-success');
       }
       $.ajax({
-          url: 'http://172.30.161.173:8989/multiproxy/',
+          url: 'http://localhost:8989/multiproxy/',
           method: 'POST',
           data: {
             onOff: onOff
@@ -228,7 +228,7 @@
       isMultiProxy = false;
       $("#btnOverIDC").attr('class', 'btn btn-danger');
       $.ajax({
-          url: 'http://172.30.161.173:8989/reset',
+          url: 'http://localhost:8989/reset',
           method: 'GET',
           dataType: 'json'
         })
