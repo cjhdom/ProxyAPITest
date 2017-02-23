@@ -75,7 +75,7 @@ exports.updateSingleService = (prxNameList, serverName, serviceName, weight) => 
 exports.buildStart = (prxName, serverName, serviceName) => {
   return pool.query('update weight set beforeBuild = weight where proxyServerName = ? AND ' +
     'serverName = ? AND serviceName = ?', [
-    weight, prxName, serverName, serviceName
+    prxName, serverName, serviceName
   ]).then(pool.query('update weight set weight = 0 where proxyServerName = ? AND ' +
     'serverName = ? AND serviceName = ?', [
     prxName, serverName, serviceName
