@@ -36,10 +36,10 @@ FeManager.prototype.getWeight = function (serverName, serviceName) {
         if (err) {
           return resolve(server);
           /*return reject({
-            err,
-            url,
-            name: this.name
-          });*/
+           err,
+           url,
+           name: this.name
+           });*/
         } else {
           console.log(typeof body.current);
           server.weight = Number(body.current);
@@ -94,14 +94,9 @@ FeManager.prototype.getWeightAll = function () {
 FeManager.prototype.setWeightAll = function (targetServerList, weight) {
   return new Promise((resolve, reject) => {
     async.each(targetServerList, (targetServer, callbackEach) => {
-      var serverIdx = this.serverList.findIndex(server => server.serverName === targetServer.serverName &&
-      server.serviceName === targetServer.serviceName);
-      if (serverIdx === -1) {
-        callbackEach(new Error('no such server'));
-      } else {
-        this.serverList[serverIdx].weight = weight;
-        callbackEach();
-      }
+      this.setWeight(targetServer.serverName, targetServer.serviceName, weight)
+        .then(() => callbackEach())
+        .catch(res => callbackEach(res));
     }, (err) => {
       if (err) {
         return reject(err);
@@ -114,14 +109,34 @@ FeManager.prototype.setWeightAll = function (targetServerList, weight) {
 
 FeManager.prototype.setWeight = function (serverName, serviceName, weight) {
   return new Promise((resolve, reject) => {
-    var serverIdx = this.serverList.findIndex(server => server.serverName === serverName &&
-      server.serviceName === serviceName);
+    var server = _.find(this.serverList, {
+      serverName: serverName,
+      serviceName: serviceName
+    });
 
-    if (serverIdx === -1) {
-      return reject(new Error('no such server'));
+    if (typeof server != 'undefined') {
+      var url = this.ip + '/haproxy/setWeight?backend=' + serviceName.toLowerCase() +
+        '&server=' + serverName.toLowerCase() + '&weight=' + weight;
+
+      request({
+        uri: url,
+        method: 'get'
+      }, (err, response, body) => {
+        if (err) {
+          return resolve(server);
+          /*return reject({
+           err,
+           url,
+           name: this.name
+           });*/
+        } else {
+          console.log(typeof body.current);
+          server.weight = Number(body.current);
+          return resolve(server);
+        }
+      });
     } else {
-      this.serverList[serverIdx].weight = weight;
-      return resolve();
+      return reject({code: '999', message: 'couldn\'t find the requested server ' + serverName});
     }
   });
 };

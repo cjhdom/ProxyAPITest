@@ -17,9 +17,11 @@ const env = require('../config/config').env;
 exports = module.exports = {};
 
 exports.init = () => {
+  var proxyServers = null;
+
   database.fetchAll()
     .then(rows => {
-      database.fetchProxyServerList()
+      return database.fetchProxyServerList()
         .then(res => {
           var mngrs = [];
 
@@ -32,18 +34,13 @@ exports.init = () => {
           });
 
           serverStatus.initServerStatus(null, mngrs);
+          return Promise.resolve();
         })
         .catch(err => {
           return Promise.reject(err);
         });
     })
-    .catch(err => {
-      console.log(err);
-    });
-
-  var proxyServers = null;
-
-  database.fetchProxyServerList()
+    .then(() => database.fetchProxyServerList())
     .then(res => {
       proxyServers = res;
       return database.fetchServerList();
@@ -51,8 +48,8 @@ exports.init = () => {
     .then(res => {
       serverList.initServerList(proxyServers, res);
     })
-    .catch(res => {
-      console.log(res);
+    .catch(err => {
+      console.log(err);
     });
 };
 

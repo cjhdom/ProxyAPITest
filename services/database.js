@@ -73,15 +73,18 @@ exports.updateSingleService = (prxNameList, serverName, serviceName, weight) => 
 };
 
 exports.buildStart = (prxName, serverName, serviceName, weight) => {
-  return pool.query('update weight set weight = ? and beforeBuild = weight where proxyServerName = ? AND ' +
+  return pool.query('update weight set beforeBuild = weight where proxyServerName = ? AND ' +
     'serverName = ? AND serviceName = ?', [
     weight, prxName, serverName, serviceName
-  ]).then(() => Promise.resolve({result: '000'}))
+  ]).then(pool.query('update weight set weight = ? where proxyServerName = ? AND ' +
+    'serverName = ? AND serviceName = ?', [
+    weight, prxName, serverName, serviceName
+  ])).then(() => Promise.resolve({result: '000'}))
     .catch(result => Promise.reject(result));
 };
 
 exports.buildFinished = (prxName, serverName, serviceName) => {
-  return pool.query('update weight set weight = beforeBuild where proxyServerName in ? AND ' +
+  return pool.query('update weight set weight = beforeBuild, beforeBuild = NULL where proxyServerName in ? AND ' +
     'serverName = ? AND serviceName = ?', [
      prxName, serverName, serviceName
   ]).then(() => Promise.resolve({result: '000'}))
