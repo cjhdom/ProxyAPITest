@@ -149,11 +149,10 @@ router.patch('/weight/single', (req, res, next) => {
 });
 
 router.get('/build/start', (req, res, next) => {
-  const proxyServerName = req.query.proxyServerName;
   const serverName = req.query.serverName;
   const serviceName = req.query.serviceName;
 
-  serverStatus.buildStart(proxyServerName, serverName, serviceName, (err, response) => {
+  serverStatus.buildStart(serverName, serviceName, (err, response) => {
     if (err) {
       if (response) {
         res.json(response);
@@ -168,11 +167,10 @@ router.get('/build/start', (req, res, next) => {
 });
 
 router.get('/build/end', (req, res, next) => {
-  const proxyServerName = req.query.proxyServerName;
   const serverName = req.query.serverName;
   const serviceName = req.query.serviceName;
 
-  serverStatus.buildEnd(proxyServerName, serverName, serviceName, (err, response) => {
+  serverStatus.buildEnd(serverName, serviceName, (err, response) => {
     if (err) {
       if (response) {
         res.json(response);

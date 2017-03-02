@@ -47,7 +47,7 @@
   function setWeight(serverName, serviceName) {
     $.ajax({
         url: 'http://<%-ip%>/weight',
-        method: 'POST',
+        method: 'PATCH',
         data: {
           serverName: serverName,
           serviceName: serviceName

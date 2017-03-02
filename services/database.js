@@ -26,7 +26,7 @@ exports.fetchAll = () => {
 exports.fetchSingleService = (prxName, serverName, serviceName) => {
   return pool.query('select * from weight where proxyServerName = ? and serverName = ? and serviceName = ?', [
     prxName, serverName, serviceName
-  ]).then(([rows]) => Promise.resolve(rows))
+  ]).then(([rows]) => Promise.resolve(rows[0]))
     .catch(result => Promise.reject(result));
 };
 
@@ -61,23 +61,26 @@ exports.updateSingleService = (prxNameList, serverName, serviceName, weight) => 
     .catch(result => Promise.reject(result));
 };
 
-exports.buildStart = (prxName, serverName, serviceName) => {
-  return pool.query('update weight set beforeBuild = weight where proxyServerName = ? AND ' +
-    'serverName = ? AND serviceName = ?', [
-    prxName, serverName, serviceName
-  ]).then(pool.query('update weight set weight = 0 where proxyServerName = ? AND ' +
-    'serverName = ? AND serviceName = ?', [
-    prxName, serverName, serviceName
-  ])).then((res) => Promise.resolve(res))
+exports.buildStart = (serverName, serviceName) => {
+  return pool.query('update weight set beforeBuild = weight where serverName = ? AND serviceName = ?', [
+    serverName, serviceName
+  ]).then(() => {
+    return pool.query('update weight set weight = 0 where serverName = ? AND serviceName = ?', [
+      serverName, serviceName
+    ]);
+  }).then((res) => Promise.resolve(res))
     .catch(result => Promise.reject(result));
 };
 
-exports.buildFinished = (prxName, serverName, serviceName) => {
-  return pool.query('update weight set weight = beforeBuild, beforeBuild = NULL where proxyServerName in ? AND ' +
-    'serverName = ? AND serviceName = ?', [
-     prxName, serverName, serviceName
-  ]).then(() => Promise.resolve({result: '000'}))
-    .catch(result => Promise.reject(result));
+exports.buildFinished = (serverName, serviceName) => {
+  return pool.query('update weight set weight = beforeBuild where serverName = ? AND ' +
+    'serviceName = ?', [
+    serverName, serviceName
+  ]).then(() => {
+    return pool.query('update weight set beforeBuild=NULL where beforeBuild != NULL')
+  }).then(() =>
+      Promise.resolve({result: '000'})
+    ).catch(result => Promise.reject(result));
 };
 
 exports.setMultiProxy = (onOff) => {

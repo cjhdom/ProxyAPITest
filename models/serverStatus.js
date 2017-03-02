@@ -22,7 +22,6 @@ exports.getDbWeightAll = (callback) => {
     .catch(response => callback(response));
 };
 
-
 /**
  * 모든 서버의 weight를 가져오는 것
  * @param callback
@@ -320,11 +319,11 @@ exports.setMultiProxy = (onOff, callback) => {
           }
         });
       } else {
-        callback();
+        return callback();
       }
     })
     .catch(response => {
-      callback(response);
+      return callback(response);
     });
 };
 
@@ -364,7 +363,6 @@ exports.setSingleServerWeight = (prxName, serverName, serviceName, weight, callb
 
 /**
  * 하나의 서버에 대한 weight 가져오기
- * @todo 요것 진짜 쓸일이 있을까?
  * @param prxName
  * @param serverName
  * @param callback
@@ -416,24 +414,58 @@ exports.getServerWeight = (prxName, serverName, serviceName, callback) => {
  * @param weight
  * @param callback
  */
-exports.buildStart = (prxName, serverName, serviceName, callback) => {
+exports.buildStart = (serverName, serviceName, callback) => {
+  const weight = 0;
+
   async.auto({
-    setDb: (callback) => {
-      db.buildStart(prxName, serverName, serviceName, 0)
-        .then(response => callback(null, response))
-        .catch(response => callback(response));
+    isMultiProxy: (callbackAsync) => {
+      db.getMultiProxy()
+        .then(response => {
+          callbackAsync(null, response);
+          return null;
+        })
+        .catch(response => {
+          callbackAsync(response);
+          return null;
+        });
     },
-    setMngr: (callback) => {
-      mngrs.some(mngr => {
-        if (mngr.getName() === prxName) {
-          mngr.setWeight(serverName, serviceName, 0)
-            .then(server => callback(null, server))
-            .catch(response => callback(response));
-          return true;
+    setDb: ['isMultiProxy', (results, callbackAsync) => {
+      db.buildStart(serverName, serviceName)
+        .then(response => {
+          callbackAsync(null, response);
+          return null;
+        })
+        .catch(response => {
+          callbackAsync(response);
+          return null;
+        });
+    }],
+    setMngr: ['isMultiProxy', (results, callbackAsync) => {
+      serverList.getServer(serverName, (err, res) => {
+        if (err) {
+          return callbackAsync(err);
+        } else {
+          async.each(mngrs, (mngr, callbackEach) => {
+            var proxyIDC = mngr.IDC;
+            var serverIDC = res.IDC;
+
+            if (!results.isMultiProxy && proxyIDC !== serverIDC) {
+              return callbackEach();
+            } else {
+              mngr.setWeight(serverName, serviceName, weight)
+                .then(server => callbackEach())
+                .catch(response => callbackEach(err));
+            }
+          }, (err) => {
+            if (err) {
+              callbackAsync(err);
+            } else {
+              callbackAsync(null, {message: 'success'});
+            }
+          });
         }
-        return false;
       });
-    }
+    }]
   }, (err, res) => {
     if (err) {
       return callback(err);
@@ -443,17 +475,49 @@ exports.buildStart = (prxName, serverName, serviceName, callback) => {
   });
 };
 
-exports.buildEnd = (proxyName, serverName, serviceName, callback) => {
-  db.fetchSingleService(proxyName, serverName, serviceName)
-    .then(res => {
-      console.log(JSON.stringify(res));
-      if (!res[0].beforeBuild || res[0].beforeBuild === 0) {
-        return callback(null, {result: '000'});
-      } else {
-        exports.setSingleServerWeight(proxyName, serverName, serviceName, 1, callback);
-      }
-    })
-    .catch(res => {
-      return callback(res);
-    });
+exports.buildEnd = (serverName, serviceName, callback) => {
+  var isMultiProxy = null;
+  serverList.getServer(serverName, (serverListError, server) => {
+    if (serverListError) {
+      return callback(serverListError);
+    } else {
+      db.getMultiProxy()
+        .then(res => {
+          isMultiProxy = res;
+          return db.buildFinished(serverName, serviceName);
+        })
+        .then(res => {
+          async.each(mngrs, (mngr, callbackEach) => {
+            if (!isMultiProxy && mngr.IDC !== server.IDC) {
+              console.log('if1');
+              return callbackEach();
+            } else {
+              console.log('else1');
+
+              db.fetchSingleService(mngr.name, serverName, serviceName)
+                .then(dbRes => {
+                  // buildFinished에서 buildBefore값을 날려버리기 때문에 여기선 현재 값으로 업데이트해줘야한다
+                  if (dbRes.weight === 1) {
+                    return mngr.setWeight(serverName, serviceName, dbRes.weight)
+                  } else {
+                    callbackEach();
+                    return null;
+                  }
+                  return null;
+                })
+                .then(() => callbackEach())
+                .catch(res => callbackEach(res));
+            }
+          }, (err) => {
+            if (err) {
+              return Promise.reject(err);
+            } else {
+              return Promise.resolve();
+            }
+          });
+        })
+        .then(res => callback(null, {code: '000'}))
+        .catch(res => callback(res));
+    }
+  });
 };
