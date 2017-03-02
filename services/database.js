@@ -10,17 +10,6 @@ var pool = mysql.createPool(getConnectionOption(require('../config/config').env)
 
 module.exports = exports = {};
 
-exports.fetch = (prxName, serverName, serviceName) => {
-  return pool.query('select * from weight where proxyServerName = ? AND serverName = ? AND serviceNAme = ?', [
-    prxName, serverName, serviceName
-  ]).then(([rows]) => Promise.resolve(rows))
-    .catch(result => Promise.reject(result));
-};
-
-/**
- * 이거 쓰냐??
- * @param prxName
- */
 exports.fetchInProxy = (prxName) => {
   return pool.query('select * from weight where proxyServerName = ?', [
     prxName
@@ -91,10 +80,6 @@ exports.buildFinished = (prxName, serverName, serviceName) => {
     .catch(result => Promise.reject(result));
 };
 
-/**
- *
- * @param {boolean} onOff
- */
 exports.setMultiProxy = (onOff) => {
   return exports.getMultiProxy().then(result => {
     if (result && toBoolean(result) === onOff) {

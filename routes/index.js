@@ -4,6 +4,7 @@ const dbtest = require('../tests/dbtest');
 const serverStatus = require('../models/serverStatus');
 const serverList = require('../models/serverList');
 const toBoolean = require('to-boolean');
+const ip = require('../config/config').ip;
 
 /////////////////////////////////////////////////////////////
 /*                   webpages start                        */
@@ -19,7 +20,8 @@ router.get('/', function(req, res, next) {
         } else {
           res.render('index.html', {
             servers: JSON.stringify(result.map((server) => server.serverName)),
-            proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name))
+            proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name)),
+            ip
           });
         }
       });
@@ -38,7 +40,8 @@ router.get('/3', function(req, res, next) {
         } else {
           res.render('index3.html', {
             servers: JSON.stringify(result.map((server) => server.serverName)),
-            proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name))
+            proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name)),
+            ip
           });
         }
       });
@@ -57,7 +60,8 @@ router.get('/2', function(req, res, next) {
         } else {
           res.render('index2.html', {
             servers: JSON.stringify(result.map((server) => server.serverName)),
-            proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name))
+            proxyServers: JSON.stringify(result2.map((proxyServer) => proxyServer.name)),
+            ip
           });
         }
       });

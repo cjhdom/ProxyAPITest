@@ -86,21 +86,21 @@ function initDev() {
           serverStatus.initServerStatus(null, mngrs);
           return Promise.resolve();
         })
-        .catch(err => {
-          return Promise.reject(err);
-        });
+        .catch(err =>
+          Promise.reject(err)
+        );
     })
     .then(() => database.fetchProxyServerList())
     .then(res => {
       proxyServers = res;
       return database.fetchServerList();
     })
-    .then(res => {
-      serverList.initServerList(proxyServers, res);
-    })
-    .catch(err => {
-      console.log(err);
-    });
+    .then(res =>
+      serverList.initServerList(proxyServers, res)
+    )
+    .catch(err =>
+      console.log(err)
+    );
 }
 
 function getUrl() {

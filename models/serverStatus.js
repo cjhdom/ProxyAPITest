@@ -372,7 +372,7 @@ exports.setSingleServerWeight = (prxName, serverName, serviceName, weight, callb
 exports.getServerWeight = (prxName, serverName, serviceName, callback) => {
   async.auto({
     dbWeight: (callback) => {
-      db.fetch(prxName, serverName, serviceName)
+      db.fetchSingleService(prxName, serverName, serviceName)
         .then(response => callback(null, response))
         .catch(response => callback(response));
     },
