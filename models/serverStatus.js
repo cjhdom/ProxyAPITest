@@ -500,7 +500,6 @@ exports.buildEnd = (serverName, serviceName, callback) => {
                   if (dbRes.weight === 1) {
                     return mngr.setWeight(serverName, serviceName, dbRes.weight)
                   } else {
-                    callbackEach();
                     return null;
                   }
                   return null;
