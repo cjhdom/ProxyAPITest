@@ -6,17 +6,17 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "async": "^2.1.4",
-    "bluebird": "^3.4.6",
+    "async": "2.1.4",
+    "bluebird": "3.4.6",
     "body-parser": "~1.15.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
-    "ejs": "^2.5.5",
-    "express": "~4.14.0",
-    "lodash": "^4.16.6",
+    "ejs": "2.5.5",
+    "express": "4.14.0",
+    "lodash": "4.16.6",
     "morgan": "~1.7.0",
-    "mysql2": "^1.1.2",
-    "request": "^2.79.0",
-    "to-boolean": "^1.0.0"
+    "mysql2": "1.1.2",
+    "request": "2.79.0",
+    "to-boolean": "1.0.0"
   }
 }
