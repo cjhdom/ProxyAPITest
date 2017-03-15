@@ -86,15 +86,35 @@ FeManager.prototype.getWeightAll = function () {
 
 FeManager.prototype.setWeightAll = function (targetServerList, weight) {
   return new Promise((resolve, reject) => {
-    async.each(targetServerList, (targetServer, callbackEach) => {
-      this.setWeight(targetServer.serverName, targetServer.serviceName, weight)
-        .then(() => callbackEach())
-        .catch(res => callbackEach(res));
-    }, (err) => {
+    const url = `http://${this.ip}/haproxy/setWeightAll`;
+
+    request({
+      url,
+      method: 'POST',
+      json: {
+        targetServerList,
+        weight
+      },
+    }, (err, response, body) => {
       if (err) {
-        return reject(err);
+        return reject({
+          url,
+          weight,
+          action: 'setWeightAll',
+          response,
+          body
+        });
       } else {
-        return resolve({result: '000'});
+        this.serverList.forEach(thisServer => {
+          targetServerList.forEach(targetServer => {
+            if (thisServer.serverName === targetServer.serverName &&
+              thisServer.serviceName === targetServer.serviceName) {
+              thisServer.weight = weight;
+            }
+          });
+        });
+
+        return resolve();
       }
     });
   });
@@ -116,7 +136,12 @@ FeManager.prototype.setWeight = function (serverName, serviceName, weight) {
         method: 'get'
       }, (err, response, body) => {
         if (err) {
-          return resolve(server);
+          return reject({
+            url,
+            action: 'setWeight',
+            response,
+            body
+          });
         } else {
           server.weight = weight;
           // server.weight = Number(body.current);
