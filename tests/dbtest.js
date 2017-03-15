@@ -4,7 +4,7 @@
 'use strict';
 
 var _ = require('lodash');
-var Promise = require('bluebird');
+var Promise = require('promise');
 
 var serverList = [];
 var isMultiProxy = null;
@@ -20,7 +20,7 @@ module.exports = exports = {};
  *
  * @param {String} prxName
  * @param {String} serverName
- * @returns {bluebird|exports|module.exports}
+ * @returns {promise|exports|module.exports}
  */
 exports.fetch = (prxName, serverName) => {
   return new Promise((resolve, reject) => {
@@ -49,7 +49,7 @@ exports.fetchInProxy = (prxName) => {
 
 /**
  *
- * @returns {bluebird|exports|module.exports}
+ * @returns {promise|exports|module.exports}
  */
 exports.fetchAll = () => {
   return new Promise((resolve, reject) => {
@@ -66,7 +66,7 @@ exports.fetchAll = () => {
  * @param {String} prxName
  * @param {array} targetServers
  * @param {int} weight
- * @returns {bluebird|exports|module.exports}
+ * @returns {promise|exports|module.exports}
  */
 exports.update = (prxName, targetServers, weight) => {
   return new Promise((resolve, reject) => {

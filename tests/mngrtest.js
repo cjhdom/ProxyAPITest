@@ -2,7 +2,7 @@
  * Created by 지환 on 2016-11-10.
  */
 var _ = require('lodash');
-var Promise = require('bluebird');
+var Promise = require('promise');
 var async = require('async');
 
 function MngrTest(data, ip) {

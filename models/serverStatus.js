@@ -72,14 +72,12 @@ exports.getServerWeightAll = (callback) => {
  */
 exports.setServerWeight = (serverName, serviceName, callback) => {
   async.auto({
-    isMultiProxy: (callbackAsync) => {
+    isMultiProxy: (callback) => {
       db.getMultiProxy()
         .then(response => {
-          return callbackAsync(null, response);
+          return callback(null, response);
         })
-        .catch(response => {
-          return callbackAsync(response);
-        });
+        .catch(response => callback(response));
     },
     getMngrs: ['isMultiProxy', (results, callbackAsync) => {
       var result = [];
@@ -113,11 +111,8 @@ exports.setServerWeight = (serverName, serviceName, callback) => {
       });
     }],
     weight: ['getMngrs', (results, callbackAsync) => {
-      console.log('at 117 ' + JSON.stringify(results.getMngrs));
-      var getWeight = results.getMngrs.every(function (server, index, array) {
-          console.log(server.weight);
-          return index === 0 || server.weight === array[index - 1].weight;
-        }
+      var getWeight = results.getMngrs.every((server, index, array) =>
+          index === 0 || server.weight === array[index - 1].weight
       );
 
       if (getWeight) {
@@ -151,7 +146,8 @@ exports.setServerWeight = (serverName, serviceName, callback) => {
 
               db.updateSingleService(targetProxyServerList, serverName, serviceName, results.weight)
                 .then(response => {
-                  return callbackAsync(null, response);
+                  callbackAsync(null, response);
+                  return null;
                 })
                 .catch(response => callbackAsync(response));
             }
@@ -229,7 +225,6 @@ exports.setMultiProxy = (onOff, callback) => {
           },
           skipServers: ['getMngrs', (results, callbackAsync) => {
             // 멀티 프록시를 끌 땐 건너뛸 서버가 없다
-            // @todo: 끌 땐 이미 꺼진 서버는 request 안날리도록 해보자
             if (!onOff) {
               return callbackAsync(null, []);
             }
@@ -293,6 +288,7 @@ exports.setMultiProxy = (onOff, callback) => {
             });
           }],
           setMngr: ['skipServers', 'getMngrs', (results, callbackAuto) => {
+            console.log(`skipResult is ${results.skipServers}`);
             async.each(mngrs, (mngr, callbackEach) => {
               var weight = onOff ? 1 : 0;
               var serverList = _.chain(mngr.serverList)
@@ -490,11 +486,8 @@ exports.buildEnd = (serverName, serviceName, callback) => {
         .then(res => {
           async.each(mngrs, (mngr, callbackEach) => {
             if (!isMultiProxy && mngr.IDC !== server.IDC) {
-              console.log('if1');
               return callbackEach();
             } else {
-              console.log('else1');
-
               db.fetchSingleService(mngr.name, serverName, serviceName)
                 .then(dbRes => {
                   // buildFinished에서 buildBefore값을 날려버리기 때문에 여기선 현재 값으로 업데이트해줘야한다

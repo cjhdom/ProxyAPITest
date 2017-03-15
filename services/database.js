@@ -3,7 +3,7 @@
  */
 
 var mysql = require('mysql2/promise');
-var Promise = require('bluebird');
+var Promise = require('promise');
 var async = require('async');
 var toBoolean = require('to-boolean');
 var pool = mysql.createPool(getConnectionOption(require('../config/config').env));
@@ -138,7 +138,7 @@ function getConnectionOption(env) {
   switch (env) {
     case 'home':
       return {
-        Promise: Promise,
+        Promise,
         host: '52.231.38.182',
         port: '3306',
         user: 'root',
@@ -147,7 +147,7 @@ function getConnectionOption(env) {
       };
     case 'local':
       return {
-        Promise: Promise,
+        Promise,
         host: '192.168.56.102',
         port: '3306',
         user: 'root',

@@ -3,7 +3,7 @@
  */
 const MongoClient = require('mongodb').MongoClient;
 const _ = require('lodash');
-const Promise = require('bluebird');
+const Promise = require('promise');
 const async = require('async');
 Promise.promisifyAll(_);
 
@@ -76,7 +76,7 @@ exports.fetchAll = () => {
  * @param {String} prxName
  * @param {array} targetServers
  * @param {int} weight
- * @returns {bluebird|exports|module.exports}
+ * @returns {promise|exports|module.exports}
  */
 exports.update = (prxName, targetServers, weight) => {
   return new Promise((resolve, reject) => {

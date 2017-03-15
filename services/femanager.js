@@ -2,7 +2,7 @@
  * Created by 지환 on 2016-11-10.
  */
 var _ = require('lodash');
-var Promise = require('bluebird');
+var Promise = require('promise');
 var async = require('async');
 var request = require('request');
 var serverList = require('../models/serverList');
@@ -71,7 +71,7 @@ FeManager.prototype.getWeightAll = function () {
 
             if (idx !== -1) {
               //console.log(serverInProxy.svname + ',' + serverInProxy.pxname + ',' + serverInProxy.weight + ',' + this.name);
-              this.serverList[idx].weight = serverInProxy.weight;
+              this.serverList[idx].weight = Number(serverInProxy.weight);
             }
           });
           return resolve(this.serverList);
@@ -105,13 +105,15 @@ FeManager.prototype.setWeightAll = function (targetServerList, weight) {
           body
         });
       } else {
-        this.serverList.forEach(thisServer => {
-          targetServerList.forEach(targetServer => {
-            if (thisServer.serverName === targetServer.serverName &&
-              thisServer.serviceName === targetServer.serviceName) {
-              thisServer.weight = weight;
-            }
+        targetServerList.forEach(targetServer => {
+          const idx = _.findIndex(this.serverList, {
+            serverName: targetServer.serverName,
+            serviceName: targetServer.serviceName
           });
+
+          if (idx !== -1) {
+            this.serverList[idx].weight = weight;
+          }
         });
 
         return resolve();

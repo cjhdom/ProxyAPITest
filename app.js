@@ -20,6 +20,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.get('/favicon.ico', function(req, res) {
+  res.sendStatus(204);
+});
+
 app.use(myMiddleware);
 app.use('/', index);
 

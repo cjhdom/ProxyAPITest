@@ -2,7 +2,7 @@
  * Created by piru on 2017. 1. 20..
  */
 var mysql = require('mysql2');
-var Promise = require('bluebird');
+var Promise = require('promise');
 var path = require('path');
 
 const config = require('../config/config');
