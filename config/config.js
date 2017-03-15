@@ -7,5 +7,5 @@ exports = module.exports = {
   rootPath: path.normalize(__dirname + '/..'),
   port: 8080,
   env: process.env.NOVA_ENV,
-  ip: process.env.NOVA_ENV === 'real' ? 'novaproxyapi.com' : 'localhost:8989'
+  ip: process.env.NOVA_ENV === 'real' ? 'novaproxyapi.com' : 'localhost:8080'
 };
