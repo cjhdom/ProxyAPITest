@@ -88,7 +88,7 @@
               .value();
 
             serverList.forEach(function (server) {
-              table[outerIdx].push(server.weight);
+              table[outerIdx].push(Number(server.weight));
             });
           });
 

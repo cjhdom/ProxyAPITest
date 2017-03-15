@@ -22,8 +22,10 @@ exports.init = () => {
   switch (env) {
     case 'home':
     case 'local':
+      console.log('initializing dev femanager');
       return initDev();
     case 'real':
+      console.log('initializing real femanager');
       return initReal();
   }
 };

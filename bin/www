@@ -6,12 +6,13 @@
 var app = require('../app');
 var debug = require('debug')('proxyapi:server');
 var http = require('http');
+const config = require('../config/config');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '8080');
+var port = normalizePort(config.port || '8080');
 app.set('port', port);
 
 /**
@@ -94,5 +95,5 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  console.log('Listening on ' + bind);
+  console.log(`Listening on ${bind} on ${config.env} mode`);
 }

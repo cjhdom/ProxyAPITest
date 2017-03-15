@@ -415,6 +415,7 @@ exports.getServerWeight = (prxName, serverName, serviceName, callback) => {
  * @param callback
  */
 exports.buildStart = (serverName, serviceName, callback) => {
+  // 빌드시작할 때 무조건 weight 0으로
   const weight = 0;
 
   async.auto({
