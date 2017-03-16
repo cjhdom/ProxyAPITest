@@ -22,15 +22,14 @@ exports.init = () => {
   switch (env) {
     case 'home':
     case 'local':
-      console.log('initializing dev femanager');
       return initDev();
     case 'real':
-      console.log('initializing real femanager');
       return initReal();
   }
 };
 
 function initReal() {
+  console.log('initializing real femanager');
   var proxyServers = null;
   var mngrs = [];
 
@@ -69,6 +68,7 @@ function initReal() {
 }
 
 function initDev() {
+  console.log('initializing dev femanager');
   var proxyServers = null;
 
   database.fetchAll()

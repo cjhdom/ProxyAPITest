@@ -244,9 +244,7 @@ exports.setMultiProxy = (onOff, callback) => {
                     serviceName: server.serviceName
                   });
 
-                  var getWeight = serversToCheck.every(server =>
-                    server.weight === 0
-                  );
+                  var getWeight = serversToCheck.every(server => server.weight === 0);
 
                   if (getWeight) {
                     result = _.concat(result, serversToCheck);
@@ -288,7 +286,6 @@ exports.setMultiProxy = (onOff, callback) => {
             });
           }],
           setMngr: ['skipServers', 'getMngrs', (results, callbackAuto) => {
-            console.log(`skipResult is ${results.skipServers}`);
             async.each(mngrs, (mngr, callbackEach) => {
               var weight = onOff ? 1 : 0;
               var serverList = _.chain(mngr.serverList)
