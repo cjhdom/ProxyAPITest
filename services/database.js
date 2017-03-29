@@ -13,20 +13,23 @@ module.exports = exports = {};
 exports.fetchInProxy = (prxName) => {
   return pool.query('select * from weight where proxyServerName = ?', [
     prxName
-  ]).then(([rows]) => Promise.resolve(rows))
+  ]).then(res => res[0])
+    .then((rows) => Promise.resolve(rows))
     .catch(result => Promise.reject(result));
 };
 
 exports.fetchAll = () => {
   return pool.query('select * from weight')
-    .then(([rows]) => Promise.resolve(rows))
+    .then(res => res[0])
+    .then((rows) => Promise.resolve(rows))
     .catch(result => Promise.reject(result));
 };
 
 exports.fetchSingleService = (prxName, serverName, serviceName) => {
   return pool.query('select * from weight where proxyServerName = ? and serverName = ? and serviceName = ?', [
     prxName, serverName, serviceName
-  ]).then(([rows]) => Promise.resolve(rows[0]))
+  ]).then(res => res[0])
+    .then((rows) => Promise.resolve(rows[0]))
     .catch(result => Promise.reject(result));
 };
 
@@ -99,25 +102,29 @@ exports.setMultiProxy = (onOff) => {
 
 exports.getMultiProxy = () => {
   return pool.query('select configValue from apiConfig where fieldName = \'isOverIDC\'')
-    .then(([rows]) => Promise.resolve(toBoolean(rows[0].configValue)))
+    .then(res => res[0])
+    .then((rows) => Promise.resolve(toBoolean(rows[0].configValue)))
     .catch(result => Promise.reject(result));
 };
 
 exports.fetchProxyServerList = () => {
   return pool.query('select * from proxyServer')
-    .then(([rows]) => Promise.resolve(rows))
+    .then(res => res[0])
+    .then((rows) => Promise.resolve(rows))
     .catch(result => Promise.reject(result));
 };
 
 exports.fetchServerList = () => {
   return pool.query('select * from feServer')
-    .then(([rows]) => Promise.resolve(rows))
+    .then(res => res[0])
+    .then((rows) => Promise.resolve(rows))
     .catch(result => Promise.reject(result));
 };
 
 exports.fetchServiceList = () => {
   return pool.query('select * from service')
-    .then(([rows]) => Promise.resolve(rows))
+    .then(res => res[0])
+    .then((rows) => Promise.resolve(rows))
     .catch(result => Promise.reject(result));
 };
 
